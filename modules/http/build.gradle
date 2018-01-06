@@ -1,0 +1,13 @@
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+dependencies {
+    compile project(':base')
+    testCompile 'junit:junit:4.12'
+}
+eclipse {
+    project {
+        name = 'Traghentto-Http'
+    }
+}

@@ -1,0 +1,17 @@
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+dependencies {
+    compile project(':base')
+    compile project(':http')
+    compile project(':file')
+    compile project(':zip')
+    compile project(':apache-http')
+    testCompile 'junit:junit:4.12'
+}
+eclipse {
+    project {
+        name = 'Traghentto-JavaSE'
+    }
+}

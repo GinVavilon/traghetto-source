@@ -1,0 +1,13 @@
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+dependencies {
+    compile project(':java-se')
+    testCompile 'junit:junit:4.12'
+}
+eclipse {
+    project {
+        name = 'Traghentto-ExampleSE'
+    }
+}
