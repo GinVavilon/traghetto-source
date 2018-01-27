@@ -6,15 +6,13 @@ package com.github.ginvavilon.traghentto.android.creators;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.ParseException;
-
 import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.android.AndroidSource;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.params.StreamParams;
@@ -43,14 +41,9 @@ class AndroidProxySource implements AndroidSource {
     }
 
     @Override
-    public InputStream openInputStream(StreamParams pParams)
-            throws IOException, IOSourceException, ParseException {
-        return mSource.openInputStream(pParams);
-    }
-
-    @Override
-    public void closeStream(Closeable pStream) throws IOException {
-        mSource.closeStream(pStream);
+    public StreamResource<InputStream> openResource(StreamParams pParams)
+            throws IOSourceException, IOException {
+        return mSource.openResource(pParams);
     }
 
     @Override

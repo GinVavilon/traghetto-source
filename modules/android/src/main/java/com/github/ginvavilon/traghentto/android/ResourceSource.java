@@ -8,12 +8,12 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.ginvavilon.traghentto.BaseSource;
 import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.UriConstants;
 import com.github.ginvavilon.traghentto.android.creators.AndroidSourceCreator;
@@ -23,7 +23,7 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  * @author Vladimir Baraznovsky
  *
  */
-public class ResourceSource implements AndroidSource {
+public class ResourceSource extends BaseSource implements AndroidSource {
 
     private final Resources mResources;
     private final int mId;
@@ -50,13 +50,8 @@ public class ResourceSource implements AndroidSource {
     }
 
     @Override
-    public InputStream openInputStream(StreamParams pParams) throws IOException {
+    protected InputStream openInputStream(StreamParams pParams) throws IOException {
 	return mResources.openRawResource(mId);
-    }
-
-    @Override
-    public void closeStream(Closeable pStream) throws IOException {
-	pStream.close();
     }
 
     @Override

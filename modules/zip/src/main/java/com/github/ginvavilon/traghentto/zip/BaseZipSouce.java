@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 
 import com.github.ginvavilon.traghentto.Source;
-import com.github.ginvavilon.traghentto.StreamSource;
 
 /**
  * @author Vladimir Baraznovsky

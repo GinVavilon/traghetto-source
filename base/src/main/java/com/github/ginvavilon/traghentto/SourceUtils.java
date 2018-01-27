@@ -3,7 +3,6 @@
  */
 package com.github.ginvavilon.traghentto;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,8 +11,8 @@ import java.util.List;
 import com.github.ginvavilon.traghentto.StreamUtils.ICopyListener;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.exceptions.SourceAlreadyExistsException;
-import com.github.ginvavilon.traghentto.params.StreamParams;
 import com.github.ginvavilon.traghentto.params.ParamNames;
+import com.github.ginvavilon.traghentto.params.StreamParams;
 import com.github.ginvavilon.traghentto.params.VoidParams;
 
 /**
@@ -71,12 +70,15 @@ public class SourceUtils {
                 to.create();
 
                 InputStream inputStream = null;
+                StreamResource<InputStream> inputResource = null;
+                StreamResource<OutputStream> outputResource = null;
                 OutputStream outputStream = null;
                 try {
                     StreamParams inParam = getSaflyParams(pInParams);
-
-                    inputStream = pFrom.openInputStream(inParam);
-                    outputStream = to.openOutputStream(pOutParams);
+                    inputResource = pFrom.openResource(inParam);
+                    outputResource = to.openOutputResource(pOutParams);
+                    inputStream = inputResource.getStream();
+                    outputStream = outputResource.getStream();
                     long skipByte = inParam.getProperty(ParamNames.SKIP, 0L);
                     skipByte = inParam.getProperty(ParamNames.OUT_SKIP, skipByte);
                     long readed = inParam.getProperty(ParamNames.OUT_READED, 0L);
@@ -84,8 +86,8 @@ public class SourceUtils {
                             skipByte, pListener);
 
                 } finally {
-                    closeStream(pFrom, inputStream);
-                    closeStream(to, outputStream);
+                    StreamUtils.close(inputResource);
+                    StreamUtils.close(outputResource);
                 }
             } else {
                 throw new SourceAlreadyExistsException();
@@ -94,15 +96,7 @@ public class SourceUtils {
         }
     }
 
-    public static void closeStream(Source pSource, Closeable is) {
-        if (is != null) {
-            try {
-                pSource.closeStream(is);
-            } catch (IOException e) {
-                Logger.e(e);
-            }
-        }
-    }
+
 
     public static StreamParams getSaflyParams(StreamParams pParams) {
         if (pParams != null) {

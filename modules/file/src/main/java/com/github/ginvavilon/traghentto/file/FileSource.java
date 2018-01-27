@@ -3,7 +3,6 @@
  */
 package com.github.ginvavilon.traghentto.file;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,18 +12,19 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.ginvavilon.traghentto.BaseWritebleSource;
 import com.github.ginvavilon.traghentto.Source;
-import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.SourceCreator;
 import com.github.ginvavilon.traghentto.SourceUtils;
-import com.github.ginvavilon.traghentto.params.StreamParams;
+import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.params.ParamNames;
+import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-public class FileSource implements Source, WritableSource {
+public class FileSource extends BaseWritebleSource implements Source, WritableSource {
     private File mFile;
 
     public FileSource(File pFile) {
@@ -36,6 +36,9 @@ public class FileSource implements Source, WritableSource {
     public List<? extends FileSource> getChildren() {
         List<FileSource> list = new ArrayList<FileSource>();
         File[] listFiles = mFile.listFiles();
+        if (listFiles == null) {
+            return null;
+        }
         for (File file : listFiles) {
             FileSource source = new FileSource(file);
             list.add(source);
@@ -55,7 +58,7 @@ public class FileSource implements Source, WritableSource {
     }
 
     @Override
-    public InputStream openInputStream(StreamParams pParams) throws IOException {
+    protected InputStream openInputStream(StreamParams pParams) throws IOException {
         return new FileInputStream(mFile);
     }
 
@@ -72,11 +75,6 @@ public class FileSource implements Source, WritableSource {
     @Override
     public boolean exists() {
         return mFile.exists();
-    }
-
-    @Override
-    public void closeStream(Closeable pStream) throws IOException {
-        pStream.close();
     }
 
     @Override
@@ -105,14 +103,9 @@ public class FileSource implements Source, WritableSource {
     }
 
     @Override
-    public OutputStream openOutputStream(StreamParams pParams) throws IOException {
+    protected OutputStream openOutputStream(StreamParams pParams) throws IOException {
         StreamParams params = SourceUtils.getSaflyParams(pParams);
         return new FileOutputStream(mFile, params.getProperty(ParamNames.APPEND, false));
-    }
-
-    @Override
-    public OutputStream openOutputStream() throws IOException {
-        return openOutputStream(null);
     }
 
     @Override

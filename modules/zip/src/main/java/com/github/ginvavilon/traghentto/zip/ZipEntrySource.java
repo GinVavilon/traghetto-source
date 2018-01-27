@@ -3,14 +3,16 @@
  */
 package com.github.ginvavilon.traghentto.zip;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
 import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.StreamSource;
+import com.github.ginvavilon.traghentto.StreamUtils;
+import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
@@ -45,12 +47,12 @@ class ZipEntrySource implements StreamSource {
 	return mZipEntry.isDirectory();
     }
 
-
     @Override
-    public InputStream openInputStream(StreamParams pParams) throws IOException {
-	return mZipParrent.openInputStream(mZipEntry);
+    public StreamResource<InputStream> openResource(StreamParams pParams)
+            throws IOSourceException, IOException {
+        InputStream inputStream = mZipParrent.openInputStream(mZipEntry);
+        return StreamUtils.createResource(inputStream);
     }
-
 
     @Override
     public String getPath() {
@@ -91,14 +93,6 @@ class ZipEntrySource implements StreamSource {
     public boolean exists() {
 	return true;
     }
-
-
-    @Override
-    public void closeStream(Closeable pStream) throws IOException {
-	mZipParrent.closeStream(pStream);
-
-    }
-
 
     @Override
     public String getUriString() {

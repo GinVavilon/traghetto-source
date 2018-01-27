@@ -9,12 +9,12 @@ import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.ginvavilon.traghentto.BaseSource;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.UriConstants;
@@ -25,7 +25,7 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  * @author Vladimir Baraznovsky
  *
  */
-public class AssetSource implements AndroidSource {
+public class AssetSource extends BaseSource implements AndroidSource {
 
     private final AssetManager mAssetManager;
     private final String mPath;
@@ -78,13 +78,8 @@ public class AssetSource implements AndroidSource {
     }
 
     @Override
-    public InputStream openInputStream(StreamParams pParams) throws IOException {
+    protected InputStream openInputStream(StreamParams pParams) throws IOException {
 	return mAssetManager.open(mPath);
-    }
-
-    @Override
-    public void closeStream(Closeable pStream) throws IOException {
-	pStream.close();
     }
 
     @Override
