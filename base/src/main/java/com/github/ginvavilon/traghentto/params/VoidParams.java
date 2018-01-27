@@ -8,7 +8,7 @@ package com.github.ginvavilon.traghentto.params;
  * @author Vladimir Baraznovsky
  *
  */
-public class VoidParams implements ISourceStreamParams {
+public class VoidParams implements StreamParams {
 
     @Override
     public Object getProperty(String pKey, Object pDefault) {
@@ -41,7 +41,7 @@ public class VoidParams implements ISourceStreamParams {
     }
 
     @Override
-    public ISourceStreamParams changeProperty(String pKey, Object pDefault) {
+    public StreamParams changeProperty(String pKey, Object pDefault) {
 	return this;
     }
 

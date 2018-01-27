@@ -8,14 +8,14 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
-import com.github.ginvavilon.traghentto.IStreamSource;
-import com.github.ginvavilon.traghentto.IWritableSource;
+import com.github.ginvavilon.traghentto.StreamSource;
+import com.github.ginvavilon.traghentto.WritableSource;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-public interface IZipArhive  extends IStreamSource{
+public interface ZipSource  extends StreamSource{
     void openEntry(ZipEntry pZipEntry) throws IOException;
     void closeEntry(ZipEntry pZipEntry) throws IOException;
     InputStream openInputStream(ZipEntry pZipEntry) throws IOException;
@@ -24,5 +24,5 @@ public interface IZipArhive  extends IStreamSource{
     ZipEntrySource getChild(ZipEntrySource pZipEntrySource, String pName);
     ZipEntrySource getChild(String pName);
     String getURI(ZipEntrySource pZipEntrySource);
-    boolean unzip(IWritableSource pTo) throws IOException;
+    boolean unzip(WritableSource pTo) throws IOException;
 }

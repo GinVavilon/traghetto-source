@@ -22,8 +22,8 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.border.CompoundBorder;
 
-import com.github.ginvavilon.traghentto.ISource;
-import com.github.ginvavilon.traghentto.IWritableSource;
+import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Logger.LogHandler;
 import com.github.ginvavilon.traghentto.SourceUtils;
@@ -43,9 +43,9 @@ public class ExampleMain {
      */
     private final class LogListner implements ICopyListener {
         private final StringBuilder mLogBuilder;
-        private final ISource mIn;
+        private final Source mIn;
 
-        private LogListner(StringBuilder pLog, ISource pOut) {
+        private LogListner(StringBuilder pLog, Source pOut) {
             mLogBuilder = pLog;
             mIn = pOut;
         }
@@ -208,8 +208,8 @@ public class ExampleMain {
                 String in = inEdit.getText();
                 String out = outEdit.getText();
                 try {
-                    ISource inSource = SourceFactory.createFromUrl(in);
-                    ISource outSource = SourceFactory.createFromUrl(out);
+                    Source inSource = SourceFactory.createFromUrl(in);
+                    Source outSource = SourceFactory.createFromUrl(out);
 
                     LogListner listener = new LogListner(log, inSource);
 
@@ -224,7 +224,7 @@ public class ExampleMain {
                         public void run() {
 
                             try {
-                                SourceUtils.replace(inSource, (IWritableSource) outSource,
+                                SourceUtils.replace(inSource, (WritableSource) outSource,
                                         listener);
                             } catch (IOSourceException | IOException e) {
                                 listener.onFail(e);

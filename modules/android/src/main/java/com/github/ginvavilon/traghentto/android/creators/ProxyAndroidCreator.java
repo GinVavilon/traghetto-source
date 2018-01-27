@@ -6,7 +6,7 @@ package com.github.ginvavilon.traghentto.android.creators;
 import android.content.Context;
 import android.net.Uri;
 
-import com.github.ginvavilon.traghentto.ISource;
+import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceCreator;
 
 /**
@@ -15,11 +15,11 @@ import com.github.ginvavilon.traghentto.SourceCreator;
  */
 public abstract class ProxyAndroidCreator implements AndroidSourceCreator<AndroidProxySource> {
 
-    protected final SourceCreator<? extends ISource> mCreator;
+    protected final SourceCreator<? extends Source> mCreator;
 
     protected abstract String getParameter(Uri pUri);
 
-    public ProxyAndroidCreator(SourceCreator<? extends ISource> pCreator) {
+    public ProxyAndroidCreator(SourceCreator<? extends Source> pCreator) {
         super();
         mCreator = pCreator;
     }
@@ -27,7 +27,7 @@ public abstract class ProxyAndroidCreator implements AndroidSourceCreator<Androi
     @Override
     public AndroidProxySource create(Context pContext, Uri pUri) {
     
-        ISource source = mCreator.create(getParameter(pUri));
+        Source source = mCreator.create(getParameter(pUri));
         return new AndroidProxySource(source);
     }
 

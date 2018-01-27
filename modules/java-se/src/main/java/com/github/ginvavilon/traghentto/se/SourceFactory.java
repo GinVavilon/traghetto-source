@@ -8,7 +8,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.ginvavilon.traghentto.ISource;
+import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceCreator;
 import com.github.ginvavilon.traghentto.UriConstants;
 import com.github.ginvavilon.traghentto.file.CachedSource;
@@ -52,7 +52,7 @@ public class SourceFactory implements UriConstants {
         sDefault = new Data(true, creator);
     }
 
-    private static ISource createBasePathUri(URI uri) {
+    private static Source createBasePathUri(URI uri) {
         Data data = sCreators.get(uri.getScheme());
         if (data == null) {
             data = sDefault;
@@ -62,30 +62,30 @@ public class SourceFactory implements UriConstants {
 
     }
 
-    public static ISource createFromUri(URI url) {
-        ISource source = createBasePathUri(url);
+    public static Source createFromUri(URI url) {
+        Source source = createBasePathUri(url);
         if (url.getFragment() != null) {
             source = source.getChild(url.getFragment());
         }
         return source;
     }
 
-    public static ISource createCachedIfNeed(ISource pSource, DiskLruCache pDiskLruCache) {
+    public static Source createCachedIfNeed(Source pSource, DiskLruCache pDiskLruCache) {
         if (pSource.isLocal()) {
             return pSource;
         } else {
-            return new CachedSource<ISource>(pDiskLruCache, pSource);
+            return new CachedSource<Source>(pDiskLruCache, pSource);
         }
     }
 
-    public static ISource createFromUrl(String pUri) throws MalformedURLException {
+    public static Source createFromUrl(String pUri) throws MalformedURLException {
         return createFromUri(URI.create(pUri));
 
     }
 
-    public static ISource createChild(ISource pParent, String pUri) throws MalformedURLException {
+    public static Source createChild(Source pParent, String pUri) throws MalformedURLException {
         URI uri = URI.create(pUri);
-        ISource source;
+        Source source;
         if (!uri.isAbsolute()) {
             source = pParent.getChild(pUri);
         } else {

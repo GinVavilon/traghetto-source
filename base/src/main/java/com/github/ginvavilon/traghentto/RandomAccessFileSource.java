@@ -9,24 +9,24 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
-import com.github.ginvavilon.traghentto.params.ISourceStreamParams;
+import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-public class RandomAccessFileSource implements ISource {
+public class RandomAccessFileSource implements Source {
 
-    private IStreamSource mSource;
+    private StreamSource mSource;
 
-    public RandomAccessFileSource(IStreamSource pSource) {
+    public RandomAccessFileSource(StreamSource pSource) {
 	super();
 	mSource = pSource;
     }
 
     @Override
-    public List<? extends ISource> getChildren() {
-	List<? extends ISource> children = null;
+    public List<? extends Source> getChildren() {
+	List<? extends Source> children = null;
 	try {
 	    mSource.open();
 	    children = mSource.getChildren();
@@ -39,8 +39,8 @@ public class RandomAccessFileSource implements ISource {
     }
 
     @Override
-    public ISource getChild(String pName) {
-	ISource child = null;
+    public Source getChild(String pName) {
+	Source child = null;
 	try {
 	    mSource.open();
 	    child = mSource.getChild(pName);
@@ -49,8 +49,8 @@ public class RandomAccessFileSource implements ISource {
 	} finally {
 	    StreamUtils.close(mSource);
 	}
-	if ((child != null) && (child instanceof IStreamSource)) {
-	    return new RandomAccessFileSource((IStreamSource) child);
+	if ((child != null) && (child instanceof StreamSource)) {
+	    return new RandomAccessFileSource((StreamSource) child);
 	}
 	return child;
     }
@@ -62,7 +62,7 @@ public class RandomAccessFileSource implements ISource {
     }
 
     @Override
-    public InputStream openInputStream(ISourceStreamParams pParams) throws IOException,
+    public InputStream openInputStream(StreamParams pParams) throws IOException,
             IOSourceException {
 	mSource.open();
 	return mSource.openInputStream(pParams);

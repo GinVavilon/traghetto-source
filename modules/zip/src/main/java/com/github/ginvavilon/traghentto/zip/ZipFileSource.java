@@ -16,22 +16,22 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-import com.github.ginvavilon.traghentto.ICanDeleteSource;
-import com.github.ginvavilon.traghentto.IStreamSource;
-import com.github.ginvavilon.traghentto.IWritableSource;
+import com.github.ginvavilon.traghentto.DeletableSource;
+import com.github.ginvavilon.traghentto.StreamSource;
+import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.SourceCreator;
 import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.URIBuilder;
 import com.github.ginvavilon.traghentto.UriConstants;
-import com.github.ginvavilon.traghentto.params.ISourceStreamParams;
+import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-public class ZipFileSource extends AbsZipSouce implements IStreamSource,ICanDeleteSource{
+public class ZipFileSource extends BaseZipSouce implements StreamSource,DeletableSource{
     ZipFile mZipFile;
     private File mFile;
 
@@ -65,7 +65,7 @@ public class ZipFileSource extends AbsZipSouce implements IStreamSource,ICanDele
     }
 
     @Override
-    public InputStream openInputStream(ISourceStreamParams pParams) {
+    public InputStream openInputStream(StreamParams pParams) {
 	return null;
     }
 
@@ -198,7 +198,7 @@ public class ZipFileSource extends AbsZipSouce implements IStreamSource,ICanDele
 //
 //    }
     @Override
-    public boolean unzip(IWritableSource pTo) throws IOException {
+    public boolean unzip(WritableSource pTo) throws IOException {
         FileInputStream fileInputStream=null;
 
         ZipInputStream inputStream=null;
@@ -209,7 +209,7 @@ public class ZipFileSource extends AbsZipSouce implements IStreamSource,ICanDele
             pTo.createConteiner();
             ZipEntry entry = inputStream.getNextEntry();
             while ((entry != null)) {
-                IWritableSource child = pTo.getChild(entry.getName());
+                WritableSource child = pTo.getChild(entry.getName());
                 if (entry.isDirectory()) {
                     child.createConteiner();
                 } else {

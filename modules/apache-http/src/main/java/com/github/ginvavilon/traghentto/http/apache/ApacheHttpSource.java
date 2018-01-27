@@ -36,7 +36,7 @@ import com.github.ginvavilon.traghentto.SourceCreator;
 import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.http.BaseHttpSource;
-import com.github.ginvavilon.traghentto.params.ISourceStreamParams;
+import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
  * @author Vladimir Baraznovsky
@@ -55,10 +55,10 @@ public class ApacheHttpSource extends BaseHttpSource {
     }
 
     @Override
-    public InputStream openInputStream(ISourceStreamParams pParams)
+    public InputStream openInputStream(StreamParams pParams)
             throws IOException, IOSourceException {
         Logger.d(Level.HTTP | Level.SOURCE | Level.STREAM, "Open Stream");
-        ISourceStreamParams params = SourceUtils.getSaflyParams(pParams);
+        StreamParams params = SourceUtils.getSaflyParams(pParams);
         Object data = params.getProperty(PARAM_DATA, (Object) null);
         if (data != null) {
             return openInputStream(params, (Map<String, Object>) data);
@@ -67,7 +67,7 @@ public class ApacheHttpSource extends BaseHttpSource {
         return openInputStream(params, request);
     }
 
-    private InputStream openInputStream(ISourceStreamParams pParams, HttpUriRequest pRequest)
+    private InputStream openInputStream(StreamParams pParams, HttpUriRequest pRequest)
             throws IOException, ClientProtocolException, IOSourceException {
         Logger.d(Level.HTTP | Level.SOURCE, "Create Http Client");
         HttpClient client = new DefaultHttpClient();
@@ -125,7 +125,7 @@ public class ApacheHttpSource extends BaseHttpSource {
         return entity.getContent();
     }
 
-    public InputStream openInputStream(ISourceStreamParams pHttpParams, Map<String, Object> pParams)
+    public InputStream openInputStream(StreamParams pHttpParams, Map<String, Object> pParams)
             throws IOException, IOSourceException {
         HttpPost request = new HttpPost(mUrl);
         List<NameValuePair> parameters = new LinkedList<NameValuePair>();

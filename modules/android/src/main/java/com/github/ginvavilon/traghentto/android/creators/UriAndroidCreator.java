@@ -5,7 +5,7 @@ package com.github.ginvavilon.traghentto.android.creators;
 
 import android.net.Uri;
 
-import com.github.ginvavilon.traghentto.ISource;
+import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceCreator;
 
 /**
@@ -14,7 +14,7 @@ import com.github.ginvavilon.traghentto.SourceCreator;
  */
 public class UriAndroidCreator extends ProxyAndroidCreator {
 
-    public UriAndroidCreator(SourceCreator<? extends ISource> creator) {
+    public UriAndroidCreator(SourceCreator<? extends Source> creator) {
         super(creator);
     }
 

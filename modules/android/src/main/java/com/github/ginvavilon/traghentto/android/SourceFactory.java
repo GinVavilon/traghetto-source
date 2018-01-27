@@ -56,7 +56,7 @@ public class SourceFactory implements UriConstants {
         sDefault = creator;
     }
 
-    private static IAndroidSource createBasePathUri(Context pContext, Uri uri) {
+    private static AndroidSource createBasePathUri(Context pContext, Uri uri) {
         AndroidSourceCreator<?> creator = sCreators.get(uri.getScheme());
         if (creator == null) {
             creator = sDefault;
@@ -66,20 +66,20 @@ public class SourceFactory implements UriConstants {
 
     }
 
-    public static IAndroidSource createFromUri(Context pContext, Uri uri) {
-        IAndroidSource source = createBasePathUri(pContext, uri);
+    public static AndroidSource createFromUri(Context pContext, Uri uri) {
+        AndroidSource source = createBasePathUri(pContext, uri);
         if (uri.getFragment() != null) {
             source = source.getChild(uri.getFragment());
         }
         return source;
     }
 
-    public static IAndroidSource createCachedIfNeed(IAndroidSource pSource,
+    public static AndroidSource createCachedIfNeed(AndroidSource pSource,
             DiskLruCache pDiskLruCache) {
         if (pSource.isLocal()) {
             return pSource;
         } else {
-            return new AndroidCachedSource<IAndroidSource>(pDiskLruCache, pSource);
+            return new AndroidCachedSource<AndroidSource>(pDiskLruCache, pSource);
         }
     }
 
@@ -88,14 +88,14 @@ public class SourceFactory implements UriConstants {
         return new ResourceSource(resources, pId);
     }
 
-    public static IAndroidSource createFromUri(Context pContext, String pUri) {
+    public static AndroidSource createFromUri(Context pContext, String pUri) {
         return createFromUri(pContext, Uri.parse(pUri));
     }
 
-    public static IAndroidSource createChild(Context pContext, IAndroidSource pParent,
+    public static AndroidSource createChild(Context pContext, AndroidSource pParent,
             String pUri) {
         Uri uri = Uri.parse(pUri);
-        IAndroidSource source;
+        AndroidSource source;
         if (uri.isRelative()) {
             source = pParent.getChild(uri.getPath());
         } else {

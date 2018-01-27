@@ -17,13 +17,13 @@ import java.util.List;
 import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.UriConstants;
 import com.github.ginvavilon.traghentto.android.creators.AndroidSourceCreator;
-import com.github.ginvavilon.traghentto.params.ISourceStreamParams;
+import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-public class ResourceSource implements IAndroidSource {
+public class ResourceSource implements AndroidSource {
 
     private final Resources mResources;
     private final int mId;
@@ -50,7 +50,7 @@ public class ResourceSource implements IAndroidSource {
     }
 
     @Override
-    public InputStream openInputStream(ISourceStreamParams pParams) throws IOException {
+    public InputStream openInputStream(StreamParams pParams) throws IOException {
 	return mResources.openRawResource(mId);
     }
 

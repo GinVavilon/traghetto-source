@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import com.github.ginvavilon.traghentto.ISource;
+import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.params.ParamNames;
 import com.github.ginvavilon.traghentto.params.SourceStreamParams;
 
@@ -16,7 +16,7 @@ import com.github.ginvavilon.traghentto.params.SourceStreamParams;
  * @author vbaraznovsky
  *
  */
-public abstract class BaseHttpSource implements ISource, ParamNames {
+public abstract class BaseHttpSource implements Source, ParamNames {
 
     public static final String PARAM_HTTP_TIMEOUT = "http.timeout";
     protected static final String PARAM_HTTP_BUFFER = "http.buffer";
@@ -49,12 +49,12 @@ public abstract class BaseHttpSource implements ISource, ParamNames {
     }
 
     @Override
-    public List<? extends ISource> getChildren() {
+    public List<? extends Source> getChildren() {
         return null;
     }
 
     @Override
-    public ISource getChild(String pName) {
+    public Source getChild(String pName) {
         return null;
     }
 

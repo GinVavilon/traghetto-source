@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
-import com.github.ginvavilon.traghentto.IWritableSource;
+import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.RandomAccessFileSource;
 import com.github.ginvavilon.traghentto.SourceCreator;
@@ -19,11 +19,11 @@ import com.github.ginvavilon.traghentto.StreamUtils;
  * @author Vladimir Baraznovsky
  *
  */
-public class ZipRandomAccessFileSource extends RandomAccessFileSource implements IZipArhive {
+public class ZipRandomAccessFileSource extends RandomAccessFileSource implements ZipSource {
 
-    private IZipArhive mSource;
+    private ZipSource mSource;
 
-    public ZipRandomAccessFileSource(IZipArhive pSource) {
+    public ZipRandomAccessFileSource(ZipSource pSource) {
         super(pSource);
         mSource = pSource;
     }
@@ -114,7 +114,7 @@ public class ZipRandomAccessFileSource extends RandomAccessFileSource implements
     }
 
     @Override
-    public boolean unzip(IWritableSource pTo) throws IOException {
+    public boolean unzip(WritableSource pTo) throws IOException {
         return mSource.unzip(pTo);
     }
 

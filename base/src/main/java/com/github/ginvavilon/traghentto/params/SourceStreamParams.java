@@ -10,7 +10,7 @@ import java.util.Map;
  * @author Vladimir Baraznovsky
  *
  */
-public class SourceStreamParams implements ISourceStreamParams {
+public class SourceStreamParams implements StreamParams {
 
     private Map<String, Object> mParams=new  HashMap<String, Object>();
 
@@ -57,7 +57,7 @@ public class SourceStreamParams implements ISourceStreamParams {
     }
 
     @Override
-    public ISourceStreamParams changeProperty(String pKey, Object pValue) {
+    public StreamParams changeProperty(String pKey, Object pValue) {
 	return set(pKey, pValue);
     }
 

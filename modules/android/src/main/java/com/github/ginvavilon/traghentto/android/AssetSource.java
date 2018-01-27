@@ -19,13 +19,13 @@ import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.UriConstants;
 import com.github.ginvavilon.traghentto.android.creators.AndroidSourceCreator;
-import com.github.ginvavilon.traghentto.params.ISourceStreamParams;
+import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-public class AssetSource implements IAndroidSource {
+public class AssetSource implements AndroidSource {
 
     private final AssetManager mAssetManager;
     private final String mPath;
@@ -78,7 +78,7 @@ public class AssetSource implements IAndroidSource {
     }
 
     @Override
-    public InputStream openInputStream(ISourceStreamParams pParams) throws IOException {
+    public InputStream openInputStream(StreamParams pParams) throws IOException {
 	return mAssetManager.open(mPath);
     }
 

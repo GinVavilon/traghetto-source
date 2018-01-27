@@ -17,18 +17,18 @@ import com.github.ginvavilon.traghentto.file.DiskLruCache;
  * @author Vladimir Baraznovsky
  *
  */
-public class AndroidCachedSource<T extends IAndroidSource> extends CachedSource<T> implements
-        IAndroidSource {
+public class AndroidCachedSource<T extends AndroidSource> extends CachedSource<T> implements
+        AndroidSource {
 
     public AndroidCachedSource(DiskLruCache pDiskLruCache, T pSource) {
         super(pDiskLruCache, pSource);
     }
 
-    public IAndroidSource getChild(String name) {
+    public AndroidSource getChild(String name) {
         return null;
     }
 
-    public List<? extends IAndroidSource> getChildren() {
+    public List<? extends AndroidSource> getChildren() {
         return null;
     }
 

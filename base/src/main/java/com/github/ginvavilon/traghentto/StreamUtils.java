@@ -35,7 +35,7 @@ public class StreamUtils {
         return false;
     }
 
-    public static boolean closeInSource(ISource pSource, Closeable pCloseable) {
+    public static boolean closeInSource(Source pSource, Closeable pCloseable) {
         if (pCloseable != null) {
             try {
                 pSource.closeStream(pCloseable);
@@ -173,7 +173,7 @@ public class StreamUtils {
         void onFail(Throwable pE);
     }
 
-    public static String readSource(ISource pJsonSource) throws IOException {
+    public static String readSource(Source pJsonSource) throws IOException {
         InputStream in;
         try {
             in = pJsonSource.openInputStream(new VoidParams());
@@ -192,7 +192,7 @@ public class StreamUtils {
         return string;
     }
 
-    public static boolean writeSource(IWritableSource pSource, String pData) {
+    public static boolean writeSource(WritableSource pSource, String pData) {
         OutputStream stream = null;
         try {
             pSource.create();

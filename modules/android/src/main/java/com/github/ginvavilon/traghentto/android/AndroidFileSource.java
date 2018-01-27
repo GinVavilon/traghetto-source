@@ -19,7 +19,7 @@ import com.github.ginvavilon.traghentto.file.FileSource;
  * @author Vladimir Baraznovsky
  *
  */
-public class AndroidFileSource extends FileSource implements IAndroidWritableSource {
+public class AndroidFileSource extends FileSource implements AndroidWritableSource {
 
 
     public AndroidFileSource(File pFile) {

@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import com.github.ginvavilon.traghentto.ISource;
+import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.Logger.Level;
@@ -17,13 +17,13 @@ import com.github.ginvavilon.traghentto.StreamUtils.ICopyListener;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.file.DiskLruCache.Editor;
 import com.github.ginvavilon.traghentto.file.DiskLruCache.Snapshot;
-import com.github.ginvavilon.traghentto.params.ISourceStreamParams;
+import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-public class CachedSource<T extends ISource> implements ISource, ICopyListener {
+public class CachedSource<T extends Source> implements Source, ICopyListener {
     protected static final int CACHE_VERSION = 0;
     public static final int COUNT_INDEX = 2;
     private static final int INDEX_STREAM = 0;
@@ -39,11 +39,11 @@ public class CachedSource<T extends ISource> implements ISource, ICopyListener {
 
     }
 
-    public List<? extends ISource> getChildren() {
+    public List<? extends Source> getChildren() {
 	return mSource.getChildren();
     }
 
-    public ISource getChild(String pName) {
+    public Source getChild(String pName) {
 	return mSource.getChild(pName);
     }
 
@@ -51,7 +51,7 @@ public class CachedSource<T extends ISource> implements ISource, ICopyListener {
 	return mSource.isConteiner();
     }
     @Override
-    public InputStream openInputStream(ISourceStreamParams pParams) throws IOException,
+    public InputStream openInputStream(StreamParams pParams) throws IOException,
             IOSourceException {
 	String key = getKey();
 	Snapshot snapshot = mDiskLruCache.get(key);

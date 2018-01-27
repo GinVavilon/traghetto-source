@@ -13,18 +13,18 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.ginvavilon.traghentto.ISource;
-import com.github.ginvavilon.traghentto.IWritableSource;
+import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.SourceCreator;
 import com.github.ginvavilon.traghentto.SourceUtils;
-import com.github.ginvavilon.traghentto.params.ISourceStreamParams;
+import com.github.ginvavilon.traghentto.params.StreamParams;
 import com.github.ginvavilon.traghentto.params.ParamNames;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-public class FileSource implements ISource, IWritableSource {
+public class FileSource implements Source, WritableSource {
     private File mFile;
 
     public FileSource(File pFile) {
@@ -55,7 +55,7 @@ public class FileSource implements ISource, IWritableSource {
     }
 
     @Override
-    public InputStream openInputStream(ISourceStreamParams pParams) throws IOException {
+    public InputStream openInputStream(StreamParams pParams) throws IOException {
         return new FileInputStream(mFile);
     }
 
@@ -105,8 +105,8 @@ public class FileSource implements ISource, IWritableSource {
     }
 
     @Override
-    public OutputStream openOutputStream(ISourceStreamParams pParams) throws IOException {
-        ISourceStreamParams params = SourceUtils.getSaflyParams(pParams);
+    public OutputStream openOutputStream(StreamParams pParams) throws IOException {
+        StreamParams params = SourceUtils.getSaflyParams(pParams);
         return new FileOutputStream(mFile, params.getProperty(ParamNames.APPEND, false));
     }
 

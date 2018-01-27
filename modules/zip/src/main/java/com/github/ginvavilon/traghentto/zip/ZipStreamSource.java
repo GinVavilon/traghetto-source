@@ -15,21 +15,21 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import com.github.ginvavilon.traghentto.IStreamSource;
-import com.github.ginvavilon.traghentto.IWritableSource;
+import com.github.ginvavilon.traghentto.StreamSource;
+import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.URIBuilder;
 import com.github.ginvavilon.traghentto.UriConstants;
-import com.github.ginvavilon.traghentto.params.ISourceStreamParams;
+import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
 @Deprecated
-public class ZipStreamSource extends AbsZipSouce implements IStreamSource {
+public class ZipStreamSource extends BaseZipSouce implements StreamSource {
     private static final String ARCHIVE_AUTORIRY = "archive";
     private ZipInputStream mZipInputStream;
     private InputStream mStream;
@@ -57,7 +57,7 @@ public class ZipStreamSource extends AbsZipSouce implements IStreamSource {
 	mStream.mark(mStream.available());
     }
     @Override
-    public InputStream openInputStream(ISourceStreamParams pParams) throws IOException {
+    public InputStream openInputStream(StreamParams pParams) throws IOException {
 	return mZipInputStream;
     }
 
@@ -209,13 +209,13 @@ public class ZipStreamSource extends AbsZipSouce implements IStreamSource {
     }
 
     @Override
-    public boolean unzip(IWritableSource pTo) throws IOException {
+    public boolean unzip(WritableSource pTo) throws IOException {
 	try {
 	    ZipInputStream inputStream = new ZipInputStream(mStream);
 	    pTo.createConteiner();
 	    ZipEntry entry = inputStream.getNextEntry();
 	    while ((entry != null)) {
-		IWritableSource child = pTo.getChild(entry.getName());
+		WritableSource child = pTo.getChild(entry.getName());
 		if (entry.isDirectory()) {
 		    child.createConteiner();
 		} else {

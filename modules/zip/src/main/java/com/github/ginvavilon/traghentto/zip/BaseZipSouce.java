@@ -6,14 +6,14 @@ package com.github.ginvavilon.traghentto.zip;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
-import com.github.ginvavilon.traghentto.ISource;
-import com.github.ginvavilon.traghentto.IStreamSource;
+import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.StreamSource;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-public abstract class AbsZipSouce implements ISource, IZipArhive {
+public abstract class BaseZipSouce implements Source, ZipSource {
     static final String EXPRESSION_ROOT_FILE = "/?[^/]+/?";
     static final String EXPRESSION_CHILD_FILE = "[^/]+/?";
 

@@ -14,26 +14,26 @@ import java.util.List;
 
 import org.apache.http.ParseException;
 
-import com.github.ginvavilon.traghentto.ISource;
-import com.github.ginvavilon.traghentto.android.IAndroidSource;
+import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.android.AndroidSource;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
-import com.github.ginvavilon.traghentto.params.ISourceStreamParams;
+import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-class AndroidProxySource implements IAndroidSource {
+class AndroidProxySource implements AndroidSource {
 
-    private final ISource mSource;
+    private final Source mSource;
     private final Uri mUri;
 
-    public AndroidProxySource(ISource pSource, Uri uri) {
+    public AndroidProxySource(Source pSource, Uri uri) {
         mSource = pSource;
         mUri = uri;
     }
 
-    public AndroidProxySource(ISource pSource) {
+    public AndroidProxySource(Source pSource) {
         this(pSource, Uri.parse(pSource.getUriString()));
     }
 
@@ -43,7 +43,7 @@ class AndroidProxySource implements IAndroidSource {
     }
 
     @Override
-    public InputStream openInputStream(ISourceStreamParams pParams)
+    public InputStream openInputStream(StreamParams pParams)
             throws IOException, IOSourceException, ParseException {
         return mSource.openInputStream(pParams);
     }
@@ -80,16 +80,16 @@ class AndroidProxySource implements IAndroidSource {
 
     @Override
     public List<? extends AndroidProxySource> getChildren() {
-        List<? extends ISource> children = mSource.getChildren();
+        List<? extends Source> children = mSource.getChildren();
         List<AndroidProxySource> list = new ArrayList<AndroidProxySource>();
-        for (ISource child : children) {
+        for (Source child : children) {
             list.add(new AndroidProxySource(child));
         }
         return list;
     }
 
-    public IAndroidSource getChild(String pName) {
-        ISource child = mSource.getChild(pName);
+    public AndroidSource getChild(String pName) {
+        Source child = mSource.getChild(pName);
         return child != null ? new AndroidProxySource(child) : null;
     }
 

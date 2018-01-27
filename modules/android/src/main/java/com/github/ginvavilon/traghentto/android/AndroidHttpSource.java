@@ -16,7 +16,7 @@ import com.github.ginvavilon.traghentto.http.apache.ApacheHttpSource;
  * @author Vladimir Baraznovsky
  *
  */
-public class AndroidHttpSource extends ApacheHttpSource implements IAndroidSource {
+public class AndroidHttpSource extends ApacheHttpSource implements AndroidSource {
 
     private Uri mUri;
 

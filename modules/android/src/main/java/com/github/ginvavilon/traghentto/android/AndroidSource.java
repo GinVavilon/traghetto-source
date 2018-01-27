@@ -9,19 +9,19 @@ import android.os.ParcelFileDescriptor;
 import java.io.IOException;
 import java.util.List;
 
-import com.github.ginvavilon.traghentto.ISource;
+import com.github.ginvavilon.traghentto.Source;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-public interface IAndroidSource extends ISource {
+public interface AndroidSource extends Source {
 
     Uri getUri();
 
-    IAndroidSource getChild(String name);
+    AndroidSource getChild(String name);
 
-    List<? extends IAndroidSource> getChildren();
+    List<? extends AndroidSource> getChildren();
     ParcelFileDescriptor openParcelFileDescriptor() throws IOException;
 
 }

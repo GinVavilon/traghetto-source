@@ -9,20 +9,20 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
-import com.github.ginvavilon.traghentto.ISource;
-import com.github.ginvavilon.traghentto.IStreamSource;
-import com.github.ginvavilon.traghentto.params.ISourceStreamParams;
+import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.StreamSource;
+import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-class ZipEntrySource implements IStreamSource {
+class ZipEntrySource implements StreamSource {
 
     private ZipEntry mZipEntry;
-    private IZipArhive mZipParrent;
+    private ZipSource mZipParrent;
 
-    public ZipEntrySource(ZipEntry pZipEntry, IZipArhive pZipParrent) {
+    public ZipEntrySource(ZipEntry pZipEntry, ZipSource pZipParrent) {
 	super();
 	mZipEntry = pZipEntry;
 	mZipParrent = pZipParrent;
@@ -30,13 +30,13 @@ class ZipEntrySource implements IStreamSource {
 
 
     @Override
-    public List<? extends ISource> getChildren() {
+    public List<? extends Source> getChildren() {
 	return mZipParrent.getChildren(mZipEntry);
     }
 
 
     @Override
-    public ISource getChild(String pName) {
+    public Source getChild(String pName) {
 	return mZipParrent.getChild(this,pName);
     }
 
@@ -47,7 +47,7 @@ class ZipEntrySource implements IStreamSource {
 
 
     @Override
-    public InputStream openInputStream(ISourceStreamParams pParams) throws IOException {
+    public InputStream openInputStream(StreamParams pParams) throws IOException {
 	return mZipParrent.openInputStream(mZipEntry);
     }
 
@@ -112,12 +112,12 @@ class ZipEntrySource implements IStreamSource {
     }
 
 
-    public IZipArhive getZipParrent() {
+    public ZipSource getZipParrent() {
 	return mZipParrent;
     }
 
 
-    public void setZipParrent(IZipArhive pZipParrent) {
+    public void setZipParrent(ZipSource pZipParrent) {
 	mZipParrent = pZipParrent;
     }
 
