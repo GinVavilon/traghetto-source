@@ -36,6 +36,9 @@ public class FileSource extends BaseWritebleSource implements Source, WritableSo
     public List<? extends FileSource> getChildren() {
         List<FileSource> list = new ArrayList<FileSource>();
         File[] listFiles = mFile.listFiles();
+        if (listFiles == null) {
+            return null;
+        }
         for (File file : listFiles) {
             FileSource source = new FileSource(file);
             list.add(source);
@@ -55,7 +58,7 @@ public class FileSource extends BaseWritebleSource implements Source, WritableSo
     }
 
     @Override
-    public InputStream openInputStream(StreamParams pParams) throws IOException {
+    protected InputStream openInputStream(StreamParams pParams) throws IOException {
         return new FileInputStream(mFile);
     }
 
@@ -100,7 +103,7 @@ public class FileSource extends BaseWritebleSource implements Source, WritableSo
     }
 
     @Override
-    public OutputStream openOutputStream(StreamParams pParams) throws IOException {
+    protected OutputStream openOutputStream(StreamParams pParams) throws IOException {
         StreamParams params = SourceUtils.getSaflyParams(pParams);
         return new FileOutputStream(mFile, params.getProperty(ParamNames.APPEND, false));
     }

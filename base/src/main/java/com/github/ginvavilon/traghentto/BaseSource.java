@@ -19,15 +19,17 @@ public abstract class BaseSource implements Source {
 
     }
 
-    public abstract InputStream openInputStream(StreamParams pParams)
+    protected abstract InputStream openInputStream(StreamParams pParams)
             throws IOException, IOSourceException;
 
     @Override
     public StreamResource<InputStream> openResource(StreamParams pParams)
             throws IOSourceException, IOException {
-        InputStream inputStream = openInputStream(pParams);
+        StreamParams params = SourceUtils.getSaflyParams(pParams);
+        InputStream inputStream = openInputStream(params);
         return StreamUtils.createResource(inputStream);
     }
+
 
 
 }

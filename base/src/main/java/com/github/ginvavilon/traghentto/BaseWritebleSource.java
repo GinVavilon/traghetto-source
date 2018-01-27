@@ -26,5 +26,5 @@ public abstract class BaseWritebleSource extends BaseSource implements WritableS
         return openOutputResource(new VoidParams());
     }
 
-    public abstract OutputStream openOutputStream(StreamParams pParams) throws IOException;
+    protected abstract OutputStream openOutputStream(StreamParams pParams) throws IOException;
 }

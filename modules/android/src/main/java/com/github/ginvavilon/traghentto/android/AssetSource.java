@@ -78,7 +78,7 @@ public class AssetSource extends BaseSource implements AndroidSource {
     }
 
     @Override
-    public InputStream openInputStream(StreamParams pParams) throws IOException {
+    protected InputStream openInputStream(StreamParams pParams) throws IOException {
 	return mAssetManager.open(mPath);
     }
 
