@@ -3,7 +3,6 @@
  */
 package com.github.ginvavilon.traghentto.file;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,18 +12,19 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.ginvavilon.traghentto.BaseWritebleSource;
 import com.github.ginvavilon.traghentto.Source;
-import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.SourceCreator;
 import com.github.ginvavilon.traghentto.SourceUtils;
-import com.github.ginvavilon.traghentto.params.StreamParams;
+import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.params.ParamNames;
+import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-public class FileSource implements Source, WritableSource {
+public class FileSource extends BaseWritebleSource implements Source, WritableSource {
     private File mFile;
 
     public FileSource(File pFile) {
@@ -75,11 +75,6 @@ public class FileSource implements Source, WritableSource {
     }
 
     @Override
-    public void closeStream(Closeable pStream) throws IOException {
-        pStream.close();
-    }
-
-    @Override
     public String getUriString() {
         return mFile.toURI().toString();
     }
@@ -108,11 +103,6 @@ public class FileSource implements Source, WritableSource {
     public OutputStream openOutputStream(StreamParams pParams) throws IOException {
         StreamParams params = SourceUtils.getSaflyParams(pParams);
         return new FileOutputStream(mFile, params.getProperty(ParamNames.APPEND, false));
-    }
-
-    @Override
-    public OutputStream openOutputStream() throws IOException {
-        return openOutputStream(null);
     }
 
     @Override

@@ -35,32 +35,12 @@ public class StreamUtils {
         return false;
     }
 
-    public static boolean closeInSource(Source pSource, Closeable pCloseable) {
-        if (pCloseable != null) {
-            try {
-                pSource.closeStream(pCloseable);
-                return true;
-            } catch (IOException e) {
-                Logger.e(Level.STREAM, e);
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Download a bitmap from a URL and write the content to an output stream.
-     *
-     * @param urlString
-     *            The URL to fetch
-     * @param inputStream
-     * @return true if successful, false otherwise
-     */
-    public static String readStream(InputStream inputStream) {
+    public static String readStream(StreamResource<? extends InputStream> resource) {
 
         BufferedInputStream in = null;
 
         try {
-
+            InputStream inputStream = resource.getStream();
             in = new BufferedInputStream(inputStream, IO_BUFFER_SIZE);
             StringBuilder builder = new StringBuilder();
 
@@ -75,7 +55,7 @@ public class StreamUtils {
             return null;
         } finally {
             close(in);
-
+            close(resource);
         }
 
     }
@@ -173,10 +153,11 @@ public class StreamUtils {
         void onFail(Throwable pE);
     }
 
-    public static String readSource(Source pJsonSource) throws IOException {
-        InputStream in;
+    public static String readSource(Source source) throws IOException {
+        StreamResource<? extends InputStream> in;
         try {
-            in = pJsonSource.openInputStream(new VoidParams());
+            in = source.openResource(new VoidParams());
+
         } catch (IOSourceException e) {
             IOException exception = new IOException(e.getMessage());
             exception.setStackTrace(e.getStackTrace());
@@ -193,23 +174,29 @@ public class StreamUtils {
     }
 
     public static boolean writeSource(WritableSource pSource, String pData) {
-        OutputStream stream = null;
+        StreamResource<OutputStream> resource =null;
+        
         try {
             pSource.create();
             if (!pSource.exists()) {
                 return false;
             }
-            stream = pSource.openOutputStream();
+            resource = pSource.openOutputResource();
+            OutputStream stream =resource.getStream();
             stream.write(pData.getBytes());
             return true;
         } catch (IOException e) {
             Logger.e(e);
         } finally {
-            closeInSource(pSource, stream);
+            close(resource);
         }
 
         return false;
 
+    }
+
+    public static <T extends Closeable> StreamResource<T> createResource(T stream) {
+        return new SimpleStreamResource<T>(stream);
     }
 
 }

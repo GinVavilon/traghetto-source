@@ -3,7 +3,6 @@
  */
 package com.github.ginvavilon.traghentto.zip;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,14 +16,15 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import com.github.ginvavilon.traghentto.DeletableSource;
-import com.github.ginvavilon.traghentto.StreamSource;
-import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.SourceCreator;
-import com.github.ginvavilon.traghentto.SourceUtils;
+import com.github.ginvavilon.traghentto.StreamResource;
+import com.github.ginvavilon.traghentto.StreamSource;
 import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.URIBuilder;
 import com.github.ginvavilon.traghentto.UriConstants;
+import com.github.ginvavilon.traghentto.WritableSource;
+import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
@@ -65,8 +65,10 @@ public class ZipFileSource extends BaseZipSouce implements StreamSource,Deletabl
     }
 
     @Override
-    public InputStream openInputStream(StreamParams pParams) {
-	return null;
+    public StreamResource<InputStream> openResource(StreamParams pParams)
+            throws IOSourceException, IOException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
@@ -120,12 +122,6 @@ public class ZipFileSource extends BaseZipSouce implements StreamSource,Deletabl
     @Override
     public boolean exists() {
 	return mFile.exists();
-    }
-
-    @Override
-    public void closeStream(Closeable pStream) throws IOException {
-	pStream.close();
-
     }
 
     @Override
@@ -213,15 +209,16 @@ public class ZipFileSource extends BaseZipSouce implements StreamSource,Deletabl
                 if (entry.isDirectory()) {
                     child.createConteiner();
                 } else {
-                    OutputStream outputStream = null;
+                    StreamResource<OutputStream> outputResource = null;
                     try {
                         child.create();
-                        outputStream = child.openOutputStream();
+                        outputResource = child.openOutputResource();
+                        OutputStream outputStream = outputResource.getStream();
                         StreamUtils.copyStream(inputStream, outputStream,false, null);
                     } catch (Exception e) {
                             Logger.e(e);
                     } finally {
-                        SourceUtils.closeStream(child, outputStream);
+                        StreamUtils.close(outputResource);
                     }
                 }
                 entry = inputStream.getNextEntry();

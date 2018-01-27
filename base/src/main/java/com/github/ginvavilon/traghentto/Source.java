@@ -3,7 +3,6 @@
  */
 package com.github.ginvavilon.traghentto;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -23,8 +22,8 @@ public interface Source{
     Source getChild(String name);
     boolean isConteiner();
 
-    InputStream openInputStream(StreamParams pParams) throws IOException, IOSourceException;
-    void closeStream(Closeable pStream) throws IOException;
+    StreamResource<InputStream> openResource(StreamParams pParams)
+            throws IOSourceException, IOException;
     String getPath();
     String getName();
 

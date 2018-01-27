@@ -3,7 +3,6 @@
  */
 package com.github.ginvavilon.traghentto.zip;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,13 +14,14 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import com.github.ginvavilon.traghentto.StreamSource;
-import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.Logger;
-import com.github.ginvavilon.traghentto.SourceUtils;
+import com.github.ginvavilon.traghentto.StreamResource;
+import com.github.ginvavilon.traghentto.StreamSource;
 import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.URIBuilder;
 import com.github.ginvavilon.traghentto.UriConstants;
+import com.github.ginvavilon.traghentto.WritableSource;
+import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
@@ -57,9 +57,12 @@ public class ZipStreamSource extends BaseZipSouce implements StreamSource {
 	mStream.mark(mStream.available());
     }
     @Override
-    public InputStream openInputStream(StreamParams pParams) throws IOException {
-	return mZipInputStream;
+    public StreamResource<InputStream> openResource(StreamParams pParams)
+            throws IOSourceException, IOException {
+
+        return StreamUtils.createResource(mZipInputStream);
     }
+
 
     @Override
     public String getPath() {
@@ -172,10 +175,6 @@ public class ZipStreamSource extends BaseZipSouce implements StreamSource {
     }
 
     @Override
-    public void closeStream(Closeable pStream) throws IOException {
-    }
-
-    @Override
     public String getUriString() {
         URIBuilder builder = new URIBuilder();
 	builder.scheme(UriConstants.STREAM_SCHEME);
@@ -219,14 +218,17 @@ public class ZipStreamSource extends BaseZipSouce implements StreamSource {
 		if (entry.isDirectory()) {
 		    child.createConteiner();
 		} else {
-		    OutputStream outputStream = null;
-		    try {
-			child.create();
-			outputStream = child.openOutputStream();
-			StreamUtils.copyStream(inputStream, outputStream,false,null);
-		    } finally {
-			SourceUtils.closeStream(child, outputStream);
-		    }
+		    StreamResource<OutputStream> outputResource = null;
+                    try {
+                        child.create();
+                        outputResource = child.openOutputResource();
+                        OutputStream outputStream = outputResource.getStream();
+                        StreamUtils.copyStream(inputStream, outputStream,false, null);
+                    } catch (Exception e) {
+                            Logger.e(e);
+                    } finally {
+                        StreamUtils.close(outputResource);
+                    }
 		}
 		entry = inputStream.getNextEntry();
 	    }

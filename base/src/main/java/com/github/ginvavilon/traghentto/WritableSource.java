@@ -13,9 +13,13 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  *
  */
 public interface WritableSource extends DeletableSource {
-    OutputStream openOutputStream() throws IOException;
+
     boolean create() throws IOException;
     boolean createConteiner() throws IOException;
     WritableSource getChild(String name);
-    OutputStream openOutputStream(StreamParams pParams) throws IOException;
+
+    StreamResource<OutputStream> openOutputResource(StreamParams pParams) throws IOException;
+
+    StreamResource<OutputStream> openOutputResource() throws IOException;
+
 }

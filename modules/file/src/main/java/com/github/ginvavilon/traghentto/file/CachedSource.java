@@ -3,16 +3,16 @@
  */
 package com.github.ginvavilon.traghentto.file;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.Logger;
-import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.Logger.Level;
+import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.StreamResource;
+import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.StreamUtils.ICopyListener;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.file.DiskLruCache.Editor;
@@ -50,43 +50,47 @@ public class CachedSource<T extends Source> implements Source, ICopyListener {
     public boolean isConteiner() {
 	return mSource.isConteiner();
     }
+
     @Override
-    public InputStream openInputStream(StreamParams pParams) throws IOException,
-            IOSourceException {
-	String key = getKey();
-	Snapshot snapshot = mDiskLruCache.get(key);
-	if (snapshot != null) {
+    public StreamResource<InputStream> openResource(StreamParams pParams)
+            throws IOSourceException, IOException {
+        String key = getKey();
+        Snapshot snapshot = mDiskLruCache.get(key);
+        if (snapshot != null) {
             StreamUtils.close(snapshot.getInputStream(INDEX_SIZE));
-	    return snapshot.getInputStream(INDEX_STREAM);
-	} else {
-	    Editor editor = mDiskLruCache.edit(key);
-	    if (editor != null) {
-		OutputStream out = editor.newOutputStream(INDEX_STREAM);
-		InputStream in = mSource.openInputStream(pParams);
-		long size = StreamUtils.copyStream(in, out, this);
-		if (size>0) {
-		    editor.set(INDEX_SIZE, String.valueOf(size));
-		    editor.commit();
-		    mDiskLruCache.flush();
-		    Snapshot value = mDiskLruCache.get(key);
-		    if (value != null) {
-			return value.getInputStream(INDEX_STREAM);
-		    }
-		} else {
-		    editor.abort();
-		}
-	    }
-	}
-	return mSource.openInputStream(pParams);
+            return StreamUtils.createResource(snapshot.getInputStream(INDEX_STREAM));
+        } else {
+            Editor editor = mDiskLruCache.edit(key);
+            if (editor != null) {
+                OutputStream out = editor.newOutputStream(INDEX_STREAM);
+                StreamResource<InputStream> inResource = mSource.openResource(pParams);
+                InputStream in = inResource.getStream();
+                try {
+                    long size = StreamUtils.copyStream(in, out, false, true, this);
+                    if (size > 0) {
+                        editor.set(INDEX_SIZE, String.valueOf(size));
+                        editor.commit();
+                        mDiskLruCache.flush();
+                        Snapshot value = mDiskLruCache.get(key);
+                        if (value != null) {
+                            return StreamUtils.createResource(value.getInputStream(INDEX_STREAM));
+                        }
+                    } else {
+                        editor.abort();
+                    }
+                } finally {
+                    StreamUtils.close(inResource);
+                }
+            }
+        }
+
+        return mSource.openResource(pParams);
     }
+
 
     private String getKey() {
 	String key = FileUtils.hashKeyForDisk(mSource.getUriString().toString());
 	return key;
-    }
-
-    public void closeStream(Closeable pStream) throws IOException {
-	mSource.closeStream(pStream);
     }
 
     public String getPath() {
