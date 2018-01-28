@@ -102,16 +102,16 @@ public class ZipStreamSource extends BaseZipSouce implements StreamSource {
     }
 
     @Override
-    protected List<? extends ZipEntrySource> getChildren(String regExp) {
+    protected List<? extends ExistZipEntrySource> getChildren(String regExp) {
 
 
-	List<ZipEntrySource> list = new ArrayList<ZipEntrySource>();
+	List<ExistZipEntrySource> list = new ArrayList<ExistZipEntrySource>();
 	try {
 	    pushStream();
 	    Collection<ZipEntry> values = getEntries().values();
 	    for (ZipEntry entry : values) {
 		if (entry.getName().matches(regExp)) {
-		    ZipEntrySource source = new ZipEntrySource(entry, this);
+		    ExistZipEntrySource source = new ExistZipEntrySource(entry, this);
 		    list.add(source);
 		}
 	    }
@@ -158,7 +158,7 @@ public class ZipStreamSource extends BaseZipSouce implements StreamSource {
 	    entry = getEntries().get(pName + "/");
 	}
 	if (entry != null) {
-	    return new ZipEntrySource(entry, this);
+	    return new ExistZipEntrySource(entry, this);
 	}
 
 	return null;

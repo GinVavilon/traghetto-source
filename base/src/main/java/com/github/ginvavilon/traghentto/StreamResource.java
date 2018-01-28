@@ -17,4 +17,6 @@ public interface StreamResource<T extends Closeable> extends Closeable {
      * Take stream for controlling by external code
      */
     T takeStream() throws UnsupportedOperationException;
+
+    boolean isOpened();
 }

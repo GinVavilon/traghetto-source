@@ -9,17 +9,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
-import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.Logger;
-import com.github.ginvavilon.traghentto.RandomAccessFileSource;
+import com.github.ginvavilon.traghentto.RandomAccessSource;
 import com.github.ginvavilon.traghentto.SourceCreator;
 import com.github.ginvavilon.traghentto.StreamUtils;
+import com.github.ginvavilon.traghentto.WritableSource;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-public class ZipRandomAccessFileSource extends RandomAccessFileSource implements ZipSource {
+public class ZipRandomAccessFileSource extends RandomAccessSource implements ZipSource {
 
     private ZipSource mSource;
 
@@ -37,7 +37,7 @@ public class ZipRandomAccessFileSource extends RandomAccessFileSource implements
     }
 
     public boolean isOpened() {
-        return true;
+        return mSource.isOpened();
     }
 
     public List<? extends ZipEntrySource> getChildren() {
@@ -71,8 +71,16 @@ public class ZipRandomAccessFileSource extends RandomAccessFileSource implements
     }
 
     public ZipEntrySource getChild(ZipEntrySource pZipEntrySource, String pName) {
-        ZipEntrySource child = mSource.getChild(pZipEntrySource, pName);
-        child.setZipParrent(this);
+        ZipEntrySource child = null;
+        try {
+            mSource.open();
+            child = mSource.getChild(pZipEntrySource, pName);
+            child.setZipParrent(this);
+        } catch (IOException e) {
+            Logger.e(e);
+        } finally {
+            StreamUtils.close(mSource);
+        }
         return child;
     }
 
@@ -97,6 +105,10 @@ public class ZipRandomAccessFileSource extends RandomAccessFileSource implements
         try {
             mSource.open();
             children = mSource.getChildren(pZipEntry);
+            if (children == null) {
+                return null;
+            }
+
             for (ZipEntrySource child : children) {
                 child.setZipParrent(this);
             }

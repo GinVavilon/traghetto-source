@@ -8,6 +8,7 @@ import java.io.IOException;
 
 final class SimpleStreamResource<T extends Closeable> implements StreamResource<T> {
     private final T mStream;
+    private boolean mOpened = true;
 
     SimpleStreamResource(T inputStream) {
         mStream = inputStream;
@@ -16,6 +17,7 @@ final class SimpleStreamResource<T extends Closeable> implements StreamResource<
     @Override
     public void close() throws IOException {
         mStream.close();
+        mOpened = false;
     }
 
     @Override
@@ -26,5 +28,10 @@ final class SimpleStreamResource<T extends Closeable> implements StreamResource<
     @Override
     public T takeStream() throws UnsupportedOperationException {
         return mStream;
+    }
+
+    @Override
+    public boolean isOpened() {
+        return mOpened;
     }
 }

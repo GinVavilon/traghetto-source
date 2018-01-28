@@ -19,10 +19,15 @@ public interface ZipSource  extends StreamSource{
     void openEntry(ZipEntry pZipEntry) throws IOException;
     void closeEntry(ZipEntry pZipEntry) throws IOException;
     InputStream openInputStream(ZipEntry pZipEntry) throws IOException;
+
     List<? extends ZipEntrySource> getChildren(ZipEntry pZipEntry);
+
     List<? extends ZipEntrySource> getChildren();
+
     ZipEntrySource getChild(ZipEntrySource pZipEntrySource, String pName);
+
     ZipEntrySource getChild(String pName);
+
     String getURI(ZipEntrySource pZipEntrySource);
     boolean unzip(WritableSource pTo) throws IOException;
 }
