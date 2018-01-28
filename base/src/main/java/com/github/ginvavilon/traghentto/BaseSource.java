@@ -15,6 +15,7 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  */
 public abstract class BaseSource implements Source {
 
+
     public BaseSource() {
 
     }
@@ -30,6 +31,9 @@ public abstract class BaseSource implements Source {
         return StreamUtils.createResource(inputStream);
     }
 
-
+    @Override
+    public SourceIterator iterator() {
+        return new RecursiveSourceIterator(this);
+    }
 
 }

@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.SourceIterator;
 import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.StreamSource;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
@@ -86,6 +87,11 @@ public class NotExistZipEntrySource extends ZipEntrySource implements StreamSour
     @Override
     public boolean isOpened() {
         return false;
+    }
+
+    @Override
+    public SourceIterator iterator() {
+        return null;
     }
 
 }

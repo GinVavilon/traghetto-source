@@ -17,7 +17,9 @@ import java.util.zip.ZipInputStream;
 
 import com.github.ginvavilon.traghentto.DeletableSource;
 import com.github.ginvavilon.traghentto.Logger;
+import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceCreator;
+import com.github.ginvavilon.traghentto.SourceIterator;
 import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.StreamSource;
 import com.github.ginvavilon.traghentto.StreamUtils;
@@ -248,5 +250,28 @@ public class ZipFileSource extends BaseZipSouce implements StreamSource,Deletabl
             return new ZipFileSource(new File(pParam));
         }
     };
+
+    @Override
+    public SourceIterator iterator() {
+        Enumeration<? extends ZipEntry> entries = mZipFile.entries();
+        return new SourceIterator() {
+
+            @Override
+            public void close() throws Exception {
+
+            }
+
+            @Override
+            public Source next() {
+                ZipEntry zipEntry = entries.nextElement();
+                return new ExistZipEntrySource(zipEntry, ZipFileSource.this);
+            }
+
+            @Override
+            public boolean hasNext() {
+                return entries.hasMoreElements();
+            }
+        };
+    }
 
 }

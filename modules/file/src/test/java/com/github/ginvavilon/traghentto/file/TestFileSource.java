@@ -15,10 +15,9 @@ import java.io.OutputStream;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
+import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.UriConstants;
@@ -31,31 +30,36 @@ import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 public class TestFileSource extends BaseSourceTest<FileSource, FileSource> {
 
 
-    @Rule
-    public TemporaryFolder mTempTestFolder = new TemporaryFolder();
+    private static final String TEST_ASSETS = "test_assets/";
+
+
 
     private FileSource mSingleFileSource;
     private String mAbsoluteSinglePath;
     private FileSource mDirectorySource;
     private File mDirectory;
 
+    private String mAbsolutePath;
 
     @Before
     public void setUp() throws Exception {
-        File file = getResourceFile(TEST_FILE);
-        mDirectory = getResourceFile(TEST_DIRECTORY);
+        File root = getResourceFile(TEST_ASSETS);
+        File file = new File(root, TEST_FILE);
+        mAbsolutePath = root.getAbsolutePath();
+
+        mDirectory = new File(root, TEST_DIRECTORY);
         mAbsoluteSinglePath = file.getAbsolutePath();
         mSingleFileSource = new FileSource(file);
         mDirectorySource = getResourceFileSource(TEST_DIRECTORY);
     }
 
     public FileSource getResourceFileSource(String name) {
-        return new FileSource(getResourceFile(name));
+        return new FileSource(getResourceFile(TEST_ASSETS + name));
     }
 
     @Override
     protected FileSource getRootSource() {
-        return getResourceFileSource(".");
+        return getResourceFileSource("");
     }
 
     @After
@@ -179,6 +183,14 @@ public class TestFileSource extends BaseSourceTest<FileSource, FileSource> {
 
     }
 
+    @Test
+    public void testCopy() throws Exception {
+        File root = mTempTestFolder.newFolder();
+        FileSource to = new FileSource(root);
+        SourceUtils.copy(mRoot, to);
+        assertStructure(to);
+    }
+
     public void assertDelete(File file) {
         assertTrue(file.exists());
         FileSource fileSource = new FileSource(file);
@@ -233,5 +245,4 @@ public class TestFileSource extends BaseSourceTest<FileSource, FileSource> {
         }
 
     }
-
 }
