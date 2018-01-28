@@ -27,8 +27,6 @@ public class RandomAccessSource extends BaseRandomAccessSource<StreamSource> imp
         return new RandomSourceResource(resource);
     }
 
-
-
     private final class RandomSourceResource implements StreamResource<InputStream> {
         private final StreamResource<InputStream> mResource;
 
@@ -74,6 +72,33 @@ public class RandomAccessSource extends BaseRandomAccessSource<StreamSource> imp
         @Override
         public boolean isOpened() {
             return mSource.isOpened() && mResource.isOpened();
+        }
+    }
+
+    @Override
+    public SourceIterator iterator() {
+        try {
+            openStream();
+            SourceIterator iterator = mSource.iterator();
+            return new SourceIterator() {
+
+                @Override
+                public void close() throws Exception {
+                    closeStream();
+                }
+
+                @Override
+                public Source next() {
+                    return iterator.next();
+                }
+
+                @Override
+                public boolean hasNext() {
+                    return iterator.hasNext();
+                }
+            };
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

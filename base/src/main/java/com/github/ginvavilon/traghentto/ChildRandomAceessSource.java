@@ -24,11 +24,11 @@ class ChildRandomAceessSource extends BaseRandomAccessSource<Source> implements 
     @Override
     public StreamResource<InputStream> openResource(StreamParams pParams)
             throws IOSourceException, IOException {
-        boolean opened = !isStreamOpened();
+        final boolean opened = !isStreamOpened();
         if (opened) {
             openStream();
         }
-        StreamResource<InputStream> resource = super.openResource(pParams);
+        final StreamResource<InputStream> resource = super.openResource(pParams);
         return new StreamResource<InputStream>() {
 
             @Override
@@ -55,7 +55,6 @@ class ChildRandomAceessSource extends BaseRandomAccessSource<Source> implements 
             }
         };
     }
-
 
 
 }

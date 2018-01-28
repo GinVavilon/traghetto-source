@@ -6,8 +6,8 @@ package com.github.ginvavilon.traghentto.file;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 
+import com.github.ginvavilon.traghentto.DelegatedSource;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Logger.Level;
 import com.github.ginvavilon.traghentto.Source;
@@ -23,32 +23,19 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  * @author Vladimir Baraznovsky
  *
  */
-public class CachedSource<T extends Source> implements Source, ICopyListener {
+public class CachedSource<T extends Source> extends DelegatedSource<T>
+        implements Source, ICopyListener {
     protected static final int CACHE_VERSION = 0;
     public static final int COUNT_INDEX = 2;
     private static final int INDEX_STREAM = 0;
     private static final int INDEX_SIZE = 1;
 
-    private final T mSource;
     private DiskLruCache mDiskLruCache;
 
     public CachedSource(DiskLruCache pDiskLruCache, T pSource) {
-	super();
+        super(pSource);
 	mDiskLruCache = pDiskLruCache;
-	mSource = pSource;
 
-    }
-
-    public List<? extends Source> getChildren() {
-	return mSource.getChildren();
-    }
-
-    public Source getChild(String pName) {
-	return mSource.getChild(pName);
-    }
-
-    public boolean isConteiner() {
-	return mSource.isConteiner();
     }
 
     @Override
@@ -93,21 +80,6 @@ public class CachedSource<T extends Source> implements Source, ICopyListener {
 	return key;
     }
 
-    public String getPath() {
-	return mSource.getPath();
-    }
-
-    public String getName() {
-	return mSource.getName();
-    }
-
-    public String getUriString() {
-	return mSource.getUriString();
-    }
-
-    public boolean exists() {
-	return mSource.exists();
-    }
 
     @Override
     public long getLenght() {
@@ -171,7 +143,4 @@ public class CachedSource<T extends Source> implements Source, ICopyListener {
         return mDiskLruCache.remove(getKey());
     }
 
-    public T getSource() {
-        return mSource;
-    }
 }

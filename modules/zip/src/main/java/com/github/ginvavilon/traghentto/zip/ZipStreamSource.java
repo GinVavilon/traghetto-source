@@ -15,6 +15,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import com.github.ginvavilon.traghentto.Logger;
+import com.github.ginvavilon.traghentto.SourceIterator;
 import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.StreamSource;
 import com.github.ginvavilon.traghentto.StreamUtils;
@@ -237,6 +238,10 @@ public class ZipStreamSource extends BaseZipSouce implements StreamSource {
 	} finally {
 	    close();
 	}
+    }
 
+    @Override
+    public SourceIterator iterator() {
+        return null;
     }
 }

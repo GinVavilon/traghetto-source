@@ -48,4 +48,5 @@ public abstract class BaseZipSouce implements Source, ZipSource {
     public String toString() {
         return getUriString().toString();
     }
+
 }

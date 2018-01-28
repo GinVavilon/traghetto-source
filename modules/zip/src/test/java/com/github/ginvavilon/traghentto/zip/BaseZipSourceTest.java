@@ -57,7 +57,6 @@ public abstract class BaseZipSourceTest<T extends Source> extends BaseSourceTest
     public void assertChild(Source child, String childName) {
         String path = getTestDirectory().getPath();
         assertEquals(path + childName, child.getPath());
-
     }
 
 }

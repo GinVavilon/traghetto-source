@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 
 import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.SourceIterator;
 import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.StreamSource;
 import com.github.ginvavilon.traghentto.StreamUtils;
@@ -88,5 +89,10 @@ class ExistZipEntrySource extends ZipEntrySource implements StreamSource {
     @Override
     public boolean isDataAvailable() {
 	return isOpened();
+    }
+
+    @Override
+    public SourceIterator iterator() {
+        return null;
     }
 }

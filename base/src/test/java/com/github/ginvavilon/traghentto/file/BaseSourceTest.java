@@ -13,12 +13,17 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.SourceIterator;
 import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
@@ -29,6 +34,7 @@ import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
  */
 public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source> {
 
+    private static final String SEPARATOR = "/";
     protected static final String TEST_TEXT = "Test\n123 456\n";
     private TChild mTestFileSource;
     private TChild mTestDirectorySource;
@@ -39,6 +45,19 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
     protected static final String TEST_FILE = "test.txt";
     protected static final String TEST_DIRECTORY = "test";
     protected static final String[] TEST_CHILD_FILES = { "file1", "file2", "file3" };
+    protected static final Set<String> ALL_FILES = new HashSet<>();
+    static {
+        ALL_FILES.add(TEST_FILE);
+        ALL_FILES.add(TEST_DIRECTORY);
+        for (String child : TEST_CHILD_FILES) {
+            ALL_FILES.add(TEST_DIRECTORY + SEPARATOR + child);
+        }
+    }
+
+    @Rule
+    public TemporaryFolder mTempTestFolder = new TemporaryFolder();
+
+    protected TRoot mRoot;
 
     public BaseSourceTest() {
         super();
@@ -48,9 +67,9 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
     @Before
     public void setUpSources() throws Exception {
 
-        TRoot root = getRootSource();
-        mTestFileSource = (TChild) root.getChild(TEST_FILE);
-        mTestDirectorySource = (TChild) root.getChild(TEST_DIRECTORY);
+        mRoot = getRootSource();
+        mTestFileSource = (TChild) mRoot.getChild(TEST_FILE);
+        mTestDirectorySource = (TChild) mRoot.getChild(TEST_DIRECTORY);
     }
 
     public TChild getTestFile() {
@@ -60,6 +79,31 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
     public TChild getTestDirectory() {
         return mTestDirectorySource;
     }
+
+    @Test
+    public void testIterator() throws Exception {
+        assertStructure(mRoot);
+    }
+
+    protected void assertStructure(Source root) throws Exception {
+        Set<String> files = new HashSet<>(ALL_FILES);
+        String rootPath = root.getPath();
+        if (!rootPath.endsWith(SEPARATOR)) {
+            rootPath += SEPARATOR;
+        }
+
+        SourceIterator iterator = root.iterator();
+        Source next;
+        while (iterator.hasNext()) {
+            next = iterator.next();
+            String path = getRelativePath(rootPath, next.getPath());
+            assertTrue("File not expected " + path, files.contains(path));
+            files.remove(path);
+        }
+        assertTrue(files.isEmpty());
+        iterator.close();
+    }
+
 
     protected abstract TRoot getRootSource();
 
@@ -187,5 +231,17 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
         assertArrayEquals(TEST_CHILD_FILES, names);
     }
 
+    protected String getRelativePath(String rootPath, String path) {
+
+
+        if (path.startsWith(rootPath)) {
+            path = path.substring(rootPath.length());
+        }
+        while (path.endsWith(SEPARATOR)) {
+            path = path.substring(0, path.length() - 1);
+        }
+
+        return path;
+    }
 
 }

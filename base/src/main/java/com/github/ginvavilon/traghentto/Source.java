@@ -14,7 +14,7 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  * @author Vladimir Baraznovsky
  *
  */
-public interface Source{
+public interface Source extends Iterable<Source> {
 
     public static final long UNKNOWN_LENGHT=-1;
 
@@ -32,4 +32,7 @@ public interface Source{
     long getLenght();
     boolean isLocal();
     boolean isDataAvailable();
+
+    SourceIterator iterator();
+
 }

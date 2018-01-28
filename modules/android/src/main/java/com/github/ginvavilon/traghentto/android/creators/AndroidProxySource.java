@@ -7,68 +7,28 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.ginvavilon.traghentto.DelegatedSource;
 import com.github.ginvavilon.traghentto.Source;
-import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.android.AndroidSource;
-import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
-import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-class AndroidProxySource implements AndroidSource {
+class AndroidProxySource extends DelegatedSource<Source> implements AndroidSource {
 
-    private final Source mSource;
     private final Uri mUri;
 
     public AndroidProxySource(Source pSource, Uri uri) {
-        mSource = pSource;
+        super(pSource);
         mUri = uri;
     }
 
     public AndroidProxySource(Source pSource) {
         this(pSource, Uri.parse(pSource.getUriString()));
-    }
-
-    @Override
-    public boolean isConteiner() {
-        return mSource.isConteiner();
-    }
-
-    @Override
-    public StreamResource<InputStream> openResource(StreamParams pParams)
-            throws IOSourceException, IOException {
-        return mSource.openResource(pParams);
-    }
-
-    @Override
-    public String getPath() {
-        return mSource.getPath();
-    }
-
-    @Override
-    public String getName() {
-        return mSource.getName();
-    }
-
-    @Override
-    public String getUriString() {
-        return mSource.getUriString();
-    }
-
-    @Override
-    public boolean exists() {
-        return mSource.exists();
-    }
-
-    @Override
-    public long getLenght() {
-        return mSource.getLenght();
     }
 
     @Override
@@ -84,14 +44,6 @@ class AndroidProxySource implements AndroidSource {
     public AndroidSource getChild(String pName) {
         Source child = mSource.getChild(pName);
         return child != null ? new AndroidProxySource(child) : null;
-    }
-
-    public boolean isLocal() {
-        return mSource.isLocal();
-    }
-
-    public boolean isDataAvailable() {
-        return mSource.isDataAvailable();
     }
 
     @Override

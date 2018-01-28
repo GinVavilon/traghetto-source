@@ -68,4 +68,8 @@ public abstract class DelegatedSource<T extends Source> implements Source {
         return mSource.isDataAvailable();
     }
 
+    @Override
+    public SourceIterator iterator() {
+        return mSource.iterator();
+    }
 }
