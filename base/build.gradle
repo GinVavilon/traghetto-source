@@ -5,6 +5,20 @@ apply plugin: 'eclipse'
 dependencies {
     testCompile 'junit:junit:4.12'
 }
+
+configurations {
+    testOutput.extendsFrom (testCompile)
+}
+
+task jarTest (type: Jar, dependsOn: testClasses) {
+    from sourceSets.test.output
+    classifier = 'test'
+}
+
+artifacts {
+    testOutput jarTest
+}
+
 eclipse {
     project {
         name = 'Traghentto-Base'

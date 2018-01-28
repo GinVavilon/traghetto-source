@@ -5,6 +5,7 @@ apply plugin: 'eclipse'
 dependencies {
     compile project(':base')
     testCompile 'junit:junit:4.12'
+    testCompile project(path: ':base', configuration: 'testOutput')
 }
 eclipse {
     project {

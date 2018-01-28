@@ -9,6 +9,7 @@ dependencies {
     compile project(':zip')
     compile project(':apache-http')
     testCompile 'junit:junit:4.12'
+    testCompile project(path: ':zip', configuration: 'testOutput')
 }
 eclipse {
     project {
