@@ -26,10 +26,13 @@ public abstract class BaseZipSouce implements Source, ZipSource {
 
     @Override
     public List<? extends ZipEntrySource> getChildren(ZipEntry pZipEntry) {
+        if (!pZipEntry.isDirectory()) {
+            return null;
+        }
         return getChildren(pZipEntry+EXPRESSION_CHILD_FILE);
     }
 
-    protected abstract List<? extends ZipEntrySource> getChildren(String pString);
+    protected abstract List<? extends ExistZipEntrySource> getChildren(String pString);
 
     @Override
     public boolean isConteiner() {

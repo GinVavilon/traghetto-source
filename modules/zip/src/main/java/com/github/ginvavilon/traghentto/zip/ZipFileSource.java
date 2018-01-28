@@ -44,19 +44,19 @@ public class ZipFileSource extends BaseZipSouce implements StreamSource,Deletabl
     public ZipEntrySource getChild(String pName) {
 	ZipEntry entry = mZipFile.getEntry(pName);
 	if (entry != null) {
-	    return new ZipEntrySource(entry, this);
+	    return new ExistZipEntrySource(entry, this);
 	}
-	return null;
+        return new NotExistZipEntrySource(this, pName);
     }
 
-    protected List<ZipEntrySource> getChildren(String regExp) {
+    protected List<ExistZipEntrySource> getChildren(String regExp) {
 	Enumeration<? extends ZipEntry> entries = mZipFile.entries();
-	List<ZipEntrySource> list = new ArrayList<ZipEntrySource>();
+	List<ExistZipEntrySource> list = new ArrayList<ExistZipEntrySource>();
 	while (entries.hasMoreElements()) {
 	    ZipEntry entry = entries.nextElement();
 
 	    if (entry.getName().matches(regExp)) {
-		ZipEntrySource source = new ZipEntrySource(entry, this);
+		ExistZipEntrySource source = new ExistZipEntrySource(entry, this);
 		list.add(source);
 	    }
 

@@ -1,0 +1,191 @@
+/**
+ * 
+ */
+package com.github.ginvavilon.traghentto.file;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.StreamResource;
+import com.github.ginvavilon.traghentto.StreamUtils;
+import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
+
+/**
+ * @author vbaraznovsky
+ *
+ */
+public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source> {
+
+    protected static final String TEST_TEXT = "Test\n123 456\n";
+    private TChild mTestFileSource;
+    private TChild mTestDirectorySource;
+
+    protected static final String TEST_CHILD_FOLDER = "folder1";
+    private static final int TEST_FILE_LENGHT = 13;
+    protected static final String TEST_CHILD = "child.txt";
+    protected static final String TEST_FILE = "test.txt";
+    protected static final String TEST_DIRECTORY = "test";
+    protected static final String[] TEST_CHILD_FILES = { "file1", "file2", "file3" };
+
+    public BaseSourceTest() {
+        super();
+    }
+
+
+    @Before
+    public void setUpSources() throws Exception {
+
+        TRoot root = getRootSource();
+        mTestFileSource = (TChild) root.getChild(TEST_FILE);
+        mTestDirectorySource = (TChild) root.getChild(TEST_DIRECTORY);
+    }
+
+    public TChild getTestFile() {
+        return mTestFileSource;
+    }
+
+    public TChild getTestDirectory() {
+        return mTestDirectorySource;
+    }
+
+    protected abstract TRoot getRootSource();
+
+    /**
+     * Test method for {@link com.github.ginvavilon.traghentto.file.FileSource#isConteiner()}.
+     */
+    @Test
+    public void testIsConteiner() {
+        assertFalse(getTestFile().isConteiner());
+        assertTrue(getTestDirectory().isConteiner());
+    }
+
+    /**
+     * Test method for {@link com.github.ginvavilon.traghentto.file.FileSource#getName()}.
+     */
+    @Test
+    public void testGetName() {
+        assertEquals(TEST_FILE, getTestFile().getName());
+        assertEquals(TEST_DIRECTORY, getTestDirectory().getName());
+    }
+
+    /**
+     * Test method for {@link com.github.ginvavilon.traghentto.file.FileSource#exists()}.
+     */
+    @Test
+    public void testExists() {
+        assertTrue(getTestFile().exists());
+        assertTrue(getTestDirectory().exists());
+        assertFalse(getTestDirectory().getChild(TEST_CHILD).exists());
+    }
+
+    /**
+     * Test method for {@link com.github.ginvavilon.traghentto.file.FileSource#getLenght()}.
+     */
+    @Test
+    public void testGetLenght() {
+        assertEquals(TEST_FILE_LENGHT, getTestFile().getLenght());
+    }
+
+    /**
+     * Test method for
+     * {@link com.github.ginvavilon.traghentto.BaseSource#openResource(com.github.ginvavilon.traghentto.params.StreamParams)}.
+     * 
+     * @throws IOException
+     * @throws IOSourceException
+     */
+    @Test
+    public void testOpenResource() throws IOException, IOSourceException {
+        StreamResource<InputStream> singleResource = getTestFile().openResource(null);
+        String string = StreamUtils.readStream(singleResource);
+        assertEquals(TEST_TEXT, string);
+        assertTrue("Streem must be closed", checkClosedStream(singleResource));
+    }
+
+
+    protected boolean checkClosedStream(StreamResource<InputStream> singleResource) {
+        boolean streamClosed = false;
+        try {
+            singleResource.getStream().read();
+        } catch (IOException e) {
+            streamClosed = true;
+        }
+        return streamClosed;
+    }
+
+    protected abstract void assertDataAvailable(boolean dataAvailable);
+
+    protected abstract void assertLocal(boolean local);
+
+    /**
+     * Test method for {@link com.github.ginvavilon.traghentto.file.FileSource#isLocal()}.
+     */
+    @Test
+    public void testIsLocal() {
+        assertLocal(getTestFile().isLocal());
+    }
+
+    /**
+     * Test method for {@link com.github.ginvavilon.traghentto.file.FileSource#isDataAvailable()}.
+     */
+    @Test
+    public void testIsDataAvailable() {
+        assertDataAvailable(getTestFile().isDataAvailable());
+    }
+
+    public File getResourceFile(String name) {
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource(name).getFile());
+        return file;
+    }
+
+
+    public abstract void assertChild(TChild child, String childName);
+
+
+    /**
+     * Test method for {@link com.github.ginvavilon.traghentto.file.FileSource#getChild(java.lang.String)}.
+     */
+    @Test
+    public void testGetChild() {
+        for (String childName : TEST_CHILD_FILES) {
+            TChild child = (TChild) getTestDirectory().getChild(childName);
+            assertChild(child, childName);
+            assertTrue(child.exists());
+        }
+
+        TChild child = (TChild) getTestDirectory().getChild(TEST_FILE);
+        assertChild(child, TEST_FILE);
+        assertFalse(child.exists());
+    }
+
+
+    /**
+     * Test method for
+     * {@link com.github.ginvavilon.traghentto.file.FileSource#getChildren()}.
+     * 
+     * @throws IOException
+     */
+    @Test
+    public void testGetChildren() throws IOException {
+        assertNull(getTestFile().getChildren());
+        List<? extends Source> children = getTestDirectory().getChildren();
+        assertNotNull(children);
+        Object[] names = children.stream().map(Source::getName).sorted().toArray();
+        assertArrayEquals(TEST_CHILD_FILES, names);
+    }
+
+
+}
