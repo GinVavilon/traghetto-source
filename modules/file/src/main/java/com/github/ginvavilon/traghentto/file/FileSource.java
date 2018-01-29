@@ -134,6 +134,9 @@ public class FileSource extends BaseWritebleSource implements Source, WritableSo
     private static boolean recursiveDelete(File pFile) {
         if (pFile.isDirectory()) {
             File[] listFiles = pFile.listFiles();
+            if (listFiles ==null) {
+            	return false;
+            }
             for (File file : listFiles) {
                 recursiveDelete(file);
             }
