@@ -124,7 +124,7 @@ public class StreamUtils {
             if (hasListener) {
                 pListener.onCompite();
             }
-
+            outputStream.flush();
             return readed;
         } catch (final IOException e) {
             Logger.e(e);
@@ -185,7 +185,7 @@ public class StreamUtils {
             OutputStream stream =resource.getStream();
             stream.write(pData.getBytes());
             return true;
-        } catch (IOException e) {
+        } catch (IOException | IOSourceException e) {
             Logger.e(e);
         } finally {
             close(resource);

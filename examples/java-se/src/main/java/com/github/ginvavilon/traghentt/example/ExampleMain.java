@@ -8,6 +8,9 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.concurrent.Executors;
 
 import javax.swing.BoxLayout;
@@ -22,13 +25,18 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.border.CompoundBorder;
 
+import org.apache.commons.codec.digest.Crypt;
+
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.WritableSource;
+
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Logger.LogHandler;
 import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.StreamUtils.ICopyListener;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
+import com.github.ginvavilon.traghentto.file.CryptoSourceCreator;
+import com.github.ginvavilon.traghentto.file.FileSource;
 import com.github.ginvavilon.traghentto.se.SourceFactory;
 
 /**
@@ -36,6 +44,21 @@ import com.github.ginvavilon.traghentto.se.SourceFactory;
  *
  */
 public class ExampleMain {
+	static {
+		try {
+			SourceFactory.registerPath("sfile", CryptoSourceCreator.create(FileSource.CREATOR,"testKey8Exampl56"));
+			
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	} 
 
     /**
      * @author vbaraznovsky
