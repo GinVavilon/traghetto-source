@@ -115,7 +115,7 @@ public class FileSource extends BaseWritebleSource implements Source, WritableSo
 
     @Override
     public boolean create() throws IOException {
-        File parentFile = mFile.getParentFile();
+        File parentFile = mFile.getAbsoluteFile().getParentFile();
         if (!parentFile.exists()) {
             parentFile.mkdirs();
         }
