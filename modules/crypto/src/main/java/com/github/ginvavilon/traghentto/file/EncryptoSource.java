@@ -1,22 +1,14 @@
-//Copyright © 2018 M800 Limited. All rights reserved.
 package com.github.ginvavilon.traghentto.file;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64.Decoder;
 
 import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.StreamResource;
-import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.params.StreamParams;

@@ -1,4 +1,3 @@
-//Copyright © 2018 M800 Limited. All rights reserved.
 package com.github.ginvavilon.traghentto.file;
 
 import java.security.InvalidKeyException;
