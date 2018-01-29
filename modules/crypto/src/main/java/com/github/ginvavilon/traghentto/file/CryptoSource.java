@@ -20,7 +20,6 @@ import java.util.Map;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.github.ginvavilon.traghentto.DelegatedSource;
@@ -55,7 +54,7 @@ public class CryptoSource<T extends Source> extends DelegatedSource<T> implement
 	public static final String AES = "AES";
 	public static final String BLOWFISH = "Blowfish";
 	public static final String RC2 = "RC2";
-	public static final String DEFAULT = DES;
+	public static final String DEFAULT = AES;
 	private static final String DEFAULT_HASH = SHA1;
 	private static final Map<String,KeySize> KEY_SIZES=new HashMap<>();
 	static {
@@ -159,13 +158,24 @@ public class CryptoSource<T extends Source> extends DelegatedSource<T> implement
 		byte[] hash = instance.digest(password.getBytes());
 		
 		KeySize size = KEY_SIZES.get(algorithm);
+		
 		int length = hash.length;
 		if (size != null) {
 			length = size.changeSize(length);
 		}
-		if (hash.length!=length) {
+
+		int oldLenght = hash.length;
+		if (oldLenght!=length) {
 			hash=Arrays.copyOf(hash, length);
 		}
+		
+		while (oldLenght<length) {
+			instance.update(hash, 0, oldLenght);
+			byte[] digest = instance.digest();
+			System.arraycopy(digest, 0, hash, oldLenght, Math.min(length - oldLenght, digest.length));
+			oldLenght=oldLenght+ digest.length;
+		}
+		
 		return createKey(algorithm, hash);
 	}
 
