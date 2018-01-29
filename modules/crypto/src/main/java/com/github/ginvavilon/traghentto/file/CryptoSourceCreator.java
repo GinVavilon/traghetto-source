@@ -35,4 +35,11 @@ public final class CryptoSourceCreator<T extends WritableSource> implements Sour
 		return new CryptoSourceCreator<T>(creator, secretKey);
 
 	}
+	
+	public static <T extends WritableSource > CryptoSourceCreator<T> createByPassword(SourceCreator<? extends T> creator, String password)
+			throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException {
+		Key secretKey = CryptoSource.createKeyByPassword(password);
+		return new CryptoSourceCreator<T>(creator, secretKey);
+	}
+
 }

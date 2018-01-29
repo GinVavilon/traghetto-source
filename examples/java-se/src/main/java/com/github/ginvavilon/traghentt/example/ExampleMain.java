@@ -35,6 +35,7 @@ import com.github.ginvavilon.traghentto.Logger.LogHandler;
 import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.StreamUtils.ICopyListener;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
+import com.github.ginvavilon.traghentto.file.CryptoSource;
 import com.github.ginvavilon.traghentto.file.CryptoSourceCreator;
 import com.github.ginvavilon.traghentto.file.FileSource;
 import com.github.ginvavilon.traghentto.se.SourceFactory;
@@ -46,7 +47,8 @@ import com.github.ginvavilon.traghentto.se.SourceFactory;
 public class ExampleMain {
 	static {
 		try {
-			SourceFactory.registerPath("sfile", CryptoSourceCreator.create(FileSource.CREATOR,"testKey8Exampl56"));
+			SourceFactory.registerPath("sfile", CryptoSourceCreator.createByPassword(FileSource.CREATOR,
+					"testKey8Exampl56"));
 			
 		} catch (InvalidKeySpecException e) {
 			// TODO Auto-generated catch block
