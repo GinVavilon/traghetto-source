@@ -11,7 +11,10 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -26,6 +29,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.CompoundBorder;
 
 import org.apache.commons.codec.digest.Crypt;
+import org.w3c.dom.events.UIEvent;
 
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.WritableSource;
@@ -45,6 +49,8 @@ import com.github.ginvavilon.traghentto.se.SourceFactory;
  *
  */
 public class ExampleMain {
+	
+	private ExecutorService mExecutor=Executors.newSingleThreadExecutor();
 	static {
 		try {
 			SourceFactory.registerPath("sfile", CryptoSourceCreator.createByPassword(FileSource.CREATOR,
@@ -69,6 +75,7 @@ public class ExampleMain {
     private final class LogListner implements ICopyListener {
         private final StringBuilder mLogBuilder;
         private final Source mIn;
+		private Future<?> mTask;
 
         private LogListner(StringBuilder pLog, Source pOut) {
             mLogBuilder = pLog;
@@ -85,21 +92,45 @@ public class ExampleMain {
 
         @Override
         public void onProgress(long pRadedByte) {
-            long lenght = mIn.getLenght();
-            mLogBuilder.append(String.format("Progress %s/%s", pRadedByte, lenght));
-            mLogBuilder.append("\n");
-            log();
-            int size = (int) (100 * pRadedByte / lenght);
-            mProgressBar.setValue(size);
+			sentToLog(new Runnable() {
+
+				@Override
+				public void run() {
+
+					long lenght = mIn.getLenght();
+					mLogBuilder.append(String.format("Progress %s/%s", pRadedByte, lenght));
+					mLogBuilder.append("\n");
+					log();
+					int size = (int) (100 * pRadedByte / lenght);
+					mProgressBar.setValue(size);
+
+				}
+			});
 
         }
 
+		protected void sentToLog(Runnable task) {
+			if (mTask != null) {
+				mTask.cancel(false);
+			}
+			mTask = mExecutor.submit(task);
+		}
+
         @Override
         public void onFail(Throwable pE) {
-            mLogBuilder.append("Fail: ");
-            mLogBuilder.append(pE.getMessage());
-            mLogBuilder.append("\n");
-            log();
+        	sentToLog(new Runnable() {
+				
+				@Override
+				public void run() {
+					mLogBuilder.append("Fail: ");
+		            mLogBuilder.append(pE.getMessage());
+		            mLogBuilder.append("\n");
+		            log();
+					
+				}
+			});
+            
+            pE.printStackTrace();
 
         }
 
@@ -109,8 +140,15 @@ public class ExampleMain {
 
         @Override
         public void onCompite() {
-            mLogBuilder.append("Complite");
-            log();
+        	sentToLog(new Runnable() {
+				
+				@Override
+				public void run() {
+					mLogBuilder.append("Complite");
+					mProgressBar.setValue(100);
+					log();
+				}
+			});
 
         }
     }
