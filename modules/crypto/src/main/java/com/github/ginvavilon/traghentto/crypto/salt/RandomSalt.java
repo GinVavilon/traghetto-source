@@ -25,7 +25,13 @@ public class RandomSalt extends BaseRandomSalt {
 		Random random = getRandom();
 		int randomX1 = random.nextInt()&(~MASK);
 		int randomX2 = random.nextInt()&(~MASK);
-		int size = mMinSize + random.nextInt(mMaxSize - mMinSize);
+		int size;
+		if (mMaxSize > mMinSize) {
+			size = mMinSize + random.nextInt(mMaxSize - mMinSize);
+		} else {
+			size = mMaxSize;
+		}
+
 		int m1 = randomX1 + size;
 		int m2 = randomX2 + size;
 		int m3 = randomX2 + randomX1;
