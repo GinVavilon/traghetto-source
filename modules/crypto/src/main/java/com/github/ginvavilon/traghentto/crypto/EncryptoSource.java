@@ -1,4 +1,4 @@
-package com.github.ginvavilon.traghentto.file;
+package com.github.ginvavilon.traghentto.crypto;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -10,6 +10,7 @@ import javax.crypto.CipherOutputStream;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.WritableSource;
+import com.github.ginvavilon.traghentto.crypto.salt.Salt;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 import com.github.ginvavilon.traghentto.params.VoidParams;
@@ -19,6 +20,11 @@ public class EncryptoSource<T extends WritableSource> extends CryptoSource<T> im
 	public EncryptoSource(T source, Key key) {
 		super(source, key);
 	}
+	
+	public EncryptoSource(T source, CryptoConfiguration configuration) {
+		super(source, configuration);
+	}
+
 
 	@Override
 	public boolean delete() {
@@ -26,8 +32,8 @@ public class EncryptoSource<T extends WritableSource> extends CryptoSource<T> im
 	}
 
 	@Override
-	protected CryptoSource<? extends Source> wrapChild(Source source) {
-		return new EncryptoSource<WritableSource>((WritableSource) source, mKey);
+	protected EncryptoSource<WritableSource> wrapChild(Source source) {
+		return new EncryptoSource<WritableSource>((WritableSource) source, mConfiguration);
 	}
 
 
@@ -43,7 +49,7 @@ public class EncryptoSource<T extends WritableSource> extends CryptoSource<T> im
 
 	@Override
 	public EncryptoSource<WritableSource> getChild(String name) {
-		return new EncryptoSource<>(getSource().getChild(name), mKey);
+		return wrapChild(getSource().getChild(name));
 	}
 
 	@Override
@@ -55,7 +61,7 @@ public class EncryptoSource<T extends WritableSource> extends CryptoSource<T> im
 			public OutputStream wrap(OutputStream stream, Cipher cipher) {
 				return new CipherOutputStream(stream, cipher);
 			}
-		});
+		}, Salt::addSalt);
 	}
 
 	@Override

@@ -38,9 +38,9 @@ import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Logger.LogHandler;
 import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.StreamUtils.ICopyListener;
+import com.github.ginvavilon.traghentto.crypto.CryptoSource;
+import com.github.ginvavilon.traghentto.crypto.CryptoSourceCreator;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
-import com.github.ginvavilon.traghentto.file.CryptoSource;
-import com.github.ginvavilon.traghentto.file.CryptoSourceCreator;
 import com.github.ginvavilon.traghentto.file.FileSource;
 import com.github.ginvavilon.traghentto.se.SourceFactory;
 
