@@ -118,15 +118,10 @@ public class CryptoSource<T extends Source> extends DelegatedSource<T> implement
 		Cipher cipher = Cipher.getInstance(mConfiguration.getAlgorithm());
 		Key key = mConfiguration.getKey();
 		
-		if (mConfiguration.getAlgorithm().contains(Crypto.Mode.CBC)) {
-			byte[] iv = mConfiguration.getIv(cipher.getBlockSize());
 
-			
-			IvParameterSpec ivParams = new IvParameterSpec(iv);
-			cipher.init(encryptMode, key, ivParams);
-		} else {
-			cipher.init(encryptMode, key);
-		}
+		byte[] iv = mConfiguration.getIv(cipher.getBlockSize());
+		IvParameterSpec ivParams = new IvParameterSpec(iv);
+		cipher.init(encryptMode, key, ivParams);
 		CryptoUtils.println("cipher", cipher.getAlgorithm());
 		CryptoUtils.println("cipher-key-format", key.getFormat());
 		CryptoUtils.println("cipher-key", key.getEncoded());
