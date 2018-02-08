@@ -53,6 +53,23 @@ public interface Crypto {
 		public static final String PKCS5 = "PKCS5Padding";
 		public static final String SSL3 = "SSL3Padding";
 	}
+	
+	public interface KeySizes{
+
+		int BLOWFISH_MAX = 448;
+		int BLOFISH_MIN = 32;
+		int RC2 = 128;
+		int DES_EDE_192 = 192;
+		int DES_EDE_128 = 128;
+		int RSA_4096 = 4096;
+		int RSA_2048 = 2048;
+		int RSA_1024 = 1024;
+		int DES = 64;
+		int AES_256 = 256;
+		int AES_192 = 192;
+		int AES_128 = 128;
+		
+	}
 
 	
 }

@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -28,17 +27,14 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.border.CompoundBorder;
 
-import org.apache.commons.codec.digest.Crypt;
-import org.w3c.dom.events.UIEvent;
-
-import com.github.ginvavilon.traghentto.Source;
-import com.github.ginvavilon.traghentto.WritableSource;
-
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Logger.LogHandler;
+import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.StreamUtils.ICopyListener;
-import com.github.ginvavilon.traghentto.crypto.CryptoSource;
+import com.github.ginvavilon.traghentto.WritableSource;
+import com.github.ginvavilon.traghentto.crypto.Crypto.Algorithm;
+import com.github.ginvavilon.traghentto.crypto.CryptoConfiguration;
 import com.github.ginvavilon.traghentto.crypto.CryptoSourceCreator;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.file.FileSource;
@@ -53,8 +49,21 @@ public class ExampleMain {
 	private ExecutorService mExecutor=Executors.newSingleThreadExecutor();
 	static {
 		try {
+            FileSource privateKeySource = FileSource.CREATOR.create("files/private.key");
+            FileSource publicKeySource = FileSource.CREATOR.create("files/public.key");
+
+            CryptoConfiguration configuration = CryptoConfiguration.builder()
+                    .setAlgorithm(Algorithm.RSA)
+                    .loadPrivateKey(privateKeySource)
+                    .loadPublicKey(publicKeySource)
+                    .build();
+
+			
 			SourceFactory.registerPath("sfile", CryptoSourceCreator.createByPassword(FileSource.CREATOR,
 					"testKey8Exampl56"));
+            SourceFactory.registerPath("rsa-file",
+                    CryptoSourceCreator.create(FileSource.CREATOR,
+                            configuration));
 			
 		} catch (InvalidKeySpecException e) {
 			// TODO Auto-generated catch block
@@ -65,7 +74,10 @@ public class ExampleMain {
 		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 	} 
 
     /**
@@ -199,6 +211,7 @@ public class ExampleMain {
         });
 
         EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 try {
                     ExampleMain window = new ExampleMain();
@@ -263,6 +276,7 @@ public class ExampleMain {
         sl_panel_1.putConstraint(SpringLayout.NORTH, btnRun, 6, SpringLayout.SOUTH, outEdit);
         sl_panel_1.putConstraint(SpringLayout.WEST, btnRun, 65, SpringLayout.WEST, panel_1);
         btnRun.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 mStatus.setText("Copy");
                 StringBuilder log = new StringBuilder();

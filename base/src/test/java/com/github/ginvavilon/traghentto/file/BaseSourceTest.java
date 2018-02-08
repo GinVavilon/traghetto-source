@@ -153,7 +153,7 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
     @Test
     public void testOpenResource() throws IOException, IOSourceException {
         StreamResource<InputStream> singleResource = getTestFile().openResource(null);
-        String string = StreamUtils.readStream(singleResource);
+        String string = StreamUtils.readStringFromResource(singleResource);
         assertEquals(TEST_TEXT, string);
         assertTrue("Streem must be closed", checkClosedStream(singleResource));
     }

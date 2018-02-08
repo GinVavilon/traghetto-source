@@ -9,6 +9,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import com.github.ginvavilon.traghentto.Logger.Level;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
@@ -35,21 +36,26 @@ public class StreamUtils {
         return false;
     }
 
-    public static String readStream(StreamResource<? extends InputStream> resource) {
+	public static byte[] readResource(StreamResource<? extends InputStream> resource, int initialSize) {
 
         BufferedInputStream in = null;
 
         try {
             InputStream inputStream = resource.getStream();
             in = new BufferedInputStream(inputStream, IO_BUFFER_SIZE);
-            StringBuilder builder = new StringBuilder();
-
-            byte[] buffer = new byte[BUFFER_SIZE];
+			int size = Math.max(in.available(), initialSize);
+			byte[] result = new byte[size];
+			int index = 0;
+			byte[] buffer = new byte[BUFFER_SIZE];
             int count;
             while ((count = in.read(buffer)) != -1) {
-                builder.append(new String(buffer, 0, count));
+				if (result.length < index + count) {
+					result = Arrays.copyOf(result, index + count);
+				}
+				System.arraycopy(buffer, 0, result, index, count);
+				index += count;
             }
-            return builder.toString();
+			return result;
         } catch (final IOException e) {
             Logger.e(e);
             return null;
@@ -58,6 +64,30 @@ public class StreamUtils {
             close(resource);
         }
 
+    }
+    public static String readStringFromResource(StreamResource<? extends InputStream> resource) {
+    	
+    	BufferedInputStream in = null;
+    	
+    	try {
+    		InputStream inputStream = resource.getStream();
+    		in = new BufferedInputStream(inputStream, IO_BUFFER_SIZE);
+    		StringBuilder builder = new StringBuilder();
+    		
+    		byte[] buffer = new byte[BUFFER_SIZE];
+    		int count;
+    		while ((count = in.read(buffer)) != -1) {
+    			builder.append(new String(buffer, 0, count));
+    		}
+    		return builder.toString();
+    	} catch (final IOException e) {
+    		Logger.e(e);
+    		return null;
+    	} finally {
+    		close(in);
+    		close(resource);
+    	}
+    	
     }
 
     public static long copyStream(InputStream inputStream, OutputStream outputStream,
@@ -153,7 +183,7 @@ public class StreamUtils {
         void onFail(Throwable pE);
     }
 
-    public static String readSource(Source source) throws IOException {
+    public static String readStringFromSource(Source source) throws IOException {
         StreamResource<? extends InputStream> in;
         try {
             in = source.openResource(new VoidParams());
@@ -166,12 +196,32 @@ public class StreamUtils {
         if (in == null) {
             throw new IOException("not opened stream");
         }
-        String string = readStream(in);
+        String string = readStringFromResource(in);
         if (string == null) {
             throw new IOException("not read string");
         }
         return string;
     }
+
+	public static byte[] readSource(Source source) throws IOException {
+		StreamResource<? extends InputStream> in;
+		try {
+			in = source.openResource(new VoidParams());
+
+		} catch (IOSourceException e) {
+			IOException exception = new IOException(e.getMessage());
+			exception.setStackTrace(e.getStackTrace());
+			throw exception;
+		}
+		if (in == null) {
+			throw new IOException("not opened stream");
+		}
+		byte[] result = readResource(in, (int) source.getLenght());
+		if (result == null) {
+			throw new IOException("not read source");
+		}
+		return result;
+	}
 
     public static boolean writeSource(WritableSource pSource, String pData) {
         StreamResource<OutputStream> resource =null;
@@ -192,8 +242,28 @@ public class StreamUtils {
         }
 
         return false;
-
     }
+
+	public static boolean writeSource(WritableSource pSource, byte[] pData) {
+		StreamResource<OutputStream> resource = null;
+
+		try {
+			pSource.create();
+			if (!pSource.exists()) {
+				return false;
+			}
+			resource = pSource.openOutputResource();
+			OutputStream stream = resource.getStream();
+			stream.write(pData);
+			return true;
+		} catch (IOException | IOSourceException e) {
+			Logger.e(e);
+		} finally {
+			close(resource);
+		}
+
+		return false;
+	}
 
     public static <T extends Closeable> StreamResource<T> createResource(T stream) {
         return new SimpleStreamResource<T>(stream);

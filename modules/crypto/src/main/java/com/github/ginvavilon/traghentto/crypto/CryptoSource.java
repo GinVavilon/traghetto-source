@@ -6,17 +6,12 @@ package com.github.ginvavilon.traghentto.crypto;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -26,7 +21,6 @@ import javax.crypto.spec.IvParameterSpec;
 import com.github.ginvavilon.traghentto.DelegatedSource;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.StreamResource;
-import com.github.ginvavilon.traghentto.crypto.Crypto.Algorithm;
 import com.github.ginvavilon.traghentto.crypto.salt.Salt;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.params.StreamParams;
@@ -52,7 +46,8 @@ public class CryptoSource<T extends Source> extends DelegatedSource<T> implement
 		return mSource;
 	}
     
-	public List<? extends Source> getChildren() {
+	@Override
+    public List<? extends Source> getChildren() {
 		List<Source> list = new ArrayList<>();
 		List<? extends Source> children = mSource.getChildren();
 		for (Source source : children) {
@@ -66,7 +61,8 @@ public class CryptoSource<T extends Source> extends DelegatedSource<T> implement
 		return new CryptoSource<Source>(source, mConfiguration);
 	}
 
-	public Source getChild(String name) {
+	@Override
+    public Source getChild(String name) {
 		return wrapChild(mSource.getChild(name));
 	}
 
@@ -116,12 +112,15 @@ public class CryptoSource<T extends Source> extends DelegatedSource<T> implement
 	protected Cipher getCipher(int encryptMode)
 			throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
 		Cipher cipher = Cipher.getInstance(mConfiguration.getAlgorithm());
-		Key key = mConfiguration.getKey();
-		
-
+		Key key = mConfiguration.getKey(encryptMode);
 		byte[] iv = mConfiguration.getIv(cipher.getBlockSize());
-		IvParameterSpec ivParams = new IvParameterSpec(iv);
-		cipher.init(encryptMode, key, ivParams);
+        if (iv != null) {
+            IvParameterSpec ivParams = new IvParameterSpec(iv);
+            cipher.init(encryptMode, key, ivParams);
+        } else {
+            cipher.init(encryptMode, key);
+
+        }
 		CryptoUtils.println("cipher", cipher.getAlgorithm());
 		CryptoUtils.println("cipher-key-format", key.getFormat());
 		CryptoUtils.println("cipher-key", key.getEncoded());
@@ -130,7 +129,8 @@ public class CryptoSource<T extends Source> extends DelegatedSource<T> implement
 	}
 
 
-	public String getUriString() {
+	@Override
+    public String getUriString() {
 		return "encrypted-"+mSource.getUriString();
 	}
 

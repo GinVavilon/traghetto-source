@@ -52,5 +52,11 @@ public final class CryptoSourceCreator<T extends WritableSource> implements Sour
 				.build();
 		return new CryptoSourceCreator<T>(creator, configuration);
 	}
+	
+    public static <T extends WritableSource> CryptoSourceCreator<T> create(SourceCreator<? extends T> creator,
+                                                                           CryptoConfiguration configuration)
+            throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException {
+		return new CryptoSourceCreator<T>(creator, configuration);
+	}
 
 }

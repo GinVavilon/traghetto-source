@@ -1,28 +1,50 @@
 package com.github.ginvavilon.traghentto.crypto;
 
+import java.io.IOException;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.StreamUtils;
+import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.crypto.Crypto.Algorithm;
 import com.github.ginvavilon.traghentto.crypto.Crypto.Hash;
+import com.github.ginvavilon.traghentto.crypto.Crypto.KeySizes;
+import com.github.ginvavilon.traghentto.crypto.Crypto.Mode;
+import com.github.ginvavilon.traghentto.crypto.iv.DisabledIvGenerator;
+import com.github.ginvavilon.traghentto.crypto.iv.EmptyIvGenerator;
+import com.github.ginvavilon.traghentto.crypto.iv.IvGenerator;
 
 public class CryptoUtils {
 
 	private static final String PBKDF2_WITH = "PBKDF2With";
 	private static final Map<String, KeySize> KEY_SIZES = new HashMap<>();
 	static {
-		KEY_SIZES.put(Algorithm.AES, new ListBitsKeySize(128, 192, 256));
-		KEY_SIZES.put(Algorithm.DES, new ListBitsKeySize(64));
-		KEY_SIZES.put(Algorithm.RSA, new ListBitsKeySize(1024, 2048, 4096));
-		KEY_SIZES.put(Algorithm.DES_EDE, new ListBitsKeySize(128, 192));
-		KEY_SIZES.put(Algorithm.RC2, new ListBitsKeySize(128));
-		KEY_SIZES.put(Algorithm.BLOWFISH, new LimitKeySize(32, 448));
+		KEY_SIZES.put(Algorithm.AES, new ListBitsKeySize(KeySizes.AES_128, KeySizes.AES_192, KeySizes.AES_256));
+		KEY_SIZES.put(Algorithm.DES, new ListBitsKeySize(KeySizes.DES));
+		KEY_SIZES.put(Algorithm.RSA, new ListBitsKeySize(KeySizes.RSA_1024, KeySizes.RSA_2048, KeySizes.RSA_4096));
+		KEY_SIZES.put(Algorithm.DES_EDE, new ListBitsKeySize(KeySizes.DES_EDE_128, KeySizes.DES_EDE_192));
+		KEY_SIZES.put(Algorithm.RC2, new ListBitsKeySize(KeySizes.RC2));
+		KEY_SIZES.put(Algorithm.BLOWFISH, new LimitKeySize(KeySizes.BLOFISH_MIN, KeySizes.BLOWFISH_MAX));
 	}
 	
 	
 	static void println(String string, byte[] hash) {
 		System.out.print(String.format("%12s - ", string));
+        if (hash == null) {
+            System.out.println("null");
+            return;
+        }
 		for (byte b : hash) {
 			System.out.print(String.format("%02X", b));
 			System.out.print(":");
@@ -38,6 +60,59 @@ public class CryptoUtils {
 		System.out.println();
 	}
 
+	public static KeyPair loadKeys(String algorithm, Source privateKeySouce, Source publicKeySouce)
+			throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+
+		byte[] encodedPrivateKey = StreamUtils.readSource(privateKeySouce);
+		byte[] encodedPublicKey = StreamUtils.readSource(publicKeySouce);
+
+		KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
+		X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(encodedPublicKey);
+		PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+
+		PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(encodedPrivateKey);
+		PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
+
+		return new KeyPair(publicKey, privateKey);
+	}
+
+    public static Key loadPrivateKey(String algorithm, Source privateKeySouce)
+            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+
+        byte[] encodedPrivateKey = StreamUtils.readSource(privateKeySouce);
+
+        KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
+        PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(encodedPrivateKey);
+        PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
+
+        return privateKey;
+    }
+
+    public static Key loadPublicKey(String algorithm, Source publicKeySouce)
+            throws NoSuchAlgorithmException, IOException, InvalidKeySpecException {
+
+        byte[] encodedPublicKey = StreamUtils.readSource(publicKeySouce);
+
+        KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
+        X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(encodedPublicKey);
+        PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+
+        return publicKey;
+    }
+
+	public static boolean savePrivateKey(Key privateKey, WritableSource privateKeySouce) {
+
+		PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKey.getEncoded());
+		return StreamUtils.writeSource(privateKeySouce, keySpec.getEncoded());
+
+	}
+
+	public static boolean savePublicKey(Key publicKey, WritableSource publicKeySouce) {
+		
+		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKey.getEncoded());
+		return StreamUtils.writeSource(publicKeySouce, keySpec.getEncoded());
+		
+	}
 
 	public static int getKeySizeBytes(String algorithm, int baselength) {
 
@@ -121,7 +196,7 @@ public class CryptoUtils {
 		return hashAlgorithm;
 	}
 
-	public static String getPBEKeyGenerationFactory(String hashAlgorithm, String algorithm) {
+	static String getPBEKeyGenerationFactory(String hashAlgorithm, String algorithm) {
 		if (hashAlgorithm.startsWith("PBEWith")) {
 			return hashAlgorithm;
 		}
@@ -129,7 +204,7 @@ public class CryptoUtils {
 				getKeyGenerationAlgorithm(algorithm, hashAlgorithm));
 	}
 
-	public static String getPBKDF2KeyGenerationFactory(String hashAlgorithm) {
+	static String getPBKDF2KeyGenerationFactory(String hashAlgorithm) {
 		if (hashAlgorithm.startsWith(PBKDF2_WITH)) {
 			return hashAlgorithm;
 		}
@@ -146,7 +221,7 @@ public class CryptoUtils {
 		}
 	}
 
-	public static int detectHashSize(String hashAlgorithm) {
+	static int detectHashSize(String hashAlgorithm) {
 		switch (hashAlgorithm) {
 		case Hash.MD5:
 			return 128;
@@ -172,5 +247,37 @@ public class CryptoUtils {
 			return 0;
 		}
 	}
+
+    public static IvGenerator createEmptyIvGenerator(String mode) {
+        switch (mode) {
+            case Mode.ECB:
+                return new DisabledIvGenerator();
+            case Mode.CBC:
+            case Mode.PCBC:
+            case Mode.OFB:
+            case Mode.CFB:
+                return new EmptyIvGenerator();
+            default:
+                return new DisabledIvGenerator();
+        }
+    }
+
+    public static String getDefaultMode(String algorithm) {
+        switch (algorithm) {
+            case Algorithm.RSA:
+                return Crypto.Mode.ECB;
+            default:
+                return Crypto.DEFAULT_MODE;
+        }
+    }
+
+    public static String getDefaultPadding(String algorithm) {
+        switch (algorithm) {
+            case Algorithm.RSA:
+                return Crypto.Padding.PKCS1;
+            default:
+                return Crypto.DEFAULT_PADDING;
+        }
+    }
 
 }

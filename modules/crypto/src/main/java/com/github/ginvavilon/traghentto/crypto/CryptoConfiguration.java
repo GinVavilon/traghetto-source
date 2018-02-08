@@ -1,19 +1,26 @@
 package com.github.ginvavilon.traghentto.crypto;
 
+import java.io.IOException;
 import java.security.Key;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.crypto.iv.ConstIvGenerator;
-import com.github.ginvavilon.traghentto.crypto.iv.EmptyIvGenerator;
+import com.github.ginvavilon.traghentto.crypto.iv.DisabledIvGenerator;
 import com.github.ginvavilon.traghentto.crypto.iv.HashIvGenerator;
 import com.github.ginvavilon.traghentto.crypto.iv.IvGenerator;
 import com.github.ginvavilon.traghentto.crypto.salt.NoSalt;
@@ -22,7 +29,7 @@ import com.github.ginvavilon.traghentto.crypto.salt.SaltFactory;
 
 public class CryptoConfiguration {
 
-	private final Key mKey;
+	private final Map<Integer,Key> mKeys;
 
 	private final Salt mSalt;
 
@@ -30,24 +37,32 @@ public class CryptoConfiguration {
 
 	private final IvGenerator mIvGenerator;
 
-	private CryptoConfiguration(String algorithm, Key key, Salt salt, IvGenerator ivGenrator) {
+	private CryptoConfiguration(String algorithm, Map<Integer, Key> keys, Salt salt, IvGenerator ivGenrator) {
 		super();
 		mAlgorithm = algorithm;
-		mKey = key;
+		mKeys = keys;
 		mSalt = salt;
 		mIvGenerator = ivGenrator;
 	}
 
 	public String getAlgorithm() {
-		return mAlgorithm;
+        return mAlgorithm;
 	}
 
 	public Salt getSalt() {
 		return mSalt;
 	}
 
-	public Key getKey() {
-		return mKey;
+	public Key getPrivateKey() {
+		return getKey(Cipher.DECRYPT_MODE);
+	}
+
+	public Key getPublicKey() {
+		return getKey(Cipher.ENCRYPT_MODE);
+	}
+
+	public Key getKey(int mode) {
+		return mKeys.get(mode);
 	}
 
 	public byte[] getIv(int blockSize) {
@@ -61,17 +76,38 @@ public class CryptoConfiguration {
 	public static class Builder {
 		private static final String ALGORITHM_FORMAT = "%s/%s/%s";
 
-		private Key mKey;
+		private Map<Integer,Key> mKeys = new HashMap<Integer, Key>();
 		private Salt mSalt = new NoSalt();
 		private String mAlgorithm = Crypto.DEFAULT;
 		private IvGenerator mIvGenerator;
-		private String mMode = Crypto.DEFAULT_MODE;
-		private String mPadding = Crypto.DEFAULT_PADDING;
+        private String mMode;
+        private String mPadding;
+
+		public Builder setAlgorithm(String algorithm) {
+			mAlgorithm = algorithm;
+			return this;
+		}
 
 		public Builder setKey(Key key) {
-			mKey = key;
+			putKey(key);
 			mAlgorithm = key.getAlgorithm();
 			return this;
+		}
+		public Builder setPrivateKey(Key key) {
+			mKeys.put(Cipher.DECRYPT_MODE, key);
+            CryptoUtils.println("private-key", key.getEncoded());
+			return this;
+		}
+		
+		public Builder setPublicKey(Key key) {
+			mKeys.put(Cipher.ENCRYPT_MODE, key);
+            CryptoUtils.println("public-key", key.getEncoded());
+			return this;
+		}
+
+		private void putKey(Key key) {
+			mKeys.put(Cipher.DECRYPT_MODE, key);
+			mKeys.put(Cipher.ENCRYPT_MODE, key);
 		}
 
 		public Builder setMode(String mode) {
@@ -79,13 +115,14 @@ public class CryptoConfiguration {
 			return this;
 		}
 
-		public void setPadding(String padding) {
+        public Builder setPadding(String padding) {
 			mPadding = padding;
+            return this;
 		}
 
 		public Builder setKey(byte[] key) {
 			Key secretKeySpec = new SecretKeySpec(key, mAlgorithm);
-			mKey = secretKeySpec;
+			putKey(secretKeySpec);
 			return this;
 		}
 
@@ -112,7 +149,7 @@ public class CryptoConfiguration {
 			SecretKey secretKey = factory.generateSecret(cipherSpec);
 			byte[] encoded = secretKey.getEncoded();
 			CryptoUtils.println("pbe-key", encoded);
-			mKey = secretKey;
+			putKey(secretKey);
 			return this;
 		}
 		public Builder setPBKDF2Key(String password, byte[] salt, int iteration)
@@ -133,7 +170,7 @@ public class CryptoConfiguration {
 			byte[] encoded = secretKey.getEncoded();
 			CryptoUtils.println("pbkf2-key", encoded);
 
-			mKey = secretKey;
+			putKey(secretKey);
 			return this;
 		}
 
@@ -162,23 +199,60 @@ public class CryptoConfiguration {
 			}
 
 			CryptoUtils.println("hash-key", hash);
-			mKey = new SecretKeySpec(hash, mAlgorithm);
-
+			putKey(new SecretKeySpec(hash, mAlgorithm));
 			return this;
 
 		}
 
+        public Builder loadPublicKey(Source source)
+                throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+            Key publicKey = CryptoUtils.loadPublicKey(mAlgorithm, source);
+            return setPublicKey(publicKey);
+        }
+
+        public Builder loadPrivateKey(Source source)
+                throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+            Key privateKey = CryptoUtils.loadPrivateKey(mAlgorithm, source);
+            return setPrivateKey(privateKey);
+        }
+		public Builder generatePairKey(int keysize) throws NoSuchAlgorithmException {
+			KeyPairGenerator generator = KeyPairGenerator.getInstance(mAlgorithm);
+			generator.initialize(keysize);
+			KeyPair keyPair = generator.generateKeyPair();
+			return setKeyPair(keyPair);
+		}
+		
+		private Builder setKeyPair(KeyPair keyPair) {
+			setPrivateKey(keyPair.getPrivate());
+			setPublicKey(keyPair.getPublic());
+			return this;
+		}
+
 		public CryptoConfiguration build() {
 
-			Key key = this.mKey;
-			String algorithm = String.format(ALGORITHM_FORMAT, mAlgorithm, mMode, mPadding);
+			Map<Integer, Key> keys = this.mKeys;
 			Salt salt = mSalt;
+            String mode = mMode;
+            if (mode == null) {
+                mode = CryptoUtils.getDefaultMode(mAlgorithm);
+            }
+            String padding = mPadding;
+            if (padding == null) {
+                padding = CryptoUtils.getDefaultPadding(mAlgorithm);
+            }
+
 			IvGenerator ivGenerator = mIvGenerator;
-			if (ivGenerator == null) {
-				ivGenerator = new EmptyIvGenerator();
+            if (ivGenerator == null) {
+                ivGenerator = CryptoUtils.createEmptyIvGenerator(mode);
 			}
-			return new CryptoConfiguration(algorithm, key, salt, ivGenerator);
+            String algorithm = String.format(ALGORITHM_FORMAT, mAlgorithm, mode, padding);
+			return new CryptoConfiguration(algorithm, keys, salt, ivGenerator);
 		}
+		
+        public Builder disableIv() {
+            mIvGenerator = new DisabledIvGenerator();
+            return this;
+        }
 
 		public Builder addRandomSalt(int size) {
 			mSalt = SaltFactory.createRandom(size);

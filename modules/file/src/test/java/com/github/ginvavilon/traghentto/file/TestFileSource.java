@@ -231,7 +231,7 @@ public class TestFileSource extends BaseSourceTest<FileSource, FileSource> {
         }
 
         StreamResource<InputStream> singleResource = fileSource.openResource(null);
-        String string = StreamUtils.readStream(singleResource);
+        String string = StreamUtils.readStringFromResource(singleResource);
         assertEquals(TEST_TEXT, string);
         
         hasIOException = false;
