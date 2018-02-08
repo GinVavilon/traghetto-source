@@ -39,27 +39,6 @@ public class CryptoUtils {
 	}
 	
 	
-	static void println(String string, byte[] hash) {
-		System.out.print(String.format("%12s - ", string));
-        if (hash == null) {
-            System.out.println("null");
-            return;
-        }
-		for (byte b : hash) {
-			System.out.print(String.format("%02X", b));
-			System.out.print(":");
-	
-		}
-		System.out.println();
-	
-	}
-
-	static void println(String string, Object message) {
-		System.out.print(String.format("%12s - ", string));
-		System.out.print(message);
-		System.out.println();
-	}
-
 	public static KeyPair loadKeys(String algorithm, Source privateKeySouce, Source publicKeySouce)
 			throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 

@@ -121,10 +121,10 @@ public class CryptoSource<T extends Source> extends DelegatedSource<T> implement
             cipher.init(encryptMode, key);
 
         }
-		CryptoUtils.println("cipher", cipher.getAlgorithm());
-		CryptoUtils.println("cipher-key-format", key.getFormat());
-		CryptoUtils.println("cipher-key", key.getEncoded());
-		CryptoUtils.println("cipher-iv", cipher.getIV());
+		SecurityLogger.println("cipher", cipher.getAlgorithm());
+		SecurityLogger.println("cipher-key-format", key.getFormat());
+		SecurityLogger.println("cipher-key", key.getEncoded());
+		SecurityLogger.println("cipher-iv", cipher.getIV());
 		return cipher;
 	}
 

@@ -95,13 +95,13 @@ public class CryptoConfiguration {
 		}
 		public Builder setPrivateKey(Key key) {
 			mKeys.put(Cipher.DECRYPT_MODE, key);
-            CryptoUtils.println("private-key", key.getEncoded());
+            SecurityLogger.println("private-key", key.getEncoded());
 			return this;
 		}
 		
 		public Builder setPublicKey(Key key) {
 			mKeys.put(Cipher.ENCRYPT_MODE, key);
-            CryptoUtils.println("public-key", key.getEncoded());
+            SecurityLogger.println("public-key", key.getEncoded());
 			return this;
 		}
 
@@ -142,13 +142,13 @@ public class CryptoConfiguration {
 		public Builder setPBEKey(String password, String pbeAlgorithm)
 				throws NoSuchAlgorithmException, InvalidKeySpecException {
 			String generationFactory = CryptoUtils.getPBEKeyGenerationFactory(pbeAlgorithm, mAlgorithm);
-			CryptoUtils.println("pbe-factory", generationFactory);
+			SecurityLogger.println("pbe-factory", generationFactory);
 			int lenght = CryptoUtils.getKeySizeBits(mAlgorithm, 256);
 			final SecretKeyFactory factory = SecretKeyFactory.getInstance(generationFactory);
 			final KeySpec cipherSpec = new PBEKeySpec(password.toCharArray());
 			SecretKey secretKey = factory.generateSecret(cipherSpec);
 			byte[] encoded = secretKey.getEncoded();
-			CryptoUtils.println("pbe-key", encoded);
+			SecurityLogger.println("pbe-key", encoded);
 			putKey(secretKey);
 			return this;
 		}
@@ -161,26 +161,26 @@ public class CryptoConfiguration {
 				throws NoSuchAlgorithmException, InvalidKeySpecException {
 			String generationFactory = CryptoUtils.getPBKDF2KeyGenerationFactory(hashAlgorithm);
 			int lenght = CryptoUtils.getKeySizeBits(mAlgorithm, CryptoUtils.detectHashSize(hashAlgorithm));
-			CryptoUtils.println("bits", lenght);
-			CryptoUtils.println("factory", generationFactory);
+			SecurityLogger.println("bits", lenght);
+			SecurityLogger.println("factory", generationFactory);
 			final SecretKeyFactory factory = SecretKeyFactory.getInstance(generationFactory);
 
 			final KeySpec cipherSpec = new PBEKeySpec(password.toCharArray(), salt, iteration, lenght);
 			SecretKey secretKey = factory.generateSecret(cipherSpec);
 			byte[] encoded = secretKey.getEncoded();
-			CryptoUtils.println("pbkf2-key", encoded);
+			SecurityLogger.println("pbkf2-key", encoded);
 
 			putKey(secretKey);
 			return this;
 		}
 
 		public Builder usePassword(String password, String hashAlgorithm) throws NoSuchAlgorithmException {
-			CryptoUtils.println("hash", hashAlgorithm);
+			SecurityLogger.println("hash", hashAlgorithm);
 			MessageDigest instance = MessageDigest.getInstance(hashAlgorithm);
 			byte[] hash = instance.digest(password.getBytes());
 
 			int length = CryptoUtils.getKeySizeBytes(mAlgorithm, hash.length);
-			CryptoUtils.println("lenght", length*8);
+			SecurityLogger.println("lenght", length*8);
 			int oldLenght = hash.length;
 			if (oldLenght != length) {
 				hash = Arrays.copyOf(hash, length);
@@ -195,10 +195,10 @@ public class CryptoConfiguration {
 
 			if (mIvGenerator == null) {
 				mIvGenerator = HashIvGenerator.create(hashAlgorithm, hash);
-				CryptoUtils.println("iv", mIvGenerator.generateIv(length));
+				SecurityLogger.println("iv", mIvGenerator.generateIv(length));
 			}
 
-			CryptoUtils.println("hash-key", hash);
+			SecurityLogger.println("hash-key", hash);
 			putKey(new SecretKeySpec(hash, mAlgorithm));
 			return this;
 
