@@ -54,7 +54,7 @@ public interface Crypto {
 		public static final String SSL3 = "SSL3Padding";
 	}
 	
-	public interface KeySizes{
+	public interface KeySize{
 
 		int BLOWFISH_MAX = 448;
 		int BLOFISH_MIN = 32;

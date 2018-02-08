@@ -19,7 +19,7 @@ import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.crypto.Crypto.Algorithm;
 import com.github.ginvavilon.traghentto.crypto.Crypto.Hash;
-import com.github.ginvavilon.traghentto.crypto.Crypto.KeySizes;
+import com.github.ginvavilon.traghentto.crypto.Crypto.KeySize;
 import com.github.ginvavilon.traghentto.crypto.Crypto.Mode;
 import com.github.ginvavilon.traghentto.crypto.iv.DisabledIvGenerator;
 import com.github.ginvavilon.traghentto.crypto.iv.EmptyIvGenerator;
@@ -28,14 +28,14 @@ import com.github.ginvavilon.traghentto.crypto.iv.IvGenerator;
 public class CryptoUtils {
 
 	private static final String PBKDF2_WITH = "PBKDF2With";
-	private static final Map<String, KeySize> KEY_SIZES = new HashMap<>();
+	private static final Map<String, KeySizeSpec> KEY_SIZES = new HashMap<>();
 	static {
-		KEY_SIZES.put(Algorithm.AES, new ListBitsKeySize(KeySizes.AES_128, KeySizes.AES_192, KeySizes.AES_256));
-		KEY_SIZES.put(Algorithm.DES, new ListBitsKeySize(KeySizes.DES));
-		KEY_SIZES.put(Algorithm.RSA, new ListBitsKeySize(KeySizes.RSA_1024, KeySizes.RSA_2048, KeySizes.RSA_4096));
-		KEY_SIZES.put(Algorithm.DES_EDE, new ListBitsKeySize(KeySizes.DES_EDE_128, KeySizes.DES_EDE_192));
-		KEY_SIZES.put(Algorithm.RC2, new ListBitsKeySize(KeySizes.RC2));
-		KEY_SIZES.put(Algorithm.BLOWFISH, new LimitKeySize(KeySizes.BLOFISH_MIN, KeySizes.BLOWFISH_MAX));
+		KEY_SIZES.put(Algorithm.AES, new ListBitsKeySize(KeySize.AES_128, KeySize.AES_192, KeySize.AES_256));
+		KEY_SIZES.put(Algorithm.DES, new ListBitsKeySize(KeySize.DES));
+		KEY_SIZES.put(Algorithm.RSA, new ListBitsKeySize(KeySize.RSA_1024, KeySize.RSA_2048, KeySize.RSA_4096));
+		KEY_SIZES.put(Algorithm.DES_EDE, new ListBitsKeySize(KeySize.DES_EDE_128, KeySize.DES_EDE_192));
+		KEY_SIZES.put(Algorithm.RC2, new ListBitsKeySize(KeySize.RC2));
+		KEY_SIZES.put(Algorithm.BLOWFISH, new LimitKeySize(KeySize.BLOFISH_MIN, KeySize.BLOWFISH_MAX));
 	}
 	
 	
@@ -122,7 +122,7 @@ public class CryptoUtils {
 
 	public static int getKeySizeBits(String algorithm, int baselength) {
 
-		KeySize size = KEY_SIZES.get(algorithm);
+		KeySizeSpec size = KEY_SIZES.get(algorithm);
 
 		int length = baselength;
 		if (size != null) {
@@ -132,11 +132,11 @@ public class CryptoUtils {
 
 	}
 
-	interface KeySize {
+	interface KeySizeSpec {
 		int changeSize(int oldSize);
 	}
 
-	private static class ListBitsKeySize implements KeySize {
+	private static class ListBitsKeySize implements KeySizeSpec {
 
 		private final int[] mSizes;
 
@@ -164,7 +164,7 @@ public class CryptoUtils {
 
 	}
 
-	private static class LimitKeySize implements KeySize {
+	private static class LimitKeySize implements KeySizeSpec {
 
 		private final int mMinSize;
 		private final int mMaxSize;
