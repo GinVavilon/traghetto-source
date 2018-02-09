@@ -8,17 +8,18 @@
  * Detailed information about configuring a multi-project build in Gradle can be found
  * in the user guide at https://docs.gradle.org/3.2.1/userguide/multi_project_builds.html
  */
-
-/*
-// To declare projects as part of a multi-project build use the 'include' method
-include 'shared'
-include 'api'
-include 'services:webservice'
-*/
+if (hasProperty("excludeModule")){
+	ext.excludedModules=excludeModule.split(',')
+} else {
+    ext.excludedModules=[ ]
+  }
 
 def includeModule (String name){
-    include ":$name"
-    project(":$name").projectDir = new File("modules/$name")
+	if (!excludedModules.contains(name)){
+    	include ":$name"
+    	project(":$name").projectDir = new File("modules/$name")
+	}
+
 }
 
 rootProject.name = 'TraghettoSource'
@@ -31,4 +32,6 @@ includeModule 'zip'
 includeModule 'apache-http'
 includeModule 'crypto'
 includeModule 'java-se'
-include ':examples:java-se'
+if (!excludedModules.contains('java-se')){
+	include ':examples:java-se'
+}
