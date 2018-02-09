@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.crypto.spec.SecretKeySpec;
+
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.WritableSource;
@@ -35,7 +37,7 @@ public class CryptoUtils {
 		KEY_SIZES.put(Algorithm.RSA, new ListBitsKeySize(KeySize.RSA_1024, KeySize.RSA_2048, KeySize.RSA_4096));
 		KEY_SIZES.put(Algorithm.DES_EDE, new ListBitsKeySize(KeySize.DES_EDE_128, KeySize.DES_EDE_192));
 		KEY_SIZES.put(Algorithm.RC2, new ListBitsKeySize(KeySize.RC2));
-		KEY_SIZES.put(Algorithm.BLOWFISH, new LimitKeySize(KeySize.BLOFISH_MIN, KeySize.BLOWFISH_MAX));
+		KEY_SIZES.put(Algorithm.BLOWFISH, new LimitKeySize(KeySize.BLOWFISH_MIN, KeySize.BLOWFISH_MAX));
 	}
 	
 	
@@ -60,6 +62,9 @@ public class CryptoUtils {
 
         byte[] encodedPrivateKey = StreamUtils.readSource(privateKeySouce);
 
+        if (isSymetric(algorithm)) {
+            return new SecretKeySpec(encodedPrivateKey, algorithm);
+        }
         KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
         PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(encodedPrivateKey);
         PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
@@ -67,10 +72,27 @@ public class CryptoUtils {
         return privateKey;
     }
 
+    protected static boolean isSymetric(String algorithm) {
+        switch (algorithm) {
+            case Algorithm.AES:
+            case Algorithm.AES_WRAP:
+            case Algorithm.DES:
+            case Algorithm.DES_EDE:
+            case Algorithm.DES_EDE_WRAP:
+            case Algorithm.BLOWFISH:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public static Key loadPublicKey(String algorithm, Source publicKeySouce)
             throws NoSuchAlgorithmException, IOException, InvalidKeySpecException {
 
         byte[] encodedPublicKey = StreamUtils.readSource(publicKeySouce);
+        if (isSymetric(algorithm)) {
+            return new SecretKeySpec(encodedPublicKey, algorithm);
+        }
 
         KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
         X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(encodedPublicKey);
@@ -241,6 +263,20 @@ public class CryptoUtils {
         }
     }
 
+    public static boolean isSupportIv(String mode) {
+        switch (mode) {
+            case Mode.ECB:
+                return false;
+            case Mode.CBC:
+            case Mode.PCBC:
+            case Mode.OFB:
+            case Mode.CFB:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public static String getDefaultMode(String algorithm) {
         switch (algorithm) {
             case Algorithm.RSA:
@@ -257,6 +293,13 @@ public class CryptoUtils {
             default:
                 return Crypto.DEFAULT_PADDING;
         }
+    }
+
+    public static boolean isSupportIv(String algorithm, String mode) {
+        if (mode == null) {
+            mode = getDefaultMode(algorithm);
+        }
+        return isSupportIv(mode);
     }
 
 }

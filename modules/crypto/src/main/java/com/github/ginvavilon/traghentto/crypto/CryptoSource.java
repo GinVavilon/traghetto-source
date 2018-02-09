@@ -50,6 +50,9 @@ public class CryptoSource<T extends Source> extends DelegatedSource<T> implement
     public List<? extends Source> getChildren() {
 		List<Source> list = new ArrayList<>();
 		List<? extends Source> children = mSource.getChildren();
+        if (children == null) {
+            return null;
+        }
 		for (Source source : children) {
 			Source cryptoSource = wrapChild(source);
 			list.add(cryptoSource);

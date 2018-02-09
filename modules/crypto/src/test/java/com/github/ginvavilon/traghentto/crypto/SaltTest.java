@@ -1,4 +1,4 @@
-package com.github.ginvavilon.traghentto.file;
+package com.github.ginvavilon.traghentto.crypto;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -14,7 +14,7 @@ import com.github.ginvavilon.traghentto.crypto.salt.SaltFactory;
 
 public class SaltTest {
 
-	private static final int STEPS = 100000;
+    private static final int STEPS = 1000;
 	private static final byte[] TEST_MESSAGE = "Test".getBytes();
 	private static final byte[] TEST_SALT = "Salts".getBytes();
 

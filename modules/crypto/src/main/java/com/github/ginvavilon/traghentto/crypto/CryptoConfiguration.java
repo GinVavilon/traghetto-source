@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -87,6 +88,16 @@ public class CryptoConfiguration {
 			mAlgorithm = algorithm;
 			return this;
 		}
+
+        public Builder setConfiguration(CryptoConfiguration configuration) {
+            String[] parts = configuration.mAlgorithm.split("/");
+            mAlgorithm = parts[0];
+            mMode = parts[1];
+            mPadding = parts[2];
+            mIvGenerator = configuration.mIvGenerator;
+            mSalt = configuration.mSalt;
+            return this;
+        }
 
 		public Builder setKey(Key key) {
 			putKey(key);
@@ -193,7 +204,7 @@ public class CryptoConfiguration {
 				oldLenght = oldLenght + digest.length;
 			}
 
-			if (mIvGenerator == null) {
+            if (mIvGenerator == null && (CryptoUtils.isSupportIv(mAlgorithm, mMode))) {
 				mIvGenerator = HashIvGenerator.create(hashAlgorithm, hash);
 				SecurityLogger.println("iv", mIvGenerator.generateIv(length));
 			}
@@ -222,6 +233,15 @@ public class CryptoConfiguration {
 			return setKeyPair(keyPair);
 		}
 		
+        public Builder generateKey(int keysize) throws NoSuchAlgorithmException {
+
+            KeyGenerator generator = KeyGenerator.getInstance(mAlgorithm);
+            generator.init(keysize);
+            SecretKey key = generator.generateKey();
+            putKey(key);
+            return this;
+        }
+
 		private Builder setKeyPair(KeyPair keyPair) {
 			setPrivateKey(keyPair.getPrivate());
 			setPublicKey(keyPair.getPublic());

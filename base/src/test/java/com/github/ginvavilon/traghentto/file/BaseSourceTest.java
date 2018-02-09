@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -140,7 +141,12 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
      */
     @Test
     public void testGetLenght() {
-        assertEquals(TEST_FILE_LENGHT, getTestFile().getLenght());
+        assertEquals(getTestFileLenght(), getTestFile().getLenght());
+    }
+
+
+    protected long getTestFileLenght() {
+        return TEST_FILE_LENGHT;
     }
 
     /**
@@ -162,7 +168,7 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
     protected boolean checkClosedStream(StreamResource<InputStream> singleResource) {
         boolean streamClosed = false;
         try {
-            singleResource.getStream().read();
+            int res = singleResource.getStream().read();
         } catch (IOException e) {
             streamClosed = true;
         }
@@ -190,8 +196,21 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
     }
 
     public File getResourceFile(String name) {
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource(name).getFile());
+        return getResourceFile(this, name);
+    }
+
+    public static File getResourceFile(Object test, String name) {
+        ClassLoader classLoader = test.getClass().getClassLoader();
+        URL resource = classLoader.getResource(name);
+        if (resource == null) {
+            throw new IllegalArgumentException(name + " do not exist");
+        }
+        String fileName = resource.getFile();
+        if (fileName == null) {
+            throw new IllegalArgumentException(name + " is not file");
+        }
+
+        File file = new File(fileName);
         return file;
     }
 

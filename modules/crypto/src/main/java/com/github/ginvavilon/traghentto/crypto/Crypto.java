@@ -57,7 +57,7 @@ public interface Crypto {
 	public interface KeySize{
 
 		int BLOWFISH_MAX = 448;
-		int BLOFISH_MIN = 32;
+		int BLOWFISH_MIN = 32;
 		int RC2 = 128;
 		int DES_EDE_192 = 192;
 		int DES_EDE_128 = 128;
@@ -68,6 +68,9 @@ public interface Crypto {
 		int AES_256 = 256;
 		int AES_192 = 192;
 		int AES_128 = 128;
+        int DES_EDE_192_GENERATED = 128;
+        int DES_EDE_128_GENERATED = 112;
+        int DES_GENERATED = 56;
 		
 	}
 
