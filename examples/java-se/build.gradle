@@ -4,6 +4,7 @@ apply plugin: 'eclipse'
 
 dependencies {
     compile project(':java-se')
+    compile project(':crypto')
     testCompile 'junit:junit:4.12'
 }
 eclipse {
