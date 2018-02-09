@@ -36,7 +36,17 @@ subprojects{
                 testOutput jarTest
             }            
         }
+        
+   			       
+	 
+    	if (project.hasProperty('eclipse')) {
+			project.eclipse.project {
+	 			natures 'org.eclipse.buildship.core.gradleprojectnature'
+			}	
+    	}
+        
     }
-
+    
+	
 
 }
