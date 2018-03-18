@@ -11,3 +11,5 @@ eclipse {
         name = 'Traghentto-Http'
     }
 }
+
+applyJavaPublishing (project, 'http', 'Tragnetto-Http')

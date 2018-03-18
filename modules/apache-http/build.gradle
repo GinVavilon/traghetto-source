@@ -1,4 +1,3 @@
-
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
@@ -14,3 +13,5 @@ eclipse {
         name = 'Traghentto-ApacheHttp'
     }
 }
+
+applyJavaPublishing (project, 'http-apache', 'Tragnetto-Http-Apache')

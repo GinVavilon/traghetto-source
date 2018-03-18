@@ -12,3 +12,4 @@ eclipse {
         name = 'Traghentto-File'
     }
 }
+applyJavaPublishing (project, 'file', 'Tragnetto-File')

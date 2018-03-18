@@ -13,3 +13,5 @@ eclipse {
         name = 'Traghentto-Crypto'
     }
 }
+
+applyJavaPublishing (project, 'crypto', 'Tragnetto-Crypto')

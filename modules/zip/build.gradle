@@ -13,3 +13,5 @@ eclipse {
         name = 'Traghentto-Zip'
     }
 }
+
+applyJavaPublishing (project, 'zip', 'Tragnetto-Zip')

@@ -11,3 +11,5 @@ eclipse {
         name = 'Traghentto-Base'
     }
 }
+
+applyJavaPublishing (project, 'base', 'Tragnetto-Base')
