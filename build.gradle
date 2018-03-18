@@ -17,6 +17,7 @@ buildscript {
         classpath 'org.eclipse.jgit:org.eclipse.jgit:4.2.0.+'
         classpath 'com.android.tools.build:gradle:2.3.3'
         classpath 'com.github.ginvavilon:android-eclipse:0.9.+'
+        classpath 'digital.wup:android-maven-publish:1.0.0'
     }
 }
 
@@ -108,19 +109,21 @@ def applyJavaPublishing(def project, def artifact,def name = NAME, def descripti
             archives sourcesJar
             archives javadocJar
         }
-        configurePublishing(project,artifact,artifact,name,description,[project.sourcesJar,project.javadocJar]) 
+        configurePublishing(project,artifact,artifact,name,description,components.java, [project.sourcesJar,project.javadocJar]) 
     }
 
 }
 
-def configurePublishing(def project,def publishName, def artifact, def name = NAME, def description = DESCRIPTION,def archives = []){
+def configurePublishing(def project,def publishName, def artifact, def name = NAME, def description = DESCRIPTION,def component, def archives = []){
    
     project.with {
        
         publishing {
             publications {
                 "$publishName"(MavenPublication) {
-                    from components.java
+                    if (component != null){
+                        from component
+                    }
                     groupId GROUP_ID
                     artifactId artifact
                     version VERSION
