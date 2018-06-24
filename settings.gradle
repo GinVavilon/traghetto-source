@@ -26,6 +26,7 @@ rootProject.name = 'TraghettoSource'
 
 include ':base'
 includeModule 'file'
+includeModule 'path'
 includeModule 'http'
 includeModule 'android'
 includeModule 'zip'
