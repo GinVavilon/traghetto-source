@@ -13,10 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.ginvavilon.traghentto.BaseWritebleSource;
+import com.github.ginvavilon.traghentto.RenamedSource;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceCreator;
 import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.WritableSource;
+import com.github.ginvavilon.traghentto.exceptions.RenameException;
 import com.github.ginvavilon.traghentto.params.ParamNames;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 
@@ -24,7 +26,7 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  * @author Vladimir Baraznovsky
  *
  */
-public class FileSource extends BaseWritebleSource implements Source, WritableSource {
+public class FileSource extends BaseWritebleSource implements Source, WritableSource, RenamedSource {
     private File mFile;
 
     public FileSource(File pFile) {
@@ -178,5 +180,25 @@ public class FileSource extends BaseWritebleSource implements Source, WritableSo
         }
 
     };
+
+    @Override
+    public void rename(RenamedSource source) throws RenameException {
+        if (source instanceof FileSource) {
+            File file = ((FileSource) source).getFile();
+            
+            boolean result = mFile.renameTo(file);
+            if (!result) {
+                throw new RenameException("Rename is failed to file " + String.valueOf(file));
+            }
+            return;
+        }
+        throw new RenameException("Source must be" + this.getClass().getName());
+
+    }
+
+    @Override
+    public boolean canBeRenamed(RenamedSource source) {
+        return source instanceof FileSource;
+    }
 
 }
