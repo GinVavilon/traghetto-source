@@ -136,7 +136,7 @@ def applyJavaPublishing(def project, def artifact,def name = NAME, def descripti
             archives sourcesJar
             archives javadocJar
         }
-        configurePublishing(project,artifact,artifact,name,description,components.java, [project.sourcesJar,project.javadocJar]) 
+        configurePublishing(project,artifact,artifact,name,description,components.java, [project.jar,project.sourcesJar,project.javadocJar]) 
     }
 
 }
