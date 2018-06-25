@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
@@ -21,6 +22,7 @@ import com.github.ginvavilon.traghentto.BaseWritebleSource;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.RenamedSource;
 import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.SourceCreator;
 import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
@@ -217,5 +219,14 @@ public class PathSource extends BaseWritebleSource implements Source, WritableSo
     public String toString() {
         return getUriString();
     }
+
+    public static final SourceCreator<PathSource> CREATOR = new SourceCreator<PathSource>() {
+
+        @Override
+        public PathSource create(String pParam) {
+            return new PathSource(Paths.get(pParam));
+        }
+
+    };
 
 }
