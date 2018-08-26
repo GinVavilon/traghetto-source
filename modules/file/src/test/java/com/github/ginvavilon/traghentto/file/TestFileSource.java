@@ -39,13 +39,11 @@ public class TestFileSource extends BaseSourceTest<FileSource, FileSource> {
     private FileSource mDirectorySource;
     private File mDirectory;
 
-    private String mAbsolutePath;
 
     @Before
     public void setUp() throws Exception {
         File root = getResourceFile(TEST_ASSETS);
         File file = new File(root, TEST_FILE);
-        mAbsolutePath = root.getAbsolutePath();
 
         mDirectory = new File(root, TEST_DIRECTORY);
         mAbsoluteSinglePath = file.getAbsolutePath();

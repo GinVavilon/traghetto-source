@@ -25,11 +25,11 @@ android {
 }
 
 dependencies {
-    compile project(':base')
-    compile project(':http')
-    compile project(':file')
-    compile project(':zip')
-    compile project(':apache-http')
+    api project(':base')
+    compileOnly project(':http')
+    api project(':file')
+    api project(':zip')
+    compileOnly project(':apache-http')
     
 }
 
@@ -64,7 +64,7 @@ task sourcesJar(type: Jar) {
 }
 
 task jar(type: Jar, dependsOn: 'bundleRelease') {
-    from zipTree("$buildDir/intermediates/bundles/default/classes.jar")
+    from zipTree("$buildDir/intermediates/packaged-classes/release/classes.jar")
 }
 
 configurations {
@@ -76,6 +76,5 @@ artifacts {
     archives javadocJar
     archives sourcesJar
 }
-                    
 
 configurePublishing(project,'android','android','Tragnetto-Android',DESCRIPTION,components.android,[jar,sourcesJar,javadocJar]) 
