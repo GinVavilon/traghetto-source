@@ -15,6 +15,7 @@ import com.github.ginvavilon.traghentto.file.CachedSource;
 import com.github.ginvavilon.traghentto.file.DiskLruCache;
 import com.github.ginvavilon.traghentto.file.FileSource;
 import com.github.ginvavilon.traghentto.http.apache.ApacheHttpSource;
+import com.github.ginvavilon.traghentto.path.PathSource;
 import com.github.ginvavilon.traghentto.zip.ZipRandomAccessFileSource;
 
 /**
@@ -31,9 +32,17 @@ public class SourceFactory implements UriConstants {
         register(HTTPS_SCHEME, ApacheHttpSource.CREATOR);
         register(HTTP_SCHEME, ApacheHttpSource.CREATOR);
         registerPath(ZIP_FILE_SCHEME, ZipRandomAccessFileSource.CREATOR);
-        registerPath(FILE_SCHEME, FileSource.CREATOR);
+        usePathSource(true);
         setDefault(FileSource.CREATOR);
 
+    }
+
+    public static void usePathSource(boolean use) {
+        if (use) {
+            registerPath(FILE_SCHEME, PathSource.CREATOR);
+        } else {
+            registerPath(FILE_SCHEME, FileSource.CREATOR);
+        }
     }
 
     public static void register(String protocol, SourceCreator<?> creator) {
