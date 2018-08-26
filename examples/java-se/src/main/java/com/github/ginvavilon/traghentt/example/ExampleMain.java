@@ -29,6 +29,7 @@ import javax.swing.border.CompoundBorder;
 
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Logger.LogHandler;
+import com.github.ginvavilon.traghentto.ResourceSource;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.StreamUtils.ICopyListener;
@@ -48,9 +49,9 @@ public class ExampleMain {
 	
 	private ExecutorService mExecutor=Executors.newSingleThreadExecutor();
 	static {
-		try {
-            FileSource privateKeySource = FileSource.CREATOR.create("files/private.key");
-            FileSource publicKeySource = FileSource.CREATOR.create("files/public.key");
+        try {
+            Source privateKeySource = ResourceSource.CREATOR.create("private.key");
+            Source publicKeySource = ResourceSource.CREATOR.create("public.key");
 
             CryptoConfiguration configuration = CryptoConfiguration.builder()
                     .setAlgorithm(Algorithm.RSA)
