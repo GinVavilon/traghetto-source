@@ -8,6 +8,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.ginvavilon.traghentto.ResourceSource;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceCreator;
 import com.github.ginvavilon.traghentto.UriConstants;
@@ -24,6 +25,7 @@ import com.github.ginvavilon.traghentto.zip.ZipRandomAccessFileSource;
  */
 public class SourceFactory implements UriConstants {
 
+    private static final String RES_SCHEME = "res";
     private static final Map<String, Data> sCreators = new HashMap<>();
     private static Data sDefault;
 
@@ -36,6 +38,8 @@ public class SourceFactory implements UriConstants {
         } catch (ClassNotFoundException e1) {
         }
         registerPath(ZIP_FILE_SCHEME, ZipRandomAccessFileSource.CREATOR);
+        registerPath(RES_SCHEME, ResourceSource.CREATOR);
+        registerPath(RESOURCE_SCHEME, ResourceSource.CREATOR);
         usePathSource(true);
         setDefault(FileSource.CREATOR);
 
