@@ -10,12 +10,15 @@ import android.net.Uri;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceCreator;
 import com.github.ginvavilon.traghentto.UriConstants;
 import com.github.ginvavilon.traghentto.android.creators.AndroidSourceCreator;
 import com.github.ginvavilon.traghentto.android.creators.PathAndroidCreator;
 import com.github.ginvavilon.traghentto.android.creators.UriAndroidCreator;
+import com.github.ginvavilon.traghentto.file.CachedSource;
 import com.github.ginvavilon.traghentto.file.DiskLruCache;
+import com.github.ginvavilon.traghentto.file.FileSource;
 import com.github.ginvavilon.traghentto.http.apache.ApacheHttpSource;
 import com.github.ginvavilon.traghentto.zip.ZipRandomAccessFileSource;
 
@@ -33,7 +36,7 @@ public class SourceFactory implements UriConstants {
         register(HTTPS_SCHEME, ApacheHttpSource.CREATOR);
         register(HTTP_SCHEME, ApacheHttpSource.CREATOR);
         registerPath(ZIP_FILE_SCHEME, ZipRandomAccessFileSource.CREATOR);
-        register(FILE_SCHEME, AndroidFileSource.ANDROID_CREATOR);
+        registerPath(FILE_SCHEME, FileSource.CREATOR);
         register(RESOURCE_SCHEME, ResourceSource.ANDROID_CREATOR);
         register(ASSET_SCHEME, AssetSource.ANDROID_CREATOR);
         setDefault(AssetSource.ANDROID_CREATOR);
@@ -56,7 +59,7 @@ public class SourceFactory implements UriConstants {
         sDefault = creator;
     }
 
-    private static AndroidSource createBasePathUri(Context pContext, Uri uri) {
+    private static Source createBasePathUri(Context pContext, Uri uri) {
         AndroidSourceCreator<?> creator = sCreators.get(uri.getScheme());
         if (creator == null) {
             creator = sDefault;
@@ -66,20 +69,20 @@ public class SourceFactory implements UriConstants {
 
     }
 
-    public static AndroidSource createFromUri(Context pContext, Uri uri) {
-        AndroidSource source = createBasePathUri(pContext, uri);
+    public static Source createFromUri(Context pContext, Uri uri) {
+        Source source = createBasePathUri(pContext, uri);
         if (uri.getFragment() != null) {
             source = source.getChild(uri.getFragment());
         }
         return source;
     }
 
-    public static AndroidSource createCachedIfNeed(AndroidSource pSource,
+    public static Source createCachedIfNeed(Source pSource,
             DiskLruCache pDiskLruCache) {
         if (pSource.isLocal()) {
             return pSource;
         } else {
-            return new AndroidCachedSource<AndroidSource>(pDiskLruCache, pSource);
+            return new CachedSource<Source>(pDiskLruCache, pSource);
         }
     }
 
@@ -88,14 +91,14 @@ public class SourceFactory implements UriConstants {
         return new ResourceSource(resources, pId);
     }
 
-    public static AndroidSource createFromUri(Context pContext, String pUri) {
+    public static Source createFromUri(Context pContext, String pUri) {
         return createFromUri(pContext, Uri.parse(pUri));
     }
 
-    public static AndroidSource createChild(Context pContext, AndroidSource pParent,
+    public static Source createChild(Context pContext, Source pParent,
             String pUri) {
         Uri uri = Uri.parse(pUri);
-        AndroidSource source;
+        Source source;
         if (uri.isRelative()) {
             source = pParent.getChild(uri.getPath());
         } else {

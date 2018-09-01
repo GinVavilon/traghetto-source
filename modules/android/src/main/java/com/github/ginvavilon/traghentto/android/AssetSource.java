@@ -25,7 +25,7 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  * @author Vladimir Baraznovsky
  *
  */
-public class AssetSource extends BaseSource implements AndroidSource {
+public class AssetSource extends BaseSource implements ParselFileDesriptorSource {
 
     private final AssetManager mAssetManager;
     private final String mPath;
@@ -124,7 +124,6 @@ public class AssetSource extends BaseSource implements AndroidSource {
 	    return false;
     }
 
-    @Override
     public Uri getUri() {
 	Uri.Builder builder=Uri.EMPTY.buildUpon();
 	builder.scheme(UriConstants.ASSET_SCHEME);

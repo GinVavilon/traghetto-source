@@ -25,7 +25,6 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  */
 public class CachedSource<T extends Source> extends DelegatedSource<T>
         implements Source, ICopyListener {
-    protected static final int CACHE_VERSION = 0;
     public static final int COUNT_INDEX = 2;
     private static final int INDEX_STREAM = 0;
     private static final int INDEX_SIZE = 1;

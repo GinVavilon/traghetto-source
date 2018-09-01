@@ -23,7 +23,7 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  * @author Vladimir Baraznovsky
  *
  */
-public class ResourceSource extends BaseSource implements AndroidSource {
+public class ResourceSource extends BaseSource implements ParselFileDesriptorSource {
 
     private final Resources mResources;
     private final int mId;
@@ -64,7 +64,6 @@ public class ResourceSource extends BaseSource implements AndroidSource {
 	return mResources.getResourceEntryName(mId);
     }
 
-    @Override
     public Uri getUri() {
 	Uri.Builder builder = Uri.EMPTY.buildUpon();
 	builder.scheme(UriConstants.RESOURCE_SCHEME);
