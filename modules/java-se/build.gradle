@@ -10,6 +10,7 @@ dependencies {
     compileOnly project(':apache-http')
     testImplementation 'junit:junit:4.12'
     testImplementation project(path: ':zip', configuration: 'testOutput')
+    testImplementation project(path: ':base', configuration: 'testOutput')
 }
 eclipse {
     project {
