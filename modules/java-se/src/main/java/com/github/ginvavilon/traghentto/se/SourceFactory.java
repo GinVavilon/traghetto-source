@@ -5,9 +5,8 @@ package com.github.ginvavilon.traghentto.se;
 
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
+import com.github.ginvavilon.traghentto.BaseSourceFactory;
 import com.github.ginvavilon.traghentto.ResourceSource;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceCreator;
@@ -26,8 +25,14 @@ import com.github.ginvavilon.traghentto.zip.ZipRandomAccessFileSource;
 public class SourceFactory implements UriConstants {
 
     private static final String RES_SCHEME = "res";
-    private static final Map<String, Data> sCreators = new HashMap<>();
-    private static Data sDefault;
+
+    private static final BaseSourceFactory<URI> sFactory = new BaseSourceFactory.Builder<URI>()
+            .parser(URI::create)
+            .path(URI::getPath)
+            .checkAbsolute(URI::isAbsolute)
+            .childGetter(URI::getFragment)
+            .uri(URI::toString)
+            .build();
 
     static {
 
@@ -35,14 +40,33 @@ public class SourceFactory implements UriConstants {
             Class.forName("com.github.ginvavilon.traghentto.http.apache.ApacheHttpSource");
             register(HTTPS_SCHEME, ApacheHttpSource.CREATOR);
             register(HTTP_SCHEME, ApacheHttpSource.CREATOR);
-        } catch (ClassNotFoundException e1) {
+        } catch (ClassNotFoundException e) {
         }
         registerPath(ZIP_FILE_SCHEME, ZipRandomAccessFileSource.CREATOR);
         registerPath(RES_SCHEME, ResourceSource.CREATOR);
         registerPath(RESOURCE_SCHEME, ResourceSource.CREATOR);
         usePathSource(true);
         setDefault(FileSource.CREATOR);
+    }
 
+    public static void register(String protocol, SourceCreator<?> creator) {
+        sFactory.register(protocol, creator);
+    }
+
+    public static void registerPath(String protocol, SourceCreator<?> creator) {
+        sFactory.registerPath(protocol, creator);
+    }
+
+    public static void setDefault(SourceCreator<?> creator) {
+        sFactory.setDefault(creator);
+    }
+
+    public static void setDefaultPath(SourceCreator<?> creator) {
+        sFactory.setDefaultPath(creator);
+    }
+
+    public static Source create(String uri) {
+        return sFactory.createFromUri(uri);
     }
 
     public static void usePathSource(boolean use) {
@@ -53,38 +77,9 @@ public class SourceFactory implements UriConstants {
         }
     }
 
-    public static void register(String protocol, SourceCreator<?> creator) {
-        sCreators.put(protocol, new Data(false, creator));
-    }
 
-    public static void registerPath(String protocol, SourceCreator<?> creator) {
-        sCreators.put(protocol, new Data(true, creator));
-    }
-
-    public static void setDefault(SourceCreator<?> creator) {
-        sDefault = new Data(false, creator);
-    }
-
-    public static void setDefaultPath(SourceCreator<?> creator) {
-        sDefault = new Data(true, creator);
-    }
-
-    private static Source createBasePathUri(URI uri) {
-        Data data = sCreators.get(uri.getScheme());
-        if (data == null) {
-            data = sDefault;
-        }
-        String param = data.isPath() ? uri.getPath() : uri.toString();
-        return data.getCreator().create(param);
-
-    }
-
-    public static Source createFromUri(URI url) {
-        Source source = createBasePathUri(url);
-        if (url.getFragment() != null) {
-            source = source.getChild(url.getFragment());
-        }
-        return source;
+    public static Source createFromUri(URI uri) {
+        return sFactory.create(uri);
     }
 
     public static Source createCachedIfNeed(Source pSource, DiskLruCache pDiskLruCache) {
@@ -96,8 +91,7 @@ public class SourceFactory implements UriConstants {
     }
 
     public static Source createFromUrl(String pUri) throws MalformedURLException {
-        return createFromUri(URI.create(pUri));
-
+        return sFactory.createFromUri(pUri);
     }
 
     public static Source createChild(Source pParent, String pUri) throws MalformedURLException {
@@ -111,25 +105,6 @@ public class SourceFactory implements UriConstants {
         return source;
     };
 
-    private static class Data {
-        private final boolean path;
-        private final SourceCreator<?> creator;
 
-        public Data(boolean pPath, SourceCreator<?> pCreator) {
-            super();
-
-            path = pPath;
-            creator = pCreator;
-        }
-
-        public boolean isPath() {
-            return path;
-        }
-
-        public SourceCreator<?> getCreator() {
-            return creator;
-        }
-
-    }
 
 }
