@@ -33,8 +33,13 @@ public class SourceFactory implements UriConstants {
 
     static {
 
-        register(HTTPS_SCHEME, ApacheHttpSource.CREATOR);
-        register(HTTP_SCHEME, ApacheHttpSource.CREATOR);
+        try {
+            Class.forName("com.github.ginvavilon.traghentto.http.apache.ApacheHttpSource");
+            register(HTTPS_SCHEME, ApacheHttpSource.CREATOR);
+            register(HTTP_SCHEME, ApacheHttpSource.CREATOR);
+        } catch (ClassNotFoundException e) {
+        }
+
         registerPath(ZIP_FILE_SCHEME, ZipRandomAccessFileSource.CREATOR);
         registerPath(FILE_SCHEME, FileSource.CREATOR);
         register(RESOURCE_SCHEME, ResourceSource.ANDROID_CREATOR);
