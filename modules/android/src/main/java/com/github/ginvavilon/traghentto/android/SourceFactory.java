@@ -3,6 +3,7 @@
  */
 package com.github.ginvavilon.traghentto.android;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -42,6 +43,8 @@ public class SourceFactory implements UriConstants {
 
         registerPath(ZIP_FILE_SCHEME, ZipRandomAccessFileSource.CREATOR);
         registerPath(FILE_SCHEME, FileSource.CREATOR);
+        register(ContentResolver.SCHEME_ANDROID_RESOURCE, ResourceSource.ANDROID_CREATOR);
+        register(ContentResolver.SCHEME_CONTENT, DocumentSource.ANDROID_CREATOR);
         register(RESOURCE_SCHEME, ResourceSource.ANDROID_CREATOR);
         register(ASSET_SCHEME, AssetSource.ANDROID_CREATOR);
         setDefault(AssetSource.ANDROID_CREATOR);
