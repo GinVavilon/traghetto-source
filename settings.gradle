@@ -38,5 +38,6 @@ if (!excludedModules.contains('java-se')){
 }
 
 if (!excludedModules.contains('android')){
+    includeModule 'glide'
 	include ':examples:android'
 }
