@@ -23,6 +23,7 @@
             <EditText
                 android:id="@+id/txt_input"
                 android:layout_width="0dp"
+                android:inputType="textUri"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>
 
@@ -43,6 +44,7 @@
             <EditText
                 android:id="@+id/txt_output"
                 android:layout_width="0dp"
+                android:inputType="textUri"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>
 

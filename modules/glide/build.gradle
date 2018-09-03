@@ -30,7 +30,8 @@ android {
 
 dependencies {
     api project(':android')
-    api 'com.github.bumptech.glide:glide:4.7.1'
+    compileOnly 'com.github.bumptech.glide:glide:4.8.0'
+    compileOnly 'com.github.bumptech.glide:annotations:4.8.0'
     
 }
 
