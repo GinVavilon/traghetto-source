@@ -8,7 +8,10 @@ package com.github.ginvavilon.traghentto.params;
  *
  */
 public interface ParamNames {
+
     String APPEND = "append";
+    String CREATE = "create";
+
     String IN_SKIP = "in.skip";
     String OUT_SKIP = "out.skip";
     String OUT_READED = "out.skiped";

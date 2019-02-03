@@ -29,6 +29,7 @@ public class SourceFactory implements UriConstants {
     private static final BaseSourceFactory<URI> sFactory = new BaseSourceFactory.Builder<URI>()
             .parser(URI::create)
             .path(URI::getPath)
+            .protocol(URI::getScheme)
             .checkAbsolute(URI::isAbsolute)
             .childGetter(URI::getFragment)
             .uri(URI::toString)

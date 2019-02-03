@@ -92,6 +92,25 @@ public class EncryptoSource<T extends WritableSource> extends CryptoSource<T> im
         RenamedSource renamedSource = extaractRenamedSource(source);
         mSource.rename(renamedSource);
     }
+
+    @Override
+    public boolean canBeDeleted() {
+        return getSource().canBeDeleted();
+    }
+
+    @Override
+    public boolean isWritable() {
+        return getSource().isWritable();
+    }
+
+    @Override
+    public RenamedSource createRenamedSource(String name) {
+        return wrapChild(mSource.createRenamedSource(name));
+    }
 	
+    @Override
+    public String toString() {
+        return "Encrypted!" + getSource();
+    }
 
 }

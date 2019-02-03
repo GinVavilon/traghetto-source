@@ -176,6 +176,9 @@ public class CryptoSource<T extends Source> extends DelegatedSource<T> implement
 		void process(Salt salt, T stream) throws IOException;
 	}
 
-	
+    @Override
+    public String toString() {
+        return "Crypted!" + getSource();
+    }
 
 }

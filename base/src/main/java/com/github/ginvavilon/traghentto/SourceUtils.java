@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.github.ginvavilon.traghentto.StreamUtils.ICopyListener;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
+import com.github.ginvavilon.traghentto.exceptions.RenameException;
 import com.github.ginvavilon.traghentto.exceptions.SourceAlreadyExistsException;
 import com.github.ginvavilon.traghentto.params.ParamNames;
 import com.github.ginvavilon.traghentto.params.StreamParams;
@@ -104,6 +105,13 @@ public class SourceUtils {
         } else {
             return new VoidParams();
         }
+    }
+
+    public static RenamedSource rename(RenamedSource source, String newName)
+            throws RenameException {
+        RenamedSource newSource = source.createRenamedSource(newName);
+        source.rename(newSource);
+        return newSource;
     }
 }
 

@@ -10,6 +10,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
+import android.provider.DocumentsContract.Document;
+import android.support.annotation.RequiresApi;
+import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
 import java.io.FileNotFoundException;
@@ -18,8 +21,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.github.ginvavilon.traghentto.BaseWritebleSource;
+import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.RenamedSource;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.WritableSource;
@@ -63,10 +68,12 @@ public class DocumentSource extends BaseWritebleSource {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mUri = DocumentsContract.createDocument(mContentResolver,
-                    mParentDocument,
+                    toDocumentUri(mParentDocument),
                     getDocumentInfo().getMimeType(),
                     getDocumentInfo().getName());
-            requestInfo();
+            if (mUri != null) {
+                requestInfo();
+            }
         }
         return mUri != null;
     }
@@ -78,17 +85,10 @@ public class DocumentSource extends BaseWritebleSource {
 
     @Override
     public WritableSource getChild(String name) {
-        try (Cursor cursor = mContentResolver.query(mUri,
-                null,
-                DocumentsContract.Document.COLUMN_DOCUMENT_ID
-                        + " = ? OR "
-                        + DocumentsContract.Document.COLUMN_DISPLAY_NAME
-                        + " = ?",
-                new String[]{name, name},
-                null)) {
-            if (cursor.moveToNext()) {
-                CursorInfo cursorInfo = new CursorInfo(cursor);
-                return createChild(cursorInfo);
+
+        for (DocumentSource source : getChildren()) {
+            if (name.equals(source.getName())){
+                return source;
             }
         }
 
@@ -109,10 +109,16 @@ public class DocumentSource extends BaseWritebleSource {
     }
 
     @Override
-    public List<? extends Source> getChildren() {
-
+    public List<? extends DocumentSource> getChildren() {
         List<DocumentSource> children = new ArrayList<>();
-        try (Cursor cursor = mContentResolver.query(mUri, null, null, null, null)) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            return children;
+        }
+        Uri uri = toDocumentUri(mUri);
+        final Uri childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(uri,
+                DocumentsContract.getDocumentId(uri));
+
+        try (Cursor cursor = mContentResolver.query(childrenUri, null, null, null, null)) {
             if (cursor != null) {
                 CursorColumns columns = new CursorColumns(cursor);
                 while (cursor.moveToNext()) {
@@ -124,6 +130,18 @@ public class DocumentSource extends BaseWritebleSource {
         }
 
         return children;
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private static Uri toDocumentUri(Uri uri) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (DocumentsContract.isTreeUri(uri)) {
+                return DocumentsContract.buildDocumentUriUsingTree(uri,
+                        DocumentsContract.getTreeDocumentId(uri));
+            }
+        }
+        return uri;
     }
 
     private DocumentSource createChild(CursorInfo info) {
@@ -140,10 +158,11 @@ public class DocumentSource extends BaseWritebleSource {
 
     @Override
     public boolean isConteiner() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return DocumentsContract.isTreeUri(mUri);
+        if (mUri == null) {
+            return false;
         }
-        return false;
+        String type = getDocumentInfo().getMimeType();
+        return (DocumentsContract.Document.MIME_TYPE_DIR.equals(type) || TextUtils.isEmpty(type));
     }
 
     @Override
@@ -180,6 +199,11 @@ public class DocumentSource extends BaseWritebleSource {
     @Override
     public boolean isDataAvailable() {
         return exists();
+    }
+
+    @Override
+    public RenamedSource createRenamedSource(String name) {
+        return new DocumentSource(mContentResolver, null, new NameDocumentInfo(name), mParentDocument);
     }
 
     @Override
@@ -284,7 +308,7 @@ public class DocumentSource extends BaseWritebleSource {
     }
 
     private void requestInfo() {
-        try (Cursor cursor = mContentResolver.query(mUri, null, null, null, null)) {
+        try (Cursor cursor = mContentResolver.query(toDocumentUri(mUri), null, null, null, null)) {
             if ((cursor != null) && (cursor.moveToNext())) {
                 mDocumentInfo = createInfo(cursor);
             }
@@ -301,6 +325,10 @@ public class DocumentSource extends BaseWritebleSource {
         String getMimeType();
 
         long getSize();
+
+        boolean isSupportDelete();
+
+        boolean isSupportWrite();
     }
 
     private final class NameDocumentInfo implements DocumentInfo {
@@ -330,6 +358,16 @@ public class DocumentSource extends BaseWritebleSource {
         public long getSize() {
             return UNKNOWN_LENGHT;
         }
+
+        @Override
+        public boolean isSupportDelete() {
+            return false;
+        }
+
+        @Override
+        public boolean isSupportWrite() {
+            return false;
+        }
     }
 
     private static class CursorInfo implements DocumentInfo {
@@ -338,6 +376,7 @@ public class DocumentSource extends BaseWritebleSource {
         private long mSize;
         private String mMimeType;
         private String mId;
+        private int mFlags;
 
         public CursorInfo(Cursor cursor) {
             this(cursor, new CursorColumns(cursor));
@@ -352,6 +391,7 @@ public class DocumentSource extends BaseWritebleSource {
             mSize = columns.getSize(cursor);
             mMimeType = columns.getMimeType(cursor);
             mId = columns.getId(cursor);
+            mFlags = columns.getFlags(cursor);
         }
 
         @Override
@@ -369,6 +409,21 @@ public class DocumentSource extends BaseWritebleSource {
             return mMimeType;
         }
 
+        @Override
+        public boolean isSupportDelete() {
+            return checkFlag(Document.FLAG_SUPPORTS_DELETE);
+        }
+
+        private boolean checkFlag(int flags) {
+            return (mFlags & flags) == flags;
+        }
+
+        @Override
+        public boolean isSupportWrite() {
+            return checkFlag(Document.FLAG_SUPPORTS_WRITE)
+                    || checkFlag(Document.FLAG_DIR_SUPPORTS_CREATE);
+        }
+
     }
 
     private static class CursorColumns {
@@ -377,12 +432,14 @@ public class DocumentSource extends BaseWritebleSource {
         private int mId;
         private int mSize;
         private int mMimeType;
+        private int mFlags;
 
         public CursorColumns(Cursor cursor) {
             mName = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME);
             mId = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DOCUMENT_ID);
             mSize = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_SIZE);
             mMimeType = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
+            mFlags = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_FLAGS);
         }
 
         public String getName(Cursor cursor) {
@@ -401,6 +458,10 @@ public class DocumentSource extends BaseWritebleSource {
             return getLong(cursor, mSize, UNKNOWN_LENGHT);
         }
 
+        public int getFlags(Cursor cursor) {
+            return getInt(cursor, mFlags, 0);
+        }
+
         private String getString(Cursor cursor, int column, String def) {
             if (column < 0) {
                 return def;
@@ -414,6 +475,24 @@ public class DocumentSource extends BaseWritebleSource {
             }
             return cursor.getLong(column);
         }
+
+        private int getInt(Cursor cursor, int column, int def) {
+            if (column < 0) {
+                return def;
+            }
+            return cursor.getInt(column);
+        }
+    }
+
+
+    @Override
+    public boolean isWritable() {
+        return mDocumentInfo.isSupportWrite();
+    }
+
+    @Override
+    public boolean canBeDeleted() {
+        return mDocumentInfo.isSupportDelete();
     }
 
     public static final AndroidSourceCreator<DocumentSource> ANDROID_CREATOR = new AndroidSourceCreator<DocumentSource>() {
@@ -423,5 +502,4 @@ public class DocumentSource extends BaseWritebleSource {
             return new DocumentSource(context.getContentResolver(), uri);
         }
     };
-
 }
