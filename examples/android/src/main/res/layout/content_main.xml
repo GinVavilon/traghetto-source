@@ -14,59 +14,28 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:layout_height="wrap_content">
 
-            <EditText
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/txt_input"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:hint="Input"/>
+        </android.support.design.widget.TextInputLayout>
 
-            <Button
-                android:id="@+id/btn_input"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/open"
-                />
-        </LinearLayout>
-
-        <LinearLayout
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:layout_height="wrap_content">
 
-            <EditText
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/txt_output"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:hint="Output"/>
+        </android.support.design.widget.TextInputLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/btn_output_open"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/open"
-                    />
-
-                <Button
-                    android:id="@+id/btn_output_create"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/create"
-                    />
-
-            </LinearLayout>
-        </LinearLayout>
 
         <ProgressBar
             android:id="@+id/progress"
@@ -75,8 +44,15 @@
             android:layout_height="wrap_content"
             />
 
+        <TextView
+            android:id="@+id/type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="image/png"/>
+
         <ImageView
             android:id="@+id/image"
+            android:src="@drawable/ic_encrypted"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </LinearLayout>
