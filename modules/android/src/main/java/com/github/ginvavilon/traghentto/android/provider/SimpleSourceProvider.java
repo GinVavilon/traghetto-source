@@ -11,15 +11,16 @@ import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
+import com.github.ginvavilon.traghentto.Logger;
+import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.SourceUtils;
+
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.github.ginvavilon.traghentto.Logger;
-import com.github.ginvavilon.traghentto.Source;
 
 /**
  * @author vbaraznovsky
@@ -111,7 +112,13 @@ public abstract class SimpleSourceProvider extends SourceDocumentsProvider {
     protected int getRootFlags(String root, Source source) {
 
         return (canWrite(source) ? Root.FLAG_SUPPORTS_CREATE : 0)
-                | (isLocalOnly(source) ? Root.FLAG_LOCAL_ONLY : 0);
+                | (isLocalOnly(source) ? Root.FLAG_LOCAL_ONLY : 0)
+                | (isSupportChild(source) ? Root.FLAG_SUPPORTS_IS_CHILD : 0)
+                ;
+    }
+
+    protected boolean isSupportChild(Source source) {
+        return false;
     }
 
     protected boolean isLocalOnly(Source source) {
@@ -144,6 +151,19 @@ public abstract class SimpleSourceProvider extends SourceDocumentsProvider {
     }
 
     protected abstract Source getRootSource(String name);
+
+    @Override
+    public boolean isChildDocument(String parentDocumentId, String documentId) {
+        try {
+            Source parentSource = getDocumentSource(parentDocumentId);
+            Source documentSource = getDocumentSource(documentId);
+            return SourceUtils.isChild(parentSource,documentSource);
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+
+
+    }
 
     @Override
     protected Source getDocumentSource(String documentId) throws FileNotFoundException {

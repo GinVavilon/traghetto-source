@@ -113,5 +113,16 @@ public class SourceUtils {
         source.rename(newSource);
         return newSource;
     }
+
+    public static boolean isChild(Source parentSource, Source childSource) {
+        if (parentSource == null) {
+            return false;
+        }
+
+        if (childSource == null) {
+            return false;
+        }
+        return childSource.getUriString().startsWith(parentSource.getUriString());
+    }
 }
 

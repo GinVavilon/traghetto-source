@@ -9,10 +9,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.provider.DocumentFile;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -26,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Executors;
 
-import com.github.ginvavilon.traghentto.DelegatedSource;
 import com.github.ginvavilon.traghentto.DeletableSource;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Source;
