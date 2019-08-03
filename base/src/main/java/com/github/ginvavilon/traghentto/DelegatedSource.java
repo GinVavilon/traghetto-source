@@ -16,60 +16,81 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  */
 public abstract class DelegatedSource<T extends Source> implements Source {
 
-    protected final T mSource;
+    private final SourceProvider<T> mSourceProvider;
 
-    public DelegatedSource(T source) {
-        super();
-        mSource = source;
+    protected DelegatedSource(SourceProvider<T> sourceProvider) {
+        mSourceProvider = sourceProvider;
+    }
+    
+    protected DelegatedSource(T source) {
+        this(createSourceProvider(source));
     }
 
     public List<? extends Source> getChildren() {
-        return mSource.getChildren();
+        return mSourceProvider.getSource().getChildren();
     }
 
     public Source getChild(String name) {
-        return mSource.getChild(name);
+        return mSourceProvider.getSource().getChild(name);
     }
 
     public boolean isConteiner() {
-        return mSource.isConteiner();
+        return mSourceProvider.getSource().isConteiner();
     }
 
     public StreamResource<InputStream> openResource(StreamParams pParams)
             throws IOSourceException, IOException {
-        return mSource.openResource(pParams);
+        return mSourceProvider.getSource().openResource(pParams);
     }
 
     public String getPath() {
-        return mSource.getPath();
+        return mSourceProvider.getSource().getPath();
     }
 
     public String getName() {
-        return mSource.getName();
+        return mSourceProvider.getSource().getName();
     }
 
     public String getUriString() {
-        return mSource.getUriString();
+        return mSourceProvider.getSource().getUriString();
     }
 
     public boolean exists() {
-        return mSource.exists();
+        return mSourceProvider.getSource().exists();
     }
 
     public long getLenght() {
-        return mSource.getLenght();
+        return mSourceProvider.getSource().getLenght();
     }
 
     public boolean isLocal() {
-        return mSource.isLocal();
+        return mSourceProvider.getSource().isLocal();
     }
 
     public boolean isDataAvailable() {
-        return mSource.isDataAvailable();
+        return mSourceProvider.getSource().isDataAvailable();
+    }
+
+    protected final T getSource(){
+        return mSourceProvider.getSource();
     }
 
     @Override
     public SourceIterator iterator() {
-        return mSource.iterator();
+        return mSourceProvider.getSource().iterator();
+    }
+
+    private static <T>SourceProvider<T> createSourceProvider(T source) {
+        return new SourceProvider<T>() {
+            @Override
+            public T getSource() {
+                return source;
+            }
+        };
+    }
+
+
+    public interface SourceProvider<T> {
+        T getSource();
     }
 }

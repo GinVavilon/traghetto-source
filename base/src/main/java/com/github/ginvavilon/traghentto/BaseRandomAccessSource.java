@@ -25,7 +25,7 @@ class BaseRandomAccessSource<T extends Source> extends DelegatedSource<T> {
         List<? extends Source> children = null;
         try {
             openStream();
-            children = mSource.getChildren();
+            children = getSource().getChildren();
         } catch (IOException e) {
             Logger.e(e);
         } finally {
@@ -52,7 +52,7 @@ class BaseRandomAccessSource<T extends Source> extends DelegatedSource<T> {
         Source child = null;
         try {
             openStream();
-            child = mSource.getChild(pName);
+            child = getSource().getChild(pName);
         } catch (IOException e) {
             Logger.e(e);
         } finally {
@@ -68,7 +68,7 @@ class BaseRandomAccessSource<T extends Source> extends DelegatedSource<T> {
     public long getLenght() {
         try {
             openStream();
-            return mSource.getLenght();
+            return getSource().getLenght();
         } catch (IOException e) {
             Logger.e(e);
         } finally {
@@ -80,7 +80,7 @@ class BaseRandomAccessSource<T extends Source> extends DelegatedSource<T> {
 
     @Override
     public String toString() {
-        return getUriString().toString();
+        return getUriString();
     }
 
 

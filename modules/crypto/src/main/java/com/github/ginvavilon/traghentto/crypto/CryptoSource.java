@@ -42,14 +42,11 @@ public class CryptoSource<T extends Source> extends DelegatedSource<T> implement
     	mConfiguration=configuration;
 	}
 
-	protected T getSource() {
-		return mSource;
-	}
-    
+
 	@Override
     public List<? extends Source> getChildren() {
 		List<Source> list = new ArrayList<>();
-		List<? extends Source> children = mSource.getChildren();
+		List<? extends Source> children = getSource().getChildren();
         if (children == null) {
             return null;
         }
@@ -66,14 +63,14 @@ public class CryptoSource<T extends Source> extends DelegatedSource<T> implement
 
 	@Override
     public Source getChild(String name) {
-		return wrapChild(mSource.getChild(name));
+		return wrapChild(getSource().getChild(name));
 	}
 
 
 	
 	@Override
 	public StreamResource<InputStream> openResource(StreamParams pParams) throws IOSourceException, IOException {
-		StreamResource<InputStream> resource = mSource.openResource(pParams);
+		StreamResource<InputStream> resource = getSource().openResource(pParams);
 		return wrapStreamResource(resource, Cipher.DECRYPT_MODE, new StreamWrapper<InputStream>() {
 			
 			@Override
@@ -134,7 +131,7 @@ public class CryptoSource<T extends Source> extends DelegatedSource<T> implement
 
 	@Override
     public String getUriString() {
-		return "encrypted-"+mSource.getUriString();
+		return "encrypted-"+getSource().getUriString();
 	}
 
 	private final class CryptoStreamResource<T extends Closeable> implements StreamResource<T> {
