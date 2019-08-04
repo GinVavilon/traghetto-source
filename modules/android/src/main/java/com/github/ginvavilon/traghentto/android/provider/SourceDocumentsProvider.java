@@ -23,6 +23,7 @@ import com.github.ginvavilon.traghentto.DeletableSource;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.RenamedSource;
 import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.android.AssetFileDescriptorSource;
@@ -102,6 +103,19 @@ public abstract class SourceDocumentsProvider extends DocumentsProvider {
         final MatrixCursor result = new MatrixCursor(resolveDocumentProjection(projection));
         includeSource(result, documentId, null, documentId);
         return result;
+    }
+
+
+    @Override
+    public boolean isChildDocument(String parentDocumentId, String documentId) {
+        try {
+            Source parentSource = getDocumentSource(parentDocumentId);
+            Source source = getDocumentSource(documentId);
+            return SourceUtils.isChild(parentSource, source);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override

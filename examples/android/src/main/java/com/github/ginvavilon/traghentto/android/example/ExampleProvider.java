@@ -108,6 +108,14 @@ public class ExampleProvider extends SimpleSourceProvider {
         }
     }
 
+    @Override
+    protected boolean isSupportChildDetection(String root, Source source) {
+        if (source instanceof SimpleSource) {
+            return false;
+        }
+        return super.isSupportChildDetection(root, source);
+    }
+
     private Source createdCryptedSource() {
         try {
             File file = new File(getContext().getFilesDir(), ENCRYPED_DIR);

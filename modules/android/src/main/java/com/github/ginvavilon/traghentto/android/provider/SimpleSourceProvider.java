@@ -109,9 +109,21 @@ public abstract class SimpleSourceProvider extends SourceDocumentsProvider {
     protected abstract String getRootSummary(String root);
 
     protected int getRootFlags(String root, Source source) {
-
         return (canWrite(source) ? Root.FLAG_SUPPORTS_CREATE : 0)
-                | (isLocalOnly(source) ? Root.FLAG_LOCAL_ONLY : 0);
+                | (isLocalOnly(source) ? Root.FLAG_LOCAL_ONLY : 0)
+                | getFlagSupportsIsChild(root, source);
+    }
+
+    private int getFlagSupportsIsChild(String root,Source source) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return isSupportChildDetection(root,source) ? Root.FLAG_SUPPORTS_IS_CHILD : 0;
+        } else {
+            return 0;
+        }
+    }
+
+    protected boolean isSupportChildDetection(String root, Source source) {
+        return source.isConteiner();
     }
 
     protected boolean isLocalOnly(Source source) {
