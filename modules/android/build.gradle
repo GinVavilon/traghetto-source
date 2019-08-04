@@ -67,7 +67,7 @@ task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
-task jar(type: Jar, dependsOn: 'bundleRelease') {
+task jar(type: Jar, dependsOn: 'assembleRelease') {
     from zipTree("$buildDir/intermediates/packaged-classes/release/classes.jar")
 }
 
