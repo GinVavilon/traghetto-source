@@ -33,12 +33,11 @@ install:
   - chmod +x ./gradlew
 jobs:
   include:
-    - stage: clean
-      script: ./gradlew clean
     - stage: test
-      script: ./gradlew test -PexcludeModule=java-se
+      script: ./gradlew clean test -PexcludeModule=java-se
     - stage: assemble
-      script: ./gradlew assemble
+      if: branch != master
+      script: ./gradlew clean assemble
     - stage: upload
       if: branch = master
-      script: ./gradlew bintrayUpload 
+      script: ./gradlew clean assemble bintrayUpload 
