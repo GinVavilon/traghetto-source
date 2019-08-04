@@ -80,7 +80,7 @@ public abstract class DelegatedSource<T extends Source> implements Source {
         return mSourceProvider.getSource().iterator();
     }
 
-    private static <T>SourceProvider<T> createSourceProvider(T source) {
+    protected static <T> SourceProvider<T> createSourceProvider(T source) {
         return new SourceProvider<T>() {
             @Override
             public T getSource() {
