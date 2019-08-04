@@ -51,6 +51,7 @@ androidEclipse{
 }
 
 task androidJavadocs(type: Javadoc) {
+    failOnError false
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 }
@@ -65,7 +66,7 @@ task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
-task jar(type: Jar, dependsOn: 'bundleRelease') {
+task jar(type: Jar, dependsOn: 'assembleRelease') {
     from zipTree("$buildDir/intermediates/packaged-classes/release/classes.jar")
 }
 
