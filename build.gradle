@@ -1,0 +1,186 @@
+ext.GROUP_ID = 'com.github.ginvavilon.traghentto'
+ext.VERSION = '0.6.0'
+ext.REPOSITORY_URL = 'https://github.com/GinVavilon/traghetto-source'
+ext.VCS_URL = 'https://github.com/GinVavilon/traghetto-source.git'
+ext.LICENSES = ['Apache-2.0']
+ext.REPOSITOTY_NAME = 'Traghetto-Source'
+ext.DESCRIPTION = 'Interfaces for join sources of fiiles as files sytem, zip, http'
+ext.PUBLISH = false
+
+buildscript {
+    repositories {
+        jcenter()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.4.0'
+        classpath 'com.github.ginvavilon:android-eclipse:0.9.6'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
+        classpath 'org.eclipse.jgit:org.eclipse.jgit:4.2.0.+'
+        classpath 'digital.wup:android-maven-publish:3.2.0'
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        mavenLocal()
+        google()
+    }
+        
+}
+
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+
+def getGitTag(){
+
+    try{
+        FileRepositoryBuilder builder = new FileRepositoryBuilder();
+        Repository repository = builder.findGitDir(projectDir)
+            .readEnvironment()
+            .build();
+        Git git=Git.wrap(repository)
+        
+        RevWalk walk = new RevWalk(repository);
+        def tagName = git.describe().call()
+        
+        def tag = walk.parseTag(repository.getTags().get(tagName).objectId)
+        return tag
+    } catch (e){
+        return null
+    }
+}
+
+ext.gitTag = getGitTag();
+
+subprojects{
+    afterEvaluate { project ->
+        if (project.tasks.findByName('testClasses')) {
+                configurations {
+                testOutput.extendsFrom (testCompile)
+            }
+    
+            task jarTest (type: Jar, dependsOn: testClasses) {
+                from sourceSets.test.output
+                classifier = 'test'
+            }
+
+            artifacts {
+                testOutput jarTest
+            }            
+        }
+        
+   			       
+	 
+    	if (project.hasProperty('eclipse')) {
+			project.eclipse.project {
+	 			natures 'org.eclipse.buildship.core.gradleprojectnature'
+    			buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
+			}	
+    	}
+        
+    }
+
+}
+
+def updatePom(def pom, def artifactName, def artifactDescription){ 
+    pom.withXml {
+        asNode().children().last() + {
+        resolveStrategy = Closure.DELEGATE_FIRST
+            name artifactName
+            description artifactDescription
+            inceptionYear '2018'
+            url REPOSITORY_URL
+            scm {
+                url REPOSITORY_URL
+            }
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/license/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+            developers {
+                developer {
+                    id 'ginVavilon'
+                    name 'Vladimir Baraznovsky'
+                    email 'ginVavilon@gmail.com'
+                }
+            }
+        }
+    }
+}
+
+
+def applyJavaPublishing(def project, def artifact,def name = NAME, def description = DESCRIPTION){
+   
+    project.with {
+       
+        apply plugin: 'maven-publish'
+        task sourcesJar(type: Jar) {
+            classifier = 'sources'
+            from sourceSets.main.java.srcDirs
+        }
+        
+        task javadocJar(type: Jar, dependsOn: javadoc) {
+            classifier 'javadoc'
+            from javadoc.destinationDir
+        }
+
+        artifacts {
+            archives jar
+            archives sourcesJar
+            archives javadocJar
+        }
+        configurePublishing(project,artifact,artifact,name,description,components.java, [project.jar,project.sourcesJar,project.javadocJar]) 
+    }
+
+}
+
+def configurePublishing(def project,def publishName, def artifact, def name = NAME, def description = DESCRIPTION,def component, def archives = []){
+   
+    project.with {
+       
+        publishing {
+            publications {
+                "$publishName"(MavenPublication) {
+                    if (component != null){
+                        from component
+                    }
+                    groupId GROUP_ID
+                    artifactId artifact
+                    version VERSION
+                    artifacts = archives 
+                    updatePom(pom, name, description)
+                }
+            }
+        }
+        
+        apply plugin: 'com.jfrog.bintray'
+       
+            bintray {
+                user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+                key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+                publications = [publishName]
+                    pkg.repo = 'maven'
+                    pkg.name = REPOSITOTY_NAME
+
+                    pkg.desc = DESCRIPTION
+                    pkg.userOrg = user
+                    pkg.publicDownloadNumbers = PUBLISH
+                    pkg.publish = PUBLISH
+                    pkg.version.name = VERSION
+                    pkg.version.desc = gitTag?.fullMessage
+                    pkg.version.released = gitTag?.taggerIdent?.when?.format("yyyy-MM-dd'T'HH:mm:ss.SSSZZ")
+                
+            }
+        
+    }
+
+}
+
+

@@ -1,0 +1,17 @@
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+dependencies {
+    compile project(':base')
+    testImplementation 'junit:junit:4.12'
+    testImplementation project(':file')
+    testImplementation project(path: ':base', configuration: 'testOutput')
+}
+eclipse {
+    project {
+        name = 'Traghentto-Crypto'
+    }
+}
+
+applyJavaPublishing (project, 'crypto', 'Tragnetto-Crypto')

@@ -1,0 +1,15 @@
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+dependencies {
+    implementation project(':java-se')
+    implementation project(':file')
+    implementation project(':crypto')
+    testImplementation 'junit:junit:4.12'
+}
+eclipse {
+    project {
+        name = 'Traghentto-ExampleSE'
+    }
+}

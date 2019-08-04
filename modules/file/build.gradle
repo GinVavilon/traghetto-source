@@ -1,0 +1,15 @@
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+dependencies {
+    implementation project(':base')
+    testImplementation 'junit:junit:4.12'
+    testImplementation project(path: ':base', configuration: 'testOutput')
+}
+eclipse {
+    project {
+        name = 'Traghentto-File'
+    }
+}
+applyJavaPublishing (project, 'file', 'Tragnetto-File')
