@@ -11,7 +11,10 @@ import com.github.ginvavilon.traghentto.exceptions.RenameException;
  */
 public interface RenamedSource extends Source {
 
+    RenamedSource createRenamedSource(String name);
+
     boolean canBeRenamed(RenamedSource source);
+
     void rename(RenamedSource source) throws RenameException;
 
 }

@@ -13,7 +13,7 @@ import com.github.ginvavilon.traghentto.SourceCreator;
  * @author vbaraznovsky
  *
  */
-public abstract class ProxyAndroidCreator implements AndroidSourceCreator<AndroidProxySource> {
+public abstract class ProxyAndroidCreator implements AndroidSourceCreator<Source> {
 
     protected final SourceCreator<? extends Source> mCreator;
 
@@ -25,10 +25,10 @@ public abstract class ProxyAndroidCreator implements AndroidSourceCreator<Androi
     }
 
     @Override
-    public AndroidProxySource create(Context pContext, Uri pUri) {
+    public Source create(Context pContext, Uri pUri) {
     
         Source source = mCreator.create(getParameter(pUri));
-        return new AndroidProxySource(source);
+        return source;
     }
 
 }

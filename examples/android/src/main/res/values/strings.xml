@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Traghentto Example</string>
+    <string name="action_settings">Settings</string>
+    <string name="open">Open</string>
+    <string name="create">Create</string>
+    <string name="label_assets">Assets</string>
+    <string name="label_files">Files</string>
+    <string name="label_resources">Resources</string>
+    <string name="label_encrypted">Encrypted</string>
+    <string name="result_deleted">Source is deleted</string>
+    <string name="fail_delete">Source is not deleted</string>
+    <string name="failr_not_deletable">Source is not deletable</string>
+    <string name="label_open_for_replace">Open for Replace</string>
+    <string name="label_save_as">Save as...</string>
+    <string name="label_save_to">Save to...</string>
+    <string name="label_delete">Delete</string>
+    <string name="tooltip_create">Create document</string>
+    <string name="tooltip_save_tree">Save to tree</string>
+    <string name="label_open_tree">Open Tree</string>
+    <string name="label_open">Open</string>
+    <string name="tooltip_open_tree">Open tree</string>
+</resources>
