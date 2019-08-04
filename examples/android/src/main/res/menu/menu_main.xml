@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:id="@+id/group_input">
+        <item
+            android:id="@+id/item_open"
+            android:title="@string/label_open"
+            />
+
+        <item
+            android:id="@+id/item_open_tree"
+            android:title="@string/label_open_tree"
+            android:contentDescription="@string/tooltip_open_tree"
+            />
+    </group>
+
+    <group
+        android:id="@+id/group_output"
+        android:menuCategory="secondary">
+        <item
+
+            android:id="@+id/item_replace"
+            android:title="@string/label_open_for_replace"
+            />
+
+        <item
+            android:id="@+id/item_create"
+            android:title="@string/label_save_as"
+            android:contentDescription="@string/tooltip_create"
+            />
+
+        <item
+            android:id="@+id/item_save_tree"
+            android:title="@string/label_save_to"
+            android:contentDescription="@string/tooltip_save_tree"
+            />
+    </group>
+
+    <item
+        android:id="@+id/item_delete"
+        android:icon="@drawable/ic_delete"
+        android:title="@string/label_delete"
+        app:showAsAction="ifRoom"
+        />
+</menu>

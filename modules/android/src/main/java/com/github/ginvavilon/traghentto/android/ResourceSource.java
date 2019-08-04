@@ -4,6 +4,7 @@
 package com.github.ginvavilon.traghentto.android;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
@@ -23,7 +24,7 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  * @author Vladimir Baraznovsky
  *
  */
-public class ResourceSource extends BaseSource implements AndroidSource {
+public class ResourceSource extends BaseSource implements ParselFileDesriptorSource ,AssetFileDescriptorSource{
 
     private final Resources mResources;
     private final int mId;
@@ -64,7 +65,10 @@ public class ResourceSource extends BaseSource implements AndroidSource {
 	return mResources.getResourceEntryName(mId);
     }
 
-    @Override
+    public String getTypeName() {
+	    return mResources.getResourceTypeName(mId);
+    }
+
     public Uri getUri() {
 	Uri.Builder builder = Uri.EMPTY.buildUpon();
 	builder.scheme(UriConstants.RESOURCE_SCHEME);
@@ -115,6 +119,11 @@ public class ResourceSource extends BaseSource implements AndroidSource {
     @Override
     public ParcelFileDescriptor openParcelFileDescriptor() {
         return mResources.openRawResourceFd(mId).getParcelFileDescriptor();
+    }
+
+    @Override
+    public AssetFileDescriptor openAssetFileDescriptor() throws IOException {
+        return mResources.openRawResourceFd(mId);
     }
 
     public static final AndroidSourceCreator<ResourceSource> ANDROID_CREATOR = new AndroidSourceCreator<ResourceSource>() {

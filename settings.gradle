@@ -36,3 +36,7 @@ includeModule 'java-se'
 if (!excludedModules.contains('java-se')){
 	include ':examples:java-se'
 }
+
+if (!excludedModules.contains('android')){
+	include ':examples:android'
+}

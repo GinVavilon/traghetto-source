@@ -23,7 +23,7 @@ public class RandomAccessSource extends BaseRandomAccessSource<StreamSource> imp
     public StreamResource<InputStream> openResource(StreamParams pParams)
             throws IOSourceException, IOException {
         openStream();
-        StreamResource<InputStream> resource = mSource.openResource(pParams);
+        StreamResource<InputStream> resource = getSource().openResource(pParams);
         return new RandomSourceResource(resource);
     }
 
@@ -44,7 +44,7 @@ public class RandomAccessSource extends BaseRandomAccessSource<StreamSource> imp
                 exception = e;
             } finally {
                 try {
-                    mSource.close();
+                    getSource().close();
                 } catch (IOException e) {
                     if (exception != null) {
                         exception.addSuppressed(e);
@@ -71,7 +71,7 @@ public class RandomAccessSource extends BaseRandomAccessSource<StreamSource> imp
 
         @Override
         public boolean isOpened() {
-            return mSource.isOpened() && mResource.isOpened();
+            return getSource().isOpened() && mResource.isOpened();
         }
     }
 
@@ -79,7 +79,7 @@ public class RandomAccessSource extends BaseRandomAccessSource<StreamSource> imp
     public SourceIterator iterator() {
         try {
             openStream();
-            SourceIterator iterator = mSource.iterator();
+            SourceIterator iterator = getSource().iterator();
             return new SourceIterator() {
 
                 @Override

@@ -15,6 +15,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,6 +93,13 @@ public class PathSource extends BaseWritebleSource implements Source, WritableSo
         });
     }
 
+    
+    @Override
+    public RenamedSource createRenamedSource(String name) {
+        Path parent = mPath.getParent();
+        return new PathSource(parent.resolve(name));
+    }
+    
     @Override
     public boolean canBeRenamed(RenamedSource source) {
         return source instanceof PathSource;
@@ -139,13 +147,17 @@ public class PathSource extends BaseWritebleSource implements Source, WritableSo
     @Override
     protected OutputStream openOutputStream(StreamParams pParams) throws IOException {
         StreamParams params = SourceUtils.getSaflyParams(pParams);
-        StandardOpenOption[] options;
+        List<StandardOpenOption> options = new LinkedList<>();
         if (params.getProperty(ParamNames.APPEND, false)) {
-            options = new StandardOpenOption[] { StandardOpenOption.APPEND };
-        } else {
-            options = new StandardOpenOption[0];
+            options.add(StandardOpenOption.APPEND);
         }
-        return Files.newOutputStream(mPath, options);
+
+        if (params.getProperty(ParamNames.CREATE, true)) {
+            options.add(StandardOpenOption.CREATE);
+        }
+
+        return Files.newOutputStream(mPath,
+                options.toArray(new StandardOpenOption[options.size()]));
 
     }
 
@@ -228,5 +240,15 @@ public class PathSource extends BaseWritebleSource implements Source, WritableSo
         }
 
     };
+
+    @Override
+    public boolean canBeDeleted() {
+        return Files.isWritable(mPath);
+    }
+
+    @Override
+    public boolean isWritable() {
+        return Files.isWritable(mPath);
+    }
 
 }

@@ -30,6 +30,8 @@ public class Logger {
         public static final int CACHE = 2;
         public static final int HTTP = 4;
         public static final int SOURCE = 8;
+        public static final int MODULE = 16;
+        public static final int APPLICATION = 32;
 
     }
 

@@ -274,4 +274,9 @@ public class ZipFileSource extends BaseZipSouce implements StreamSource,Deletabl
         };
     }
 
+    @Override
+    public boolean canBeDeleted() {
+        return mFile.canWrite();
+    }
+
 }

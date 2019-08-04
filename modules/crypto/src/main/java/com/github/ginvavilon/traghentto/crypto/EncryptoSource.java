@@ -56,7 +56,7 @@ public class EncryptoSource<T extends WritableSource> extends CryptoSource<T> im
 
 	@Override
 	public StreamResource<OutputStream> openOutputResource(StreamParams pParams) throws IOException, IOSourceException {
-		StreamResource<OutputStream> resource = mSource.openOutputResource(pParams);
+		StreamResource<OutputStream> resource = getSource().openOutputResource(pParams);
 		return wrapStreamResource(resource, Cipher.ENCRYPT_MODE,new StreamWrapper<OutputStream>() {
 
 			@Override
@@ -75,7 +75,7 @@ public class EncryptoSource<T extends WritableSource> extends CryptoSource<T> im
         RenamedSource renamedSource = source;
         if (source instanceof EncryptoSource<?>) {
             EncryptoSource<?> encryptoSource = (EncryptoSource<?>) source;
-            renamedSource = encryptoSource.mSource;
+            renamedSource = encryptoSource.getSource();
         }
         return renamedSource;
     }
@@ -83,15 +83,34 @@ public class EncryptoSource<T extends WritableSource> extends CryptoSource<T> im
     @Override
     public boolean canBeRenamed(RenamedSource source) {
         RenamedSource renamedSource = extaractRenamedSource(source);
-        return mSource.canBeRenamed(renamedSource);
+        return getSource().canBeRenamed(renamedSource);
 
     }
 
     @Override
     public void rename(RenamedSource source) throws RenameException {
         RenamedSource renamedSource = extaractRenamedSource(source);
-        mSource.rename(renamedSource);
+        getSource().rename(renamedSource);
+    }
+
+    @Override
+    public boolean canBeDeleted() {
+        return getSource().canBeDeleted();
+    }
+
+    @Override
+    public boolean isWritable() {
+        return getSource().isWritable();
+    }
+
+    @Override
+    public RenamedSource createRenamedSource(String name) {
+        return wrapChild(getSource().createRenamedSource(name));
     }
 	
+    @Override
+    public String toString() {
+        return "Encrypted!" + getSource();
+    }
 
 }
