@@ -21,6 +21,9 @@ android:
     - 'android-sdk-preview-license-52d11cd2'
     - 'android-sdk-license-.+'
     - 'google-gdk-license-.+'
+before_install:
+  - yes | sdkmanager "platforms;android-26"
+  - yes | sdkmanager "build-tools;27.0.3"
 cache:
   directories:
     - $HOME/.gradle/caches/
