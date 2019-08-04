@@ -8,6 +8,8 @@ import android.util.Log;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Logger.LogHandler;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * @author vbaraznovsky
  *
@@ -46,8 +48,12 @@ public class AndroidLogHadler implements LogHandler {
         Logger.register(new AndroidLogHadler(tag));
     }
 
+    private static AtomicBoolean sInit = new AtomicBoolean(false);
+
     public static void init() {
-        init(DEFAULT_TAG);
+        if (!sInit.getAndSet(true)) {
+            init(DEFAULT_TAG);
+        }
     }
 
 }

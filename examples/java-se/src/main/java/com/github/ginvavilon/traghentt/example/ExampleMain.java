@@ -46,9 +46,9 @@ import com.github.ginvavilon.traghentto.se.SourceFactory;
  *
  */
 public class ExampleMain {
-	
-	private ExecutorService mExecutor=Executors.newSingleThreadExecutor();
-	static {
+
+    private ExecutorService mExecutor = Executors.newSingleThreadExecutor();
+    static {
         try {
             Source privateKeySource = ResourceSource.CREATOR.create("private.key");
             Source publicKeySource = ResourceSource.CREATOR.create("public.key");
@@ -59,27 +59,18 @@ public class ExampleMain {
                     .loadPublicKey(publicKeySource)
                     .build();
 
-			
-			SourceFactory.registerPath("sfile", CryptoSourceCreator.createByPassword(FileSource.CREATOR,
-					"testKey8Exampl56"));
+            SourceFactory.registerPath("sfile",
+                    CryptoSourceCreator.createByPassword(FileSource.CREATOR,
+                            "testKey8Exampl56"));
+
             SourceFactory.registerPath("rsa-file",
                     CryptoSourceCreator.create(FileSource.CREATOR,
                             configuration));
-			
-		} catch (InvalidKeySpecException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException | InvalidKeyException | IOException e) {
             e.printStackTrace();
         }
-	} 
+    }
 
     /**
      * @author vbaraznovsky
@@ -88,7 +79,7 @@ public class ExampleMain {
     private final class LogListner implements ICopyListener {
         private final StringBuilder mLogBuilder;
         private final Source mIn;
-		private Future<?> mTask;
+        private Future<?> mTask;
 
         private LogListner(StringBuilder pLog, Source pOut) {
             mLogBuilder = pLog;
@@ -105,44 +96,44 @@ public class ExampleMain {
 
         @Override
         public void onProgress(long pRadedByte) {
-			sentToLog(new Runnable() {
+            sentToLog(new Runnable() {
 
-				@Override
-				public void run() {
+                @Override
+                public void run() {
 
-					long lenght = mIn.getLenght();
-					mLogBuilder.append(String.format("Progress %s/%s", pRadedByte, lenght));
-					mLogBuilder.append("\n");
-					log();
-					int size = (int) (100 * pRadedByte / lenght);
-					mProgressBar.setValue(size);
+                    long lenght = mIn.getLenght();
+                    mLogBuilder.append(String.format("Progress %s/%s", pRadedByte, lenght));
+                    mLogBuilder.append("\n");
+                    log();
+                    int size = (int) (100 * pRadedByte / lenght);
+                    mProgressBar.setValue(size);
 
-				}
-			});
+                }
+            });
 
         }
 
-		protected void sentToLog(Runnable task) {
-			if (mTask != null) {
-				mTask.cancel(false);
-			}
-			mTask = mExecutor.submit(task);
-		}
+        protected void sentToLog(Runnable task) {
+            if (mTask != null) {
+                mTask.cancel(false);
+            }
+            mTask = mExecutor.submit(task);
+        }
 
         @Override
         public void onFail(Throwable pE) {
-        	sentToLog(new Runnable() {
-				
-				@Override
-				public void run() {
-					mLogBuilder.append("Fail: ");
-		            mLogBuilder.append(pE.getMessage());
-		            mLogBuilder.append("\n");
-		            log();
-					
-				}
-			});
-            
+            sentToLog(new Runnable() {
+
+                @Override
+                public void run() {
+                    mLogBuilder.append("Fail: ");
+                    mLogBuilder.append(pE.getMessage());
+                    mLogBuilder.append("\n");
+                    log();
+
+                }
+            });
+
             pE.printStackTrace();
 
         }
@@ -153,15 +144,15 @@ public class ExampleMain {
 
         @Override
         public void onCompite() {
-        	sentToLog(new Runnable() {
-				
-				@Override
-				public void run() {
-					mLogBuilder.append("Complite");
-					mProgressBar.setValue(100);
-					log();
-				}
-			});
+            sentToLog(new Runnable() {
+
+                @Override
+                public void run() {
+                    mLogBuilder.append("Complite");
+                    mProgressBar.setValue(100);
+                    log();
+                }
+            });
 
         }
     }
@@ -198,7 +189,7 @@ public class ExampleMain {
             @Override
             public void e(int pType, Throwable pE) {
                 if (pE != null) {
-                pE.printStackTrace();
+                    pE.printStackTrace();
                 }
             }
 

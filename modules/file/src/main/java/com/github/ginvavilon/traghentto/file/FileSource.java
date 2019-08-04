@@ -5,6 +5,7 @@ package com.github.ginvavilon.traghentto.file;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -107,6 +108,10 @@ public class FileSource extends BaseWritebleSource implements Source, WritableSo
     @Override
     protected OutputStream openOutputStream(StreamParams pParams) throws IOException {
         StreamParams params = SourceUtils.getSaflyParams(pParams);
+        if (!(params.getProperty(ParamNames.CREATE, true) || exists())) {
+            throw new FileNotFoundException();
+        }
+
         return new FileOutputStream(mFile, params.getProperty(ParamNames.APPEND, false));
     }
 
@@ -197,8 +202,25 @@ public class FileSource extends BaseWritebleSource implements Source, WritableSo
     }
 
     @Override
+    public RenamedSource createRenamedSource(String name) {
+        File parentFile = mFile.getParentFile();
+        return new FileSource(new File(parentFile, name));
+    }
+
+    @Override
     public boolean canBeRenamed(RenamedSource source) {
         return source instanceof FileSource;
     }
+
+    @Override
+    public boolean canBeDeleted() {
+        return mFile.canWrite();
+    }
+
+    @Override
+    public boolean isWritable() {
+        return mFile.canWrite();
+    }
+
 
 }

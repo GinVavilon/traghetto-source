@@ -49,7 +49,7 @@ public class CachedSource<T extends Source> extends DelegatedSource<T>
             Editor editor = mDiskLruCache.edit(key);
             if (editor != null) {
                 OutputStream out = editor.newOutputStream(INDEX_STREAM);
-                StreamResource<InputStream> inResource = mSource.openResource(pParams);
+                StreamResource<InputStream> inResource = getSource().openResource(pParams);
                 InputStream in = inResource.getStream();
                 try {
                     long size = StreamUtils.copyStream(in, out, false, true, this);
@@ -70,12 +70,12 @@ public class CachedSource<T extends Source> extends DelegatedSource<T>
             }
         }
 
-        return mSource.openResource(pParams);
+        return getSource().openResource(pParams);
     }
 
 
     private String getKey() {
-	String key = FileUtils.hashKeyForDisk(mSource.getUriString().toString());
+	String key = FileUtils.hashKeyForDisk(getSource().getUriString());
 	return key;
     }
 
@@ -97,12 +97,12 @@ public class CachedSource<T extends Source> extends DelegatedSource<T>
         } finally {
             StreamUtils.close(snapshot);
 	}
-	return mSource.getLenght();
+	return getSource().getLenght();
     }
 
     @Override
     public void onStart() {
-        Logger.d(Level.SOURCE | Level.CACHE, "Start put into cache %s", mSource.getUriString());
+        Logger.d(Level.SOURCE | Level.CACHE, "Start put into cache %s", getSource().getUriString());
 
     }
 
@@ -116,17 +116,17 @@ public class CachedSource<T extends Source> extends DelegatedSource<T>
 
     @Override
     public void onFail(Throwable pE) {
-        Logger.e("Fail put into cache %s", pE, mSource.getUriString());
+        Logger.e("Fail put into cache %s", pE, getSource().getUriString());
     }
 
     @Override
     public void onCompite() {
-        Logger.d(Level.CACHE | Level.SOURCE, "Finish put into cache %s", mSource.getUriString());
+        Logger.d(Level.CACHE | Level.SOURCE, "Finish put into cache %s", getSource().getUriString());
     }
 
     @Override
     public String toString() {
-        return getUriString().toString();
+        return getUriString();
     }
 
     @Override

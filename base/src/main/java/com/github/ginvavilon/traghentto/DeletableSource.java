@@ -11,4 +11,6 @@ public interface DeletableSource extends Source {
 
     boolean delete();
 
+    boolean canBeDeleted();
+
 }

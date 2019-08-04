@@ -3,10 +3,11 @@
  */
 package com.github.ginvavilon.traghentto.android;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import android.content.Context;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.Resources;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 
 import com.github.ginvavilon.traghentto.BaseSource;
 import com.github.ginvavilon.traghentto.StreamUtils;
@@ -14,16 +15,16 @@ import com.github.ginvavilon.traghentto.UriConstants;
 import com.github.ginvavilon.traghentto.android.creators.AndroidSourceCreator;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.net.Uri;
-import android.os.ParcelFileDescriptor;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Vladimir Baraznovsky
  *
  */
-public class ResourceSource extends BaseSource implements ParselFileDesriptorSource {
+public class ResourceSource extends BaseSource implements ParselFileDesriptorSource ,AssetFileDescriptorSource{
 
     private final Resources mResources;
     private final int mId;
@@ -62,6 +63,10 @@ public class ResourceSource extends BaseSource implements ParselFileDesriptorSou
     @Override
     public String getName() {
 	return mResources.getResourceEntryName(mId);
+    }
+
+    public String getTypeName() {
+	    return mResources.getResourceTypeName(mId);
     }
 
     public Uri getUri() {
@@ -122,6 +127,11 @@ public class ResourceSource extends BaseSource implements ParselFileDesriptorSou
     @Override
     public ParcelFileDescriptor openParcelFileDescriptor() {
         return mResources.openRawResourceFd(mId).getParcelFileDescriptor();
+    }
+
+    @Override
+    public AssetFileDescriptor openAssetFileDescriptor() throws IOException {
+        return mResources.openRawResourceFd(mId);
     }
 
     public static final AndroidSourceCreator<ResourceSource> ANDROID_CREATOR = new AndroidSourceCreator<ResourceSource>() {

@@ -17,6 +17,9 @@ public interface WritableSource extends DeletableSource, RenamedSource {
 
     boolean create() throws IOException;
     boolean createConteiner() throws IOException;
+
+    boolean isWritable();
+
     WritableSource getChild(String name);
 
     StreamResource<OutputStream> openOutputResource(StreamParams pParams) throws IOException, IOSourceException;
