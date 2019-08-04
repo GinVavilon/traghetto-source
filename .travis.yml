@@ -1,4 +1,11 @@
 language: android
+branches:
+  only:
+  - master
+  - develop
+  - /feature\/.+/
+  - /release\/.+/
+  - /hotfix\/.+/
 android:
   components:
     # Uncomment the lines below if you want to

@@ -1,5 +1,5 @@
 ext.GROUP_ID = 'com.github.ginvavilon.traghentto'
-ext.VERSION = '0.6.0'
+ext.VERSION = '0.6.1'
 ext.REPOSITORY_URL = 'https://github.com/GinVavilon/traghetto-source'
 ext.VCS_URL = 'https://github.com/GinVavilon/traghetto-source.git'
 ext.LICENSES = ['Apache-2.0']
@@ -17,7 +17,7 @@ buildscript {
         classpath 'com.github.ginvavilon:android-eclipse:0.9.6'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
         classpath 'org.eclipse.jgit:org.eclipse.jgit:4.2.0.+'
-        classpath 'digital.wup:android-maven-publish:3.2.0'
+        classpath 'digital.wup:android-maven-publish:3.6.2'
     }
 }
 
