@@ -11,8 +11,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.ActionMode;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -41,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String IMAGE_MIME_TIPE_PREFIX = "image/";
 
     public static final String URL = "https://www.w3schools.com/w3css/img_lights.jpg";
+    public static final String IMAGE_PNG = "image/png";
+    public static final String IMAGE_JPEG = "image/jpeg";
+
     static {
         AndroidLogHadler.init();
     }
@@ -50,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressBar mProgress;
     private ImageView mImageView;
-    private String mMimeType = "image/png";
+    private String mMimeType = IMAGE_PNG;
     private TextView mTypeText;
 
     @Override
@@ -80,6 +86,38 @@ public class MainActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 updateInput(v);
                 return false;
+            }
+        });
+
+        configureInputMenu();
+    }
+
+    private void configureInputMenu() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return;
+        }
+
+        mInputText.setCustomInsertionActionModeCallback(new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                MenuInflater menuInflater = getMenuInflater();
+                menuInflater.inflate(R.menu.input_menu, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                 return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                 return onOptionsItemSelected(menuItem);
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+
             }
         });
     }
@@ -178,6 +216,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.item_delete:
                 onDelete();
                 return true;
+            case R.id.item_open_web_image:
+                openImageInputSource(SourceFactory.createFromUri(this, URL), IMAGE_JPEG);
+                return true;
+            case R.id.item_open_resource_image:
+                openImageInputSource(SourceFactory.createFromResource(this, R.mipmap.sample), IMAGE_PNG);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -252,6 +296,13 @@ public class MainActivity extends AppCompatActivity {
             mImageView.setImageDrawable(null);
         }
 
+    }
+
+    void openImageInputSource(Source inputSource, String mimeType){
+        mMimeType = mimeType;
+        mTypeText.setText(mMimeType);
+        mInputText.setText(inputSource.getUriString());
+        show(inputSource);
     }
 
     private void show(Source source) {
