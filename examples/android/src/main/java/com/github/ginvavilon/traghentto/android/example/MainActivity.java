@@ -3,35 +3,29 @@ package com.github.ginvavilon.traghentto.android.example;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.provider.DocumentFile;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.ActionMode;
+import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.Executors;
-
-import com.github.ginvavilon.traghentto.DelegatedSource;
 import com.github.ginvavilon.traghentto.DeletableSource;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceUtils;
-import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.android.AndroidLogHadler;
@@ -40,11 +34,18 @@ import com.github.ginvavilon.traghentto.android.SourceFactory;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.exceptions.SourceAlreadyExistsException;
 
+import java.io.IOException;
+import java.util.concurrent.Executors;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final String DEFAULT_NAME = "new";
     public static final String OPEN_TYPE = "*/*";
     public static final String IMAGE_MIME_TIPE_PREFIX = "image/";
+
+    public static final String URL = "https://www.w3schools.com/w3css/img_lights.jpg";
+    public static final String IMAGE_PNG = "image/png";
+    public static final String IMAGE_JPEG = "image/jpeg";
 
     static {
         AndroidLogHadler.init();
@@ -54,25 +55,83 @@ public class MainActivity extends AppCompatActivity {
     private TextView mOutputText;
 
     private ProgressBar mProgress;
-    private String mMimeType = "image/png";
+    private ImageView mImageView;
+    private String mMimeType = IMAGE_PNG;
     private TextView mTypeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mProgress = findViewById(R.id.progress);
+        mInputText = findViewById(R.id.txt_input);
+        mOutputText = findViewById(R.id.txt_output);
+        mImageView = findViewById(R.id.image);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mProgress = findViewById(R.id.progress);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(this::startCopy);
+
         mInputText = findViewById(R.id.txt_input);
         mTypeText = findViewById(R.id.type);
         Source initialInput = SourceFactory.createFromResource(this, R.mipmap.sample);
+
         mInputText.setText(initialInput.getUriString());
         show(initialInput);
-        mOutputText = findViewById(R.id.txt_output);
+
+        mInputText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                updateInput(v);
+                return false;
+            }
+        });
+
+        configureInputMenu();
+    }
+
+    private void configureInputMenu() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return;
+        }
+
+        mInputText.setCustomInsertionActionModeCallback(new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                MenuInflater menuInflater = getMenuInflater();
+                menuInflater.inflate(R.menu.input_menu, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                 return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                 return onOptionsItemSelected(menuItem);
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+
+            }
+        });
+    }
+
+    private void updateInput(TextView v) {
+        CharSequence text = v.getText();
+        Source source = SourceFactory.createFromUri(v.getContext(), text.toString());
+        show(source);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        updateInput(mInputText);
     }
 
     private void startCopy(View view) {
@@ -157,6 +216,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.item_delete:
                 onDelete();
                 return true;
+            case R.id.item_open_web_image:
+                openImageInputSource(SourceFactory.createFromUri(this, URL), IMAGE_JPEG);
+                return true;
+            case R.id.item_open_resource_image:
+                openImageInputSource(SourceFactory.createFromResource(this, R.mipmap.sample), IMAGE_PNG);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -227,19 +292,24 @@ public class MainActivity extends AppCompatActivity {
         mTypeText.setText(mMimeType);
         if (mMimeType.startsWith(IMAGE_MIME_TIPE_PREFIX)) {
             show(inputSource);
+        } else {
+            mImageView.setImageDrawable(null);
         }
 
     }
 
-    private void show(Source source) {
-        ImageView view = findViewById(R.id.image);
-        try (StreamResource<InputStream> resource = source.openResource(null)) {
+    void openImageInputSource(Source inputSource, String mimeType){
+        mMimeType = mimeType;
+        mTypeText.setText(mMimeType);
+        mInputText.setText(inputSource.getUriString());
+        show(inputSource);
+    }
 
-            Bitmap bitmap = BitmapFactory.decodeStream(resource.getStream());
-            view.setImageBitmap(bitmap);
-        } catch (IOException | IOSourceException e) {
-            Logger.e(e);
-        }
+    private void show(Source source) {
+
+        GlideApp.with(this)
+                .load(source)
+                .into(mImageView);
     }
 
     private class CopyAsyncTask extends AsyncTask<Source, Long, Source> implements StreamUtils.ICopyListener {

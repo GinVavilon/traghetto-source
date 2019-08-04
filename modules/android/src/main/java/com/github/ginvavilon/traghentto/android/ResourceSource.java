@@ -9,16 +9,16 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.github.ginvavilon.traghentto.BaseSource;
 import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.UriConstants;
 import com.github.ginvavilon.traghentto.android.creators.AndroidSourceCreator;
 import com.github.ginvavilon.traghentto.params.StreamParams;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Vladimir Baraznovsky
@@ -116,6 +116,14 @@ public class ResourceSource extends BaseSource implements ParselFileDesriptorSou
         return getUri().toString();
     }
 
+    public int getId() {
+        return mId;
+    }
+
+    public Resources getResources() {
+        return mResources;
+    }
+
     @Override
     public ParcelFileDescriptor openParcelFileDescriptor() {
         return mResources.openRawResourceFd(mId).getParcelFileDescriptor();
@@ -151,5 +159,7 @@ public class ResourceSource extends BaseSource implements ParselFileDesriptorSou
             return new ResourceSource(resources, id);
         }
     };
+
+
 
 }
