@@ -1,9 +1,9 @@
 
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'eclipse'
 
 dependencies {
-    compile project(':base')
+    api project(':base')
     testImplementation 'junit:junit:4.12'
     testImplementation project(':file')
     testImplementation project(path: ':base', configuration: 'testOutput')
