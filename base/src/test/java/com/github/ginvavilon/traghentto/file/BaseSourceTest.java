@@ -11,6 +11,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -70,7 +71,15 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
 
         mRoot = getRootSource();
         mTestFileSource = (TChild) mRoot.getChild(TEST_FILE);
+        if (mTestFileSource == null){
+            throw new FileNotFoundException("File " + TEST_FILE + " is not found in " + mRoot);
+        }
         mTestDirectorySource = (TChild) mRoot.getChild(TEST_DIRECTORY);
+
+        if (mTestDirectorySource == null){
+            throw new FileNotFoundException("Directory " + TEST_DIRECTORY + " is not found in " + mRoot);
+        }
+
     }
 
     public TChild getTestFile() {

@@ -17,5 +17,14 @@ eclipse {
         name = 'Traghentto-JavaSE'
     }
 }
+sourceSets {
+    test{
+        runtimeClasspath  = files('/home/vbaraznovsky/workspaces/Traghetto/TraghettoSource/modules/zip/src/test/resources/')
+    }
+}
+test {
+    testLogging.showStandardStreams = true
 
+
+}
 applyJavaPublishing (project, 'javase', 'Tragnetto-JavaSE')
