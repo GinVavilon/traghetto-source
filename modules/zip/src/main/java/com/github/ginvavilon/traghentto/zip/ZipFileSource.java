@@ -85,6 +85,9 @@ public class ZipFileSource extends BaseZipSouce implements StreamSource,Deletabl
 
     @Override
     public void close() throws IOException {
+        if (mZipFile == null) {
+            return;
+        }
 	mZipFile.close();
 	mZipFile = null;
     }
