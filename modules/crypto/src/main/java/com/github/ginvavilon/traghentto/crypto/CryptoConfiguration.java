@@ -1,5 +1,14 @@
 package com.github.ginvavilon.traghentto.crypto;
 
+import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.crypto.iv.ConstIvGenerator;
+import com.github.ginvavilon.traghentto.crypto.iv.DisabledIvGenerator;
+import com.github.ginvavilon.traghentto.crypto.iv.HashIvGenerator;
+import com.github.ginvavilon.traghentto.crypto.iv.IvGenerator;
+import com.github.ginvavilon.traghentto.crypto.salt.NoSalt;
+import com.github.ginvavilon.traghentto.crypto.salt.Salt;
+import com.github.ginvavilon.traghentto.crypto.salt.SaltFactory;
+
 import java.io.IOException;
 import java.security.Key;
 import java.security.KeyPair;
@@ -19,16 +28,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.github.ginvavilon.traghentto.Source;
-import com.github.ginvavilon.traghentto.crypto.iv.ConstIvGenerator;
-import com.github.ginvavilon.traghentto.crypto.iv.DisabledIvGenerator;
-import com.github.ginvavilon.traghentto.crypto.iv.HashIvGenerator;
-import com.github.ginvavilon.traghentto.crypto.iv.IvGenerator;
-import com.github.ginvavilon.traghentto.crypto.salt.NoSalt;
-import com.github.ginvavilon.traghentto.crypto.salt.Salt;
-import com.github.ginvavilon.traghentto.crypto.salt.SaltFactory;
-
-public class CryptoConfiguration {
+public class CryptoConfiguration extends KeyCipherProvider {
 
 	private final Map<Integer,Key> mKeys;
 
@@ -73,6 +73,13 @@ public class CryptoConfiguration {
 	public static Builder builder() {
 		return new Builder();
 	}
+
+    public Builder toBuilder() {
+        Builder builder = new Builder();
+        builder.setConfiguration(this);
+        builder.mKeys.putAll(mKeys);
+        return builder;
+    }
 
 	public static class Builder {
 		private static final String ALGORITHM_FORMAT = "%s/%s/%s";
