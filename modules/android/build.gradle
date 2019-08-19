@@ -46,11 +46,6 @@ eclipse {
         name = 'Traghentto-Android'
     }
 }
-androidEclipse{
-
-   manifest = main
-   pluginType = ANDMORE
-}
 
 task androidJavadocs(type: Javadoc) {
     failOnError false
