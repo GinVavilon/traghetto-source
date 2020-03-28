@@ -44,11 +44,6 @@ eclipse {
         name = 'Traghentto-Android-Glide'
     }
 }
-androidEclipse{
-
-   manifest = main
-   pluginType = ANDMORE
-}
 
 task androidJavadocs(type: Javadoc) {
     failOnError false
@@ -66,7 +61,7 @@ task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
-task jar(type: Jar, dependsOn: 'assembleRelease') {
+task jar(type: Jar, dependsOn: 'bundleReleaseAar') {
     from zipTree("$buildDir/intermediates/packaged-classes/release/classes.jar")
 }
 

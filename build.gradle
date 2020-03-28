@@ -11,10 +11,11 @@ buildscript {
     repositories {
         jcenter()
         google()
+        mavenLocal()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.0'
-        classpath 'com.github.ginvavilon:android-eclipse:0.9.6'
+        classpath 'com.github.ginvavilon:android-eclipse:0.9.8'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
         classpath 'org.eclipse.jgit:org.eclipse.jgit:4.2.0.+'
         classpath 'digital.wup:android-maven-publish:3.6.2'

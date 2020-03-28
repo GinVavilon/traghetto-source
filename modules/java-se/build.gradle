@@ -1,12 +1,12 @@
 
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'eclipse'
 
 dependencies {
-    implementation project(':base')
-    implementation project(':file')
-    implementation project(':zip')
-    implementation project(':path')
+    api project(':base')
+    api project(':file')
+    api project(':zip')
+    api project(':path')
     compileOnly project(':apache-http')
     testImplementation 'junit:junit:4.12'
     testImplementation project(path: ':zip', configuration: 'testOutput')
@@ -17,5 +17,14 @@ eclipse {
         name = 'Traghentto-JavaSE'
     }
 }
+sourceSets {
+    test{
+        runtimeClasspath  = files('/home/vbaraznovsky/workspaces/Traghetto/TraghettoSource/modules/zip/src/test/resources/')
+    }
+}
+test {
+    testLogging.showStandardStreams = true
 
+
+}
 applyJavaPublishing (project, 'javase', 'Tragnetto-JavaSE')

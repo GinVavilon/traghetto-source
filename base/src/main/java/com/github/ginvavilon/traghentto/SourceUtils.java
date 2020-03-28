@@ -114,8 +114,15 @@ public class SourceUtils {
         return newSource;
     }
 
-    public static boolean isChild(Source parentSource, Source source) {
-        return source.getUriString().startsWith(source.getUriString());
+    public static boolean isChild(Source parentSource, Source childSource) {
+        if (parentSource == null) {
+            return false;
+        }
+
+        if (childSource == null) {
+            return false;
+        }
+        return childSource.getUriString().startsWith(parentSource.getUriString());
     }
 }
 

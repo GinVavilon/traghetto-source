@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.github.ginvavilon.traghentto.DeletableSource;
 import com.github.ginvavilon.traghentto.Logger;
+import com.github.ginvavilon.traghentto.Logger.Level;
 import com.github.ginvavilon.traghentto.RenamedSource;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceUtils;
@@ -113,7 +114,7 @@ public abstract class SourceDocumentsProvider extends DocumentsProvider {
             Source source = getDocumentSource(documentId);
             return SourceUtils.isChild(parentSource, source);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+			Logger.e(Level.MODULE, e);
             return false;
         }
     }
