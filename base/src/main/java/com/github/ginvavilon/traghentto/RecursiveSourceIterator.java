@@ -52,7 +52,9 @@ class RecursiveSourceIterator implements SourceIterator {
 
     @Override
     public void close() throws IOException {
-        mCurrentIterator.close();
+        if (mCurrentIterator != null) {
+            mCurrentIterator.close();
+        }
     }
 
 }
