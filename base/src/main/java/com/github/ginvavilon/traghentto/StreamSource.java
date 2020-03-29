@@ -10,7 +10,7 @@ import java.io.IOException;
  * @author Vladimir Baraznovsky
  *
  */
-public interface StreamSource extends Source ,Closeable{
+public interface StreamSource extends Source, Closeable{
     void open() throws IOException;
     boolean isOpened();
 

@@ -9,7 +9,7 @@ import android.net.Uri;
 import com.github.ginvavilon.traghentto.Source;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public interface AndroidSourceCreator<T extends Source> {

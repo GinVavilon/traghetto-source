@@ -11,7 +11,7 @@ import com.github.ginvavilon.traghentto.exceptions.RenameException;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public class DelegatedWritableSource<T extends WritableSource> extends DelegatedSource<T>
@@ -57,8 +57,8 @@ public class DelegatedWritableSource<T extends WritableSource> extends Delegated
     }
 
     @Override
-    public boolean createConteiner() throws IOException {
-        return getSource().createConteiner();
+    public boolean createContainer() throws IOException {
+        return getSource().createContainer();
     }
 
     @Override

@@ -9,7 +9,7 @@ public abstract class BaseRandomSalt extends BaseSalt implements Salt{
 
 	private Random mRandom;
 
-	protected abstract int calulateSize(OutputStream outputStream) throws IOException;
+	protected abstract int calculateSize(OutputStream outputStream) throws IOException;
 
 	public BaseRandomSalt() {
 		super();
@@ -22,7 +22,7 @@ public abstract class BaseRandomSalt extends BaseSalt implements Salt{
 
 	@Override
 	public void addSalt(OutputStream outputStream) throws IOException {
-		int left = calulateSize(outputStream);
+		int left = calculateSize(outputStream);
 		int bufferSize = left > BaseSalt.BUFFER_SIZE ? BaseSalt.BUFFER_SIZE : left;
 		byte[] buffer = new byte[bufferSize];
 		while (left > 0) {

@@ -44,8 +44,8 @@ public class EncryptoSource<T extends WritableSource> extends CryptoSource<T> im
 	}
 
 	@Override
-	public boolean createConteiner() throws IOException {
-        return getSource().createConteiner();
+	public boolean createContainer() throws IOException {
+        return getSource().createContainer();
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class EncryptoSource<T extends WritableSource> extends CryptoSource<T> im
 		return openOutputResource(new VoidParams());
 	}
 
-    private static RenamedSource extaractRenamedSource(RenamedSource source) {
+    private static RenamedSource extractRenamedSource(RenamedSource source) {
         RenamedSource renamedSource = source;
         if (source instanceof EncryptoSource<?>) {
             EncryptoSource<?> encryptoSource = (EncryptoSource<?>) source;
@@ -75,14 +75,14 @@ public class EncryptoSource<T extends WritableSource> extends CryptoSource<T> im
 
     @Override
     public boolean canBeRenamed(RenamedSource source) {
-        RenamedSource renamedSource = extaractRenamedSource(source);
+        RenamedSource renamedSource = extractRenamedSource(source);
         return getSource().canBeRenamed(renamedSource);
 
     }
 
     @Override
     public void rename(RenamedSource source) throws RenameException {
-        RenamedSource renamedSource = extaractRenamedSource(source);
+        RenamedSource renamedSource = extractRenamedSource(source);
         getSource().rename(renamedSource);
     }
 

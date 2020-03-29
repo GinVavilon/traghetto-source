@@ -41,11 +41,11 @@ public class CryptoUtils {
 	}
 	
 	
-	public static KeyPair loadKeys(String algorithm, Source privateKeySouce, Source publicKeySouce)
+	public static KeyPair loadKeys(String algorithm, Source privateKeySource, Source publicKeySource)
 			throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 
-		byte[] encodedPrivateKey = StreamUtils.readSource(privateKeySouce);
-		byte[] encodedPublicKey = StreamUtils.readSource(publicKeySouce);
+		byte[] encodedPrivateKey = StreamUtils.readSource(privateKeySource);
+		byte[] encodedPublicKey = StreamUtils.readSource(publicKeySource);
 
 		KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
 		X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(encodedPublicKey);
@@ -57,12 +57,12 @@ public class CryptoUtils {
 		return new KeyPair(publicKey, privateKey);
 	}
 
-    public static Key loadPrivateKey(String algorithm, Source privateKeySouce)
+    public static Key loadPrivateKey(String algorithm, Source privateKeySource)
             throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 
-        byte[] encodedPrivateKey = StreamUtils.readSource(privateKeySouce);
+        byte[] encodedPrivateKey = StreamUtils.readSource(privateKeySource);
 
-        if (isSymetric(algorithm)) {
+        if (isSymmetric(algorithm)) {
             return new SecretKeySpec(encodedPrivateKey, algorithm);
         }
         KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
@@ -72,7 +72,7 @@ public class CryptoUtils {
         return privateKey;
     }
 
-    protected static boolean isSymetric(String algorithm) {
+    protected static boolean isSymmetric(String algorithm) {
         switch (algorithm) {
             case Algorithm.AES:
             case Algorithm.AES_WRAP:
@@ -86,11 +86,11 @@ public class CryptoUtils {
         }
     }
 
-    public static Key loadPublicKey(String algorithm, Source publicKeySouce)
+    public static Key loadPublicKey(String algorithm, Source publicKeySource)
             throws NoSuchAlgorithmException, IOException, InvalidKeySpecException {
 
-        byte[] encodedPublicKey = StreamUtils.readSource(publicKeySouce);
-        if (isSymetric(algorithm)) {
+        byte[] encodedPublicKey = StreamUtils.readSource(publicKeySource);
+        if (isSymmetric(algorithm)) {
             return new SecretKeySpec(encodedPublicKey, algorithm);
         }
 
@@ -101,31 +101,31 @@ public class CryptoUtils {
         return publicKey;
     }
 
-	public static boolean savePrivateKey(Key privateKey, WritableSource privateKeySouce) {
+	public static boolean savePrivateKey(Key privateKey, WritableSource privateKeySource) {
 
 		PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKey.getEncoded());
-		return StreamUtils.writeSource(privateKeySouce, keySpec.getEncoded());
+		return StreamUtils.writeSource(privateKeySource, keySpec.getEncoded());
 
 	}
 
-	public static boolean savePublicKey(Key publicKey, WritableSource publicKeySouce) {
+	public static boolean savePublicKey(Key publicKey, WritableSource publicKeySource) {
 		
 		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKey.getEncoded());
-		return StreamUtils.writeSource(publicKeySouce, keySpec.getEncoded());
+		return StreamUtils.writeSource(publicKeySource, keySpec.getEncoded());
 		
 	}
 
-	public static int getKeySizeBytes(String algorithm, int baselength) {
+	public static int getKeySizeBytes(String algorithm, int baseLength) {
 
-		return getKeySizeBits(algorithm, baselength * 8) / 8;
+		return getKeySizeBits(algorithm, baseLength * 8) / 8;
 
 	}
 
-	public static int getKeySizeBits(String algorithm, int baselength) {
+	public static int getKeySizeBits(String algorithm, int baseLength) {
 
 		KeySizeSpec size = KEY_SIZES.get(algorithm);
 
-		int length = baselength;
+		int length = baseLength;
 		if (size != null) {
 			length = size.changeSize(length);
 		}

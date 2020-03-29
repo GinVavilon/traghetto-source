@@ -6,7 +6,7 @@ package com.github.ginvavilon.traghentto;
 import com.github.ginvavilon.traghentto.exceptions.RenameException;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public interface RenamedSource extends Source {

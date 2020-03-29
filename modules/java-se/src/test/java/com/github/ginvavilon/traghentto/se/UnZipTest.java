@@ -13,7 +13,7 @@ import com.github.ginvavilon.traghentto.file.FileSource;
 import com.github.ginvavilon.traghentto.zip.ZipRandomAccessFileSourceTest;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public class UnZipTest extends ZipRandomAccessFileSourceTest {

@@ -42,13 +42,13 @@ public class CryptoConfiguration extends KeyCipherProvider {
 
     private CryptoConfiguration(String algorithm, Map<Integer, Key> keys, KeyProvider keyProvider,
             Salt salt,
-            IvGenerator ivGenrator) {
+            IvGenerator ivGenerator) {
         super();
         mAlgorithm = algorithm;
         mKeys = keys;
         mKeyProvider = keyProvider;
         mSalt = salt;
-        mIvGenerator = ivGenrator;
+        mIvGenerator = ivGenerator;
     }
 
     public String getAlgorithm() {
@@ -180,7 +180,7 @@ public class CryptoConfiguration extends KeyCipherProvider {
             String generationFactory = CryptoUtils.getPBEKeyGenerationFactory(pbeAlgorithm,
                     mAlgorithm);
             SecurityLogger.println("pbe-factory", generationFactory);
-            int lenght = CryptoUtils.getKeySizeBits(mAlgorithm, 256);
+            int length = CryptoUtils.getKeySizeBits(mAlgorithm, 256);
             final SecretKeyFactory factory = SecretKeyFactory.getInstance(generationFactory);
             final KeySpec cipherSpec = new PBEKeySpec(password.toCharArray());
             SecretKey secretKey = factory.generateSecret(cipherSpec);
@@ -199,14 +199,14 @@ public class CryptoConfiguration extends KeyCipherProvider {
                 String hashAlgorithm)
                 throws NoSuchAlgorithmException, InvalidKeySpecException {
             String generationFactory = CryptoUtils.getPBKDF2KeyGenerationFactory(hashAlgorithm);
-            int lenght = CryptoUtils.getKeySizeBits(mAlgorithm,
+            int length = CryptoUtils.getKeySizeBits(mAlgorithm,
                     CryptoUtils.detectHashSize(hashAlgorithm));
-            SecurityLogger.println("bits", lenght);
+            SecurityLogger.println("bits", length);
             SecurityLogger.println("factory", generationFactory);
             final SecretKeyFactory factory = SecretKeyFactory.getInstance(generationFactory);
 
             final KeySpec cipherSpec = new PBEKeySpec(password.toCharArray(), salt, iteration,
-                    lenght);
+                    length);
             SecretKey secretKey = factory.generateSecret(cipherSpec);
             byte[] encoded = secretKey.getEncoded();
             SecurityLogger.println("pbkf2-key", encoded);
@@ -222,18 +222,18 @@ public class CryptoConfiguration extends KeyCipherProvider {
             byte[] hash = instance.digest(password.getBytes());
 
             int length = CryptoUtils.getKeySizeBytes(mAlgorithm, hash.length);
-            SecurityLogger.println("lenght", length * 8);
-            int oldLenght = hash.length;
-            if (oldLenght != length) {
+            SecurityLogger.println("length", length * 8);
+            int oldLength = hash.length;
+            if (oldLength != length) {
                 hash = Arrays.copyOf(hash, length);
             }
 
-            while (oldLenght < length) {
-                instance.update(hash, 0, oldLenght);
+            while (oldLength < length) {
+                instance.update(hash, 0, oldLength);
                 byte[] digest = instance.digest();
-                System.arraycopy(digest, 0, hash, oldLenght,
-                        Math.min(length - oldLenght, digest.length));
-                oldLenght = oldLenght + digest.length;
+                System.arraycopy(digest, 0, hash, oldLength,
+                        Math.min(length - oldLength, digest.length));
+                oldLength = oldLength + digest.length;
             }
 
             if (mIvGenerator == null && (CryptoUtils.isSupportIv(mAlgorithm, mMode))) {
@@ -259,9 +259,9 @@ public class CryptoConfiguration extends KeyCipherProvider {
             return setPrivateKey(privateKey);
         }
 
-        public Builder generatePairKey(int keysize) throws NoSuchAlgorithmException {
+        public Builder generatePairKey(int keySize) throws NoSuchAlgorithmException {
             KeyPairGenerator generator = KeyPairGenerator.getInstance(mAlgorithm);
-            generator.initialize(keysize);
+            generator.initialize(keySize);
             KeyPair keyPair = generator.generateKeyPair();
             return setKeyPair(keyPair);
         }

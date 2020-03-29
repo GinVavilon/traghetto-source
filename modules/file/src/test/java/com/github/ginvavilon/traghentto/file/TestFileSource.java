@@ -17,6 +17,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.github.ginvavilon.traghentto.BaseWritableSource;
 import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.StreamUtils;
@@ -24,7 +25,7 @@ import com.github.ginvavilon.traghentto.UriConstants;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public class TestFileSource extends BaseSourceTest<FileSource, FileSource> {
@@ -111,18 +112,18 @@ public class TestFileSource extends BaseSourceTest<FileSource, FileSource> {
 
     /**
      * Test method for
-     * {@link com.github.ginvavilon.traghentto.file.FileSource#createConteiner()}.
+     * {@link com.github.ginvavilon.traghentto.file.FileSource#createContainer()}.
      * 
      * @throws IOException
      */
     @Test
-    public void testCreateConteiner() throws IOException {
+    public void testCreateContainer() throws IOException {
         File root = mTempTestFolder.newFolder();
         FileSource rootSource = new FileSource(root);
-        rootSource.getChild(TEST_CHILD_FOLDER).createConteiner();
+        rootSource.getChild(TEST_CHILD_FOLDER).createContainer();
 
         File file = new File(root, TEST_CHILD_FOLDER);
-        assertTrue("Conteiner does not exits", file.exists());
+        assertTrue("Container does not exits", file.exists());
         assertTrue("File is not directory", file.isDirectory());
     }
 
@@ -199,7 +200,7 @@ public class TestFileSource extends BaseSourceTest<FileSource, FileSource> {
 
     /**
      * Test method for
-     * {@link com.github.ginvavilon.traghentto.BaseWritebleSource#openOutputResource()}.
+     * {@link BaseWritableSource#openOutputResource()}.
      * 
      * @throws IOException
      * @throws IOSourceException
@@ -225,7 +226,7 @@ public class TestFileSource extends BaseSourceTest<FileSource, FileSource> {
             hasIOException = true;
         }
         if (!hasIOException) {
-            fail("Streem must be closed");
+            fail("Stream must be closed");
         }
 
         StreamResource<InputStream> singleResource = fileSource.openResource(null);
@@ -239,7 +240,7 @@ public class TestFileSource extends BaseSourceTest<FileSource, FileSource> {
             hasIOException = true;
         }
         if (!hasIOException) {
-            fail("Streem must be closed");
+            fail("Stream must be closed");
         }
 
     }

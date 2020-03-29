@@ -22,13 +22,12 @@ import com.github.ginvavilon.traghentto.BaseSource;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.StreamResource;
-import com.github.ginvavilon.traghentto.android.AndroidLogHadler;
+import com.github.ginvavilon.traghentto.android.AndroidLogHandler;
 import com.github.ginvavilon.traghentto.android.AssetSource;
 import com.github.ginvavilon.traghentto.android.ResourceSource;
 import com.github.ginvavilon.traghentto.android.provider.SimpleSourceProvider;
 import com.github.ginvavilon.traghentto.crypto.Crypto;
 import com.github.ginvavilon.traghentto.crypto.CryptoConfiguration;
-import com.github.ginvavilon.traghentto.crypto.EncryptoSource;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.file.FileSource;
 import com.github.ginvavilon.traghentto.params.StreamParams;
@@ -37,8 +36,8 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class ExampleProvider extends SimpleSourceProvider {
 
-    private static final String ENCRYPED_ROOT = "encryped-files";
-    private static final String ENCRYPED_DIR = "encryped";
+    private static final String ENCRYPTED_FILES = "encrypted-files";
+    private static final String ENCRYPTED_DIR = "encrypted";
     private static final String ASSET_ROOT = "assets";
     private static final String FILES_ROOT = "files";
     private static final String RESOURCES_ROOT = "resources";
@@ -46,13 +45,13 @@ public class ExampleProvider extends SimpleSourceProvider {
     public static final String IMAGE_PNG_MIME_TYPE = "image/png";
 
     static {
-        AndroidLogHadler.init();
+        AndroidLogHandler.init();
     }
 
     @Override
     protected int getRootIcon(String root) {
         switch (root) {
-            case ENCRYPED_ROOT:
+            case ENCRYPTED_FILES:
                 return R.drawable.ic_encrypted;
             default:
                 return R.mipmap.ic_launcher_round;
@@ -68,7 +67,7 @@ public class ExampleProvider extends SimpleSourceProvider {
             return getContext().getString(R.string.label_files);
         case RESOURCES_ROOT:
             return getContext().getString(R.string.label_resources);
-        case ENCRYPED_ROOT:
+        case ENCRYPTED_FILES:
             return getContext().getString(R.string.label_encrypted);
         default:
             return getContext().getString(R.string.app_name);
@@ -82,7 +81,7 @@ public class ExampleProvider extends SimpleSourceProvider {
 
     @Override
     protected List<String> createRootNames() {
-        return Arrays.asList(ENCRYPED_ROOT, FILES_ROOT, ASSET_ROOT, RESOURCES_ROOT);
+        return Arrays.asList(ENCRYPTED_FILES, FILES_ROOT, ASSET_ROOT, RESOURCES_ROOT);
     }
 
 
@@ -97,8 +96,8 @@ public class ExampleProvider extends SimpleSourceProvider {
         switch (name) {
         case FILES_ROOT:
             return new FileSource(getContext().getFilesDir());
-        case ENCRYPED_ROOT:
-            return createdCryptedSource();
+        case ENCRYPTED_FILES:
+            return createdEncryptedSource();
         case RESOURCES_ROOT:
             SimpleSource sources = new SimpleSource();
             sources.add(new ResourceSource(getContext().getResources(), R.mipmap.ic_launcher));
@@ -123,9 +122,9 @@ public class ExampleProvider extends SimpleSourceProvider {
         return super.isSupportChildDetection(root, source);
     }
 
-    private Source createdCryptedSource() {
+    private Source createdEncryptedSource() {
         try {
-            File file = new File(getContext().getFilesDir(), ENCRYPED_DIR);
+            File file = new File(getContext().getFilesDir(), ENCRYPTED_DIR);
             CryptoConfiguration configuration = CryptoConfiguration
                     .builder()
                     .usePassword("testKey8Exampl56")
@@ -169,7 +168,7 @@ public class ExampleProvider extends SimpleSourceProvider {
         }
 
         @Override
-        public boolean isConteiner() {
+        public boolean isContainer() {
             return true;
         }
 
@@ -206,7 +205,7 @@ public class ExampleProvider extends SimpleSourceProvider {
         }
 
         @Override
-        public long getLenght() {
+        public long getLength() {
             return 0;
         }
 

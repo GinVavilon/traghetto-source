@@ -10,10 +10,10 @@ import java.io.IOException;
 import com.github.ginvavilon.traghentto.Source;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
-public interface ParselFileDesriptorSource extends Source {
+public interface ParcelFileDescriptorSource extends Source {
 
     ParcelFileDescriptor openParcelFileDescriptor() throws IOException;
 

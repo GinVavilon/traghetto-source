@@ -30,8 +30,8 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  *
  */
 @Deprecated
-public class ZipStreamSource extends BaseZipSouce implements StreamSource {
-    private static final String ARCHIVE_AUTORIRY = "archive";
+public class ZipStreamSource extends BaseZipSource implements StreamSource {
+    private static final String ARCHIVE_AUTHORITY = "archive";
     private ZipInputStream mZipInputStream;
     private InputStream mStream;
     private Map<String, ZipEntry> mEntries=null;
@@ -179,7 +179,7 @@ public class ZipStreamSource extends BaseZipSouce implements StreamSource {
     public String getUriString() {
         URIBuilder builder = new URIBuilder();
 	builder.scheme(UriConstants.STREAM_SCHEME);
-	builder.authority(ARCHIVE_AUTORIRY);
+	builder.authority(ARCHIVE_AUTHORITY);
         return builder.build().toString();
 
     }
@@ -188,14 +188,14 @@ public class ZipStreamSource extends BaseZipSouce implements StreamSource {
     public String getURI(ZipEntrySource pZipEntrySource) {
         URIBuilder builder = new URIBuilder();
 	builder.scheme(UriConstants.STREAM_SCHEME);
-	builder.authority(ARCHIVE_AUTORIRY);
+	builder.authority(ARCHIVE_AUTHORITY);
 	builder.encodedFragment(pZipEntrySource.getPath());
         return builder.build().toString();
     }
 
     @Override
-    public long getLenght() {
-	return UNKNOWN_LENGHT;
+    public long getLength() {
+	return UNKNOWN_LENGTH;
     }
 
     @Override
@@ -212,12 +212,12 @@ public class ZipStreamSource extends BaseZipSouce implements StreamSource {
     public boolean unzip(WritableSource pTo) throws IOException {
 	try {
 	    ZipInputStream inputStream = new ZipInputStream(mStream);
-	    pTo.createConteiner();
+	    pTo.createContainer();
 	    ZipEntry entry = inputStream.getNextEntry();
 	    while ((entry != null)) {
 		WritableSource child = pTo.getChild(entry.getName());
 		if (entry.isDirectory()) {
-		    child.createConteiner();
+		    child.createContainer();
 		} else {
 		    StreamResource<OutputStream> outputResource = null;
                     try {

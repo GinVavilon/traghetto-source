@@ -6,24 +6,24 @@ package com.github.ginvavilon.traghentto.zip;
 import com.github.ginvavilon.traghentto.StreamSource;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public abstract class ZipEntrySource implements StreamSource {
 
-    protected ZipSource mZipParrent;
+    protected ZipSource mZipParent;
 
-    public ZipEntrySource(ZipSource pZipParrent) {
+    public ZipEntrySource(ZipSource pZipParent) {
         super();
-        mZipParrent = pZipParrent;
+        mZipParent = pZipParent;
     }
 
-    public ZipSource getZipParrent() {
-        return mZipParrent;
+    public ZipSource getZipParent() {
+        return mZipParent;
     }
 
-    public void setZipParrent(ZipSource pZipParrent) {
-        mZipParrent = pZipParrent;
+    public void setZipParent(ZipSource pZipParent) {
+        mZipParent = pZipParent;
     }
 
     @Override
@@ -44,7 +44,7 @@ public abstract class ZipEntrySource implements StreamSource {
 
     @Override
     public String getUriString() {
-        return mZipParrent.getURI(this);
+        return mZipParent.getURI(this);
     }
 
 }

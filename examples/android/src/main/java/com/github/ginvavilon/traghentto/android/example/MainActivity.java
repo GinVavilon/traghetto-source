@@ -27,7 +27,7 @@ import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.WritableSource;
-import com.github.ginvavilon.traghentto.android.AndroidLogHadler;
+import com.github.ginvavilon.traghentto.android.AndroidLogHandler;
 import com.github.ginvavilon.traghentto.android.DocumentSource;
 import com.github.ginvavilon.traghentto.android.SourceFactory;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
@@ -40,14 +40,14 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String DEFAULT_NAME = "new";
     public static final String OPEN_TYPE = "*/*";
-    public static final String IMAGE_MIME_TIPE_PREFIX = "image/";
+    public static final String IMAGE_MIME_TYPE_PREFIX = "image/";
 
     public static final String URL = "https://www.w3schools.com/w3css/img_lights.jpg";
     public static final String IMAGE_PNG = "image/png";
     public static final String IMAGE_JPEG = "image/jpeg";
 
     static {
-        AndroidLogHadler.init();
+        AndroidLogHandler.init();
     }
 
     private TextView mInputText;
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             showError(view, getString(R.string.error_output_is_not_writable));
             return;
         }
-        mProgress.setMax((int) input.getLenght());
+        mProgress.setMax((int) input.getLength());
         new CopyAsyncTask(view).executeOnExecutor(Executors.newCachedThreadPool(), input, output);
     }
 
@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        Snackbar.make(mInputText, R.string.failr_not_deletable,Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mInputText, R.string.fail_not_deletable,Snackbar.LENGTH_SHORT).show();
 
     }
 
@@ -298,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
 
         mMimeType = inputSource.getDocumentInfo().getMimeType();
         mTypeText.setText(mMimeType);
-        if (mMimeType.startsWith(IMAGE_MIME_TIPE_PREFIX)) {
+        if (mMimeType.startsWith(IMAGE_MIME_TYPE_PREFIX)) {
             show(inputSource);
         } else {
             mImageView.setImageDrawable(null);
@@ -339,12 +339,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onProgress(long pRadedByte) {
-            publishProgress(pRadedByte);
+        public void onProgress(long pReadBytes) {
+            publishProgress(pReadBytes);
         }
 
         @Override
-        public void onCompite() {
+        public void onComplete() {
         }
 
         @Override

@@ -10,10 +10,10 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
 import com.github.ginvavilon.traghentto.params.VoidParams;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
-public abstract class BaseWritebleSource extends BaseSource implements WritableSource {
+public abstract class BaseWritableSource extends BaseSource implements WritableSource {
 
     @Override
     public StreamResource<OutputStream> openOutputResource(StreamParams pParams)

@@ -11,15 +11,15 @@ import com.github.ginvavilon.traghentto.Logger.LogHandler;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
-public class AndroidLogHadler implements LogHandler {
+public class AndroidLogHandler implements LogHandler {
 
     private static final String DEFAULT_TAG = "Traghentto";
     private final String mTag;
 
-    public AndroidLogHadler(String tag) {
+    public AndroidLogHandler(String tag) {
         super();
         mTag = tag;
     }
@@ -45,7 +45,7 @@ public class AndroidLogHadler implements LogHandler {
     }
 
     public static void init(String tag) {
-        Logger.register(new AndroidLogHadler(tag));
+        Logger.register(new AndroidLogHandler(tag));
     }
 
     private static AtomicBoolean sInit = new AtomicBoolean(false);

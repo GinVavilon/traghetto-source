@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public abstract class DelegatedSource<T extends Source> implements Source {
@@ -35,8 +35,8 @@ public abstract class DelegatedSource<T extends Source> implements Source {
         return mSourceProvider.getSource().getChild(name);
     }
 
-    public boolean isConteiner() {
-        return mSourceProvider.getSource().isConteiner();
+    public boolean isContainer() {
+        return mSourceProvider.getSource().isContainer();
     }
 
     public StreamResource<InputStream> openResource(StreamParams pParams)
@@ -60,8 +60,8 @@ public abstract class DelegatedSource<T extends Source> implements Source {
         return mSourceProvider.getSource().exists();
     }
 
-    public long getLenght() {
-        return mSourceProvider.getSource().getLenght();
+    public long getLength() {
+        return mSourceProvider.getSource().getLength();
     }
 
     public boolean isLocal() {

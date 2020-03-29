@@ -16,7 +16,7 @@ import java.nio.charset.Charset;
 public class URIBuilder {
 
     private String mScheme;
-    private String mAuthoriry;
+    private String mAuthority;
     private String mFragment;
     private String mPath;
 
@@ -28,8 +28,8 @@ public class URIBuilder {
 
     }
 
-    public void authority(String pAuthoriry) {
-        mAuthoriry = pAuthoriry;
+    public void authority(String pAuthority) {
+        mAuthority = pAuthority;
 
     }
 
@@ -41,7 +41,7 @@ public class URIBuilder {
     public URI build() {
 
         try {
-            return new URI(mScheme, mAuthoriry, mPath, null, mFragment);
+            return new URI(mScheme, mAuthority, mPath, null, mFragment);
         } catch (URISyntaxException e) {
             return null;
         }

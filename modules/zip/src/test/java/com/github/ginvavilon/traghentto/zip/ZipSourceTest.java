@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public class ZipSourceTest extends BaseZipSourceTest<ZipFileSource> {

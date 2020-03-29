@@ -14,8 +14,8 @@ public interface ParamNames {
 
     String IN_SKIP = "in.skip";
     String OUT_SKIP = "out.skip";
-    String OUT_READED = "out.skiped";
-    String OUT_LENGHT = "out.lenght";
+    String OUT_ALREADY_READ = "out.skipped";
+    String OUT_LENGTH = "out.length";
     String SKIP = IN_SKIP;
 }
 

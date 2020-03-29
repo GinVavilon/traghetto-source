@@ -83,7 +83,7 @@ public class RandomAccessSource extends BaseRandomAccessSource<StreamSource> imp
             return new SourceIterator() {
 
                 @Override
-                public void close() throws Exception {
+                public void close() throws IOException {
                     closeStream();
                 }
 

@@ -21,8 +21,8 @@ public class ByteSalt extends BaseSalt {
 	@Override
 	protected int getSize(InputStream inputStream) throws IOException {
 		int size=mSalt.length;
-		int skiped = (int) inputStream.skip(size);
-		int left =size - skiped;
+		int skipped = (int) inputStream.skip(size);
+		int left =size - skipped;
 		return left;
 	}
 

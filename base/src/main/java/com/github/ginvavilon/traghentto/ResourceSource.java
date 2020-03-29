@@ -13,7 +13,7 @@ import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public class ResourceSource extends BaseSource {
@@ -44,7 +44,7 @@ public class ResourceSource extends BaseSource {
     }
 
     @Override
-    public boolean isConteiner() {
+    public boolean isContainer() {
         return false;
     }
 
@@ -70,8 +70,8 @@ public class ResourceSource extends BaseSource {
     }
 
     @Override
-    public long getLenght() {
-        return UNKNOWN_LENGHT;
+    public long getLength() {
+        return UNKNOWN_LENGTH;
     }
 
     @Override

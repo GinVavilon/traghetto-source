@@ -106,7 +106,7 @@ public class StreamUtils {
     }
 
     public static long copyStream(InputStream inputStream, OutputStream outputStream,
-            boolean pInAutoClose, boolean pOutAutoClose, long pAlreadyReaded, long pSkip,
+            boolean pInAutoClose, boolean pOutAutoClose, long pAlreadyRead, long pSkip,
             ICopyListener pListener) {
         BufferedOutputStream out = null;
         BufferedInputStream in = null;
@@ -115,19 +115,19 @@ public class StreamUtils {
             if (hasListener) {
                 pListener.onStart();
             }
-            long readed = pAlreadyReaded;
+            long alreadyRead = pAlreadyRead;
             if (pSkip > 0) {
-                Logger.d(Level.STREAM, "Readed %s", readed);
-                long skiped = 0;
+                Logger.d(Level.STREAM, "Read %s", alreadyRead);
+                long skipped = 0;
                 long canSkip = pSkip;
-                while ((skiped = inputStream.skip(canSkip)) > 0) {
-                    canSkip -= skiped;
-                    readed += skiped;
+                while ((skipped = inputStream.skip(canSkip)) > 0) {
+                    canSkip -= skipped;
+                    alreadyRead += skipped;
                     if (hasListener) {
-                        pListener.onProgress(readed);
+                        pListener.onProgress(alreadyRead);
                     }
                 }
-                Logger.d(Level.STREAM, "Skipped %s", readed);
+                Logger.d(Level.STREAM, "Skipped %s", alreadyRead);
             }
 
             in = new BufferedInputStream(inputStream, IO_BUFFER_SIZE);
@@ -140,9 +140,9 @@ public class StreamUtils {
                 // Log.i("Out :%s", new String(buffer, 0, count));
 
                 out.flush();
-                readed += count;
+                alreadyRead += count;
                 if (hasListener) {
-                    pListener.onProgress(readed);
+                    pListener.onProgress(alreadyRead);
                 }
             }
             if (Thread.interrupted()) {
@@ -152,10 +152,10 @@ public class StreamUtils {
                 return -1;
             }
             if (hasListener) {
-                pListener.onCompite();
+                pListener.onComplete();
             }
             outputStream.flush();
-            return readed;
+            return alreadyRead;
         } catch (final IOException e) {
             Logger.e(e);
             if (hasListener) {
@@ -176,9 +176,9 @@ public class StreamUtils {
     public static interface ICopyListener {
         void onStart();
 
-        void onProgress(long pRadedByte);
+        void onProgress(long pReadBytes);
 
-        void onCompite();
+        void onComplete();
 
         void onFail(Throwable pE);
     }
@@ -216,7 +216,7 @@ public class StreamUtils {
 		if (in == null) {
 			throw new IOException("not opened stream");
 		}
-		byte[] result = readResource(in, (int) source.getLenght());
+		byte[] result = readResource(in, (int) source.getLength());
 		if (result == null) {
 			throw new IOException("not read source");
 		}

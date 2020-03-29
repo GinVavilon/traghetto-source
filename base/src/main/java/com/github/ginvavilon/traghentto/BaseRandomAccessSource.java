@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 class BaseRandomAccessSource<T extends Source> extends DelegatedSource<T> {
@@ -59,22 +59,22 @@ class BaseRandomAccessSource<T extends Source> extends DelegatedSource<T> {
             closeStream();
         }
         if ((child != null) && (child instanceof StreamSource)) {
-            return new ChildRandomAceessSource(mStreamSource, child);
+            return new ChildRandomAccessSource(mStreamSource, child);
         }
         return child;
     }
 
     @Override
-    public long getLenght() {
+    public long getLength() {
         try {
             openStream();
-            return getSource().getLenght();
+            return getSource().getLength();
         } catch (IOException e) {
             Logger.e(e);
         } finally {
             closeStream();
         }
-        return UNKNOWN_LENGHT;
+        return UNKNOWN_LENGTH;
     }
 
 

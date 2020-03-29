@@ -50,8 +50,8 @@ public class SourceUtils {
             StreamParams pInParams,
             StreamParams pOutParams, ICopyListener pListener)
             throws IOException, IOSourceException, SourceAlreadyExistsException {
-        if (pFrom.isConteiner()) {
-            pTo.createConteiner();
+        if (pFrom.isContainer()) {
+            pTo.createContainer();
 
             List<? extends Source> children = pFrom.getChildren();
             
@@ -64,7 +64,7 @@ public class SourceUtils {
 
             if ((update) || (!pTo.exists())) {
                 WritableSource to = pTo;
-                if (to.isConteiner()) {
+                if (to.isContainer()) {
                     to = to.getChild(pFrom.getName());
                 }
 
@@ -75,15 +75,15 @@ public class SourceUtils {
                 StreamResource<OutputStream> outputResource = null;
                 OutputStream outputStream = null;
                 try {
-                    StreamParams inParam = getSaflyParams(pInParams);
+                    StreamParams inParam = getSafetyParams(pInParams);
                     inputResource = pFrom.openResource(inParam);
                     outputResource = to.openOutputResource(pOutParams);
                     inputStream = inputResource.getStream();
                     outputStream = outputResource.getStream();
                     long skipByte = inParam.getProperty(ParamNames.SKIP, 0L);
                     skipByte = inParam.getProperty(ParamNames.OUT_SKIP, skipByte);
-                    long readed = inParam.getProperty(ParamNames.OUT_READED, 0L);
-                    StreamUtils.copyStream(inputStream, outputStream, false, false, readed,
+                    long alreadyRead = inParam.getProperty(ParamNames.OUT_ALREADY_READ, 0L);
+                    StreamUtils.copyStream(inputStream, outputStream, false, false, alreadyRead,
                             skipByte, pListener);
 
                 } finally {
@@ -99,7 +99,7 @@ public class SourceUtils {
 
 
 
-    public static StreamParams getSaflyParams(StreamParams pParams) {
+    public static StreamParams getSafetyParams(StreamParams pParams) {
         if (pParams != null) {
             return pParams;
         } else {

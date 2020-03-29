@@ -24,7 +24,7 @@ import java.util.List;
  * @author Vladimir Baraznovsky
  *
  */
-public class ResourceSource extends BaseSource implements ParselFileDesriptorSource ,AssetFileDescriptorSource{
+public class ResourceSource extends BaseSource implements ParcelFileDescriptorSource,AssetFileDescriptorSource{
 
     private final Resources mResources;
     private final int mId;
@@ -46,7 +46,7 @@ public class ResourceSource extends BaseSource implements ParselFileDesriptorSou
     }
 
     @Override
-    public boolean isConteiner() {
+    public boolean isContainer() {
 	return false;
     }
 
@@ -84,7 +84,7 @@ public class ResourceSource extends BaseSource implements ParselFileDesriptorSou
     }
 
     @Override
-    public long getLenght() {
+    public long getLength() {
 	InputStream openInputStream=null;
 	try {
 	    openInputStream = openInputStream(null);
@@ -93,7 +93,7 @@ public class ResourceSource extends BaseSource implements ParselFileDesriptorSou
 	} finally {
 	    StreamUtils.close(openInputStream);
 	}
-	return UNKNOWN_LENGHT;
+	return UNKNOWN_LENGTH;
     }
 
     @Override

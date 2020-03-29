@@ -4,7 +4,7 @@
 package com.github.ginvavilon.traghentto.exceptions;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public class SourceAlreadyExistsException extends SourceException {

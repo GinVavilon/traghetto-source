@@ -35,7 +35,7 @@ import com.github.ginvavilon.traghentto.params.ParamNames;
 import com.github.ginvavilon.traghentto.params.SourceStreamParams;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -263,12 +263,12 @@ public abstract class SourceDocumentsProvider extends DocumentsProvider {
         if (source instanceof WritableSource) {
             WritableSource writableSource = (WritableSource) source;
             if (Document.MIME_TYPE_DIR.equals(mimeType)) {
-                writableSource.createConteiner();
+                writableSource.createContainer();
             } else {
                 writableSource.create();
             }
         } else {
-            throw new IllegalArgumentException("Source must be writeble");
+            throw new IllegalArgumentException("Source must be writable");
         }
 
     }
@@ -286,7 +286,7 @@ public abstract class SourceDocumentsProvider extends DocumentsProvider {
         try {
             RenamedSource newSource = renamedSource.createRenamedSource(displayName);
             if (!renamedSource.canBeRenamed(newSource)) {
-                throw new RuntimeException("Unavalable rename to" + displayName);
+                throw new RuntimeException("Unavailable rename to" + displayName);
             }
             renamedSource.rename(newSource);
             return newSource;
@@ -331,7 +331,7 @@ public abstract class SourceDocumentsProvider extends DocumentsProvider {
 
         int flags = 0;
 
-        if (source.isConteiner()) {
+        if (source.isContainer()) {
             if (canWrite(source)) {
                 flags |= Document.FLAG_DIR_SUPPORTS_CREATE;
             }
@@ -360,7 +360,7 @@ public abstract class SourceDocumentsProvider extends DocumentsProvider {
         final MatrixCursor.RowBuilder row = result.newRow();
         row.add(Document.COLUMN_DOCUMENT_ID, docId);
         row.add(Document.COLUMN_DISPLAY_NAME, displayName);
-        row.add(Document.COLUMN_SIZE, source.getLenght());
+        row.add(Document.COLUMN_SIZE, source.getLength());
         row.add(Document.COLUMN_MIME_TYPE, mimeType);
         row.add(Document.COLUMN_FLAGS, flags);
 
@@ -389,7 +389,7 @@ public abstract class SourceDocumentsProvider extends DocumentsProvider {
 
     @NonNull
     private String getMimeType(Source source) {
-        if (source.isConteiner()) {
+        if (source.isContainer()) {
             return Document.MIME_TYPE_DIR;
         }
         return getTypeForSource(source);

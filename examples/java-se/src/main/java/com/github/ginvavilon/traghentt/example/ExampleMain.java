@@ -42,7 +42,7 @@ import com.github.ginvavilon.traghentto.file.FileSource;
 import com.github.ginvavilon.traghentto.se.SourceFactory;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public class ExampleMain {
@@ -73,15 +73,15 @@ public class ExampleMain {
     }
 
     /**
-     * @author vbaraznovsky
+     * @author Vladimir Baraznovsky
      *
      */
-    private final class LogListner implements ICopyListener {
+    private final class LogListener implements ICopyListener {
         private final StringBuilder mLogBuilder;
         private final Source mIn;
         private Future<?> mTask;
 
-        private LogListner(StringBuilder pLog, Source pOut) {
+        private LogListener(StringBuilder pLog, Source pOut) {
             mLogBuilder = pLog;
             mIn = pOut;
         }
@@ -95,17 +95,17 @@ public class ExampleMain {
         }
 
         @Override
-        public void onProgress(long pRadedByte) {
+        public void onProgress(long pReadBytes) {
             sentToLog(new Runnable() {
 
                 @Override
                 public void run() {
 
-                    long lenght = mIn.getLenght();
-                    mLogBuilder.append(String.format("Progress %s/%s", pRadedByte, lenght));
+                    long length = mIn.getLength();
+                    mLogBuilder.append(String.format("Progress %s/%s", pReadBytes, length));
                     mLogBuilder.append("\n");
                     log();
-                    int size = (int) (100 * pRadedByte / lenght);
+                    int size = (int) (100 * pReadBytes / length);
                     mProgressBar.setValue(size);
 
                 }
@@ -143,12 +143,12 @@ public class ExampleMain {
         }
 
         @Override
-        public void onCompite() {
+        public void onComplete() {
             sentToLog(new Runnable() {
 
                 @Override
                 public void run() {
-                    mLogBuilder.append("Complite");
+                    mLogBuilder.append("Complete");
                     mProgressBar.setValue(100);
                     log();
                 }
@@ -157,7 +157,7 @@ public class ExampleMain {
         }
     }
 
-    private JFrame mframe;
+    private JFrame mFrame;
     private JTextField inEdit;
     private JTextField outEdit;
     private JLabel mStatus;
@@ -207,7 +207,7 @@ public class ExampleMain {
             public void run() {
                 try {
                     ExampleMain window = new ExampleMain();
-                    window.mframe.setVisible(true);
+                    window.mFrame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -226,12 +226,12 @@ public class ExampleMain {
      * Initialize the contents of the frame.
      */
     private void initialize() {
-        mframe = new JFrame();
-        mframe.setBounds(100, 100, 800, 525);
-        mframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mFrame = new JFrame();
+        mFrame.setBounds(100, 100, 800, 525);
+        mFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel panel_1 = new JPanel();
-        mframe.getContentPane().add(panel_1, BorderLayout.CENTER);
+        mFrame.getContentPane().add(panel_1, BorderLayout.CENTER);
         SpringLayout sl_panel_1 = new SpringLayout();
         panel_1.setLayout(sl_panel_1);
 
@@ -280,7 +280,7 @@ public class ExampleMain {
                     Source inSource = SourceFactory.createFromUrl(in);
                     Source outSource = SourceFactory.createFromUrl(out);
 
-                    LogListner listener = new LogListner(log, inSource);
+                    LogListener listener = new LogListener(log, inSource);
 
                     log.append(inSource.getUriString());
                     log.append("\n");
@@ -319,7 +319,7 @@ public class ExampleMain {
 
         JPanel panel = new JPanel();
         panel.setBorder(new CompoundBorder());
-        mframe.getContentPane().add(panel, BorderLayout.SOUTH);
+        mFrame.getContentPane().add(panel, BorderLayout.SOUTH);
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
         mProgressBar = new JProgressBar();

@@ -6,7 +6,7 @@ package com.github.ginvavilon.traghentto;
 import java.io.Closeable;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public interface StreamResource<T extends Closeable> extends Closeable {

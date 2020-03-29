@@ -15,7 +15,7 @@ import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.file.BaseSourceTest;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public abstract class BaseZipSourceTest<T extends Source> extends BaseSourceTest<T, Source> {

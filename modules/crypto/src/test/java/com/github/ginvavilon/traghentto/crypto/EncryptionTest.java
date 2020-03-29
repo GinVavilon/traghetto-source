@@ -81,16 +81,16 @@ public class EncryptionTest {
             throws IOException, NoSuchAlgorithmException, IOSourceException,
             SourceAlreadyExistsException,
             InvalidKeySpecException {
-        testSymetricEncription(Algorithm.AES, KeySize.AES_128);
+        testSymmetricEncryption(Algorithm.AES, KeySize.AES_128);
 
     }
 
-    protected void testSymetricEncription(String algorithm, int keysize)
+    protected void testSymmetricEncryption(String algorithm, int keySize)
             throws NoSuchAlgorithmException,
             InvalidKeySpecException, IOSourceException, SourceAlreadyExistsException, IOException {
         CryptoConfiguration configuration = CryptoConfiguration.builder()
                 .setAlgorithm(algorithm)
-                .generateKey(keysize)
+                .generateKey(keySize)
                 .addRandomSalt(512, 1024)
                 .build();
 
@@ -101,28 +101,28 @@ public class EncryptionTest {
     public void testDes()
             throws NoSuchAlgorithmException, InvalidKeySpecException, IOSourceException,
             SourceAlreadyExistsException, IOException {
-        testSymetricEncription(Algorithm.DES, KeySize.DES_GENERATED);
+        testSymmetricEncryption(Algorithm.DES, KeySize.DES_GENERATED);
     }
 
     @Test
     public void testDesEge()
             throws NoSuchAlgorithmException, InvalidKeySpecException, IOSourceException,
             SourceAlreadyExistsException, IOException {
-        testSymetricEncription(Algorithm.DES_EDE, KeySize.DES_EDE_128_GENERATED);
+        testSymmetricEncryption(Algorithm.DES_EDE, KeySize.DES_EDE_128_GENERATED);
     }
 
     @Test
     public void testBlowfishMin()
             throws NoSuchAlgorithmException, InvalidKeySpecException, IOSourceException,
             SourceAlreadyExistsException, IOException {
-        testSymetricEncription(Algorithm.BLOWFISH, KeySize.BLOWFISH_MIN);
+        testSymmetricEncryption(Algorithm.BLOWFISH, KeySize.BLOWFISH_MIN);
     }
 
     @Test
     public void testBlowfishMax()
             throws NoSuchAlgorithmException, InvalidKeySpecException, IOSourceException,
             SourceAlreadyExistsException, IOException {
-        testSymetricEncription(Algorithm.BLOWFISH, KeySize.BLOWFISH_MAX);
+        testSymmetricEncryption(Algorithm.BLOWFISH, KeySize.BLOWFISH_MAX);
     }
 
     protected void testEncryption(CryptoConfiguration configuration)
@@ -140,8 +140,8 @@ public class EncryptionTest {
         FileSource outSource = new FileSource(outRoot);
         FileSource inSource = new FileSource(testRoot);
         FileSource decSource = new FileSource(decRoot);
-        outSource.createConteiner();
-        decSource.createConteiner();
+        outSource.createContainer();
+        decSource.createContainer();
 
         FileSource keysSource = new FileSource(keyRoot);
         FileSource privateKeySource = keysSource.getChild("rsa.key");
@@ -165,8 +165,8 @@ public class EncryptionTest {
 
             String decryptedText = StreamUtils.readStringFromSource(decSource.getChild(name));
 
-            String orinalText = StreamUtils.readStringFromSource(inSource.getChild(name));
-            assertEquals(orinalText, decryptedText);
+            String originalText = StreamUtils.readStringFromSource(inSource.getChild(name));
+            assertEquals(originalText, decryptedText);
         }
     }
 

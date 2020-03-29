@@ -31,7 +31,7 @@ import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source> {
@@ -42,7 +42,7 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
     private TChild mTestDirectorySource;
 
     protected static final String TEST_CHILD_FOLDER = "folder1";
-    private static final int TEST_FILE_LENGHT = 13;
+    private static final int TEST_FILE_LENGTH = 13;
     protected static final String TEST_CHILD = "child.txt";
     protected static final String TEST_FILE = "test.txt";
     protected static final String TEST_DIRECTORY = "test";
@@ -118,12 +118,12 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
     protected abstract TRoot getRootSource();
 
     /**
-     * Test method for {@link com.github.ginvavilon.traghentto.file.FileSource#isConteiner()}.
+     * Test method for {@link com.github.ginvavilon.traghentto.file.FileSource#isContainer()}.
      */
     @Test
-    public void testIsConteiner() {
-        assertFalse(getTestFile().isConteiner());
-        assertTrue(getTestDirectory().isConteiner());
+    public void testIsContainer() {
+        assertFalse(getTestFile().isContainer());
+        assertTrue(getTestDirectory().isContainer());
     }
 
     /**
@@ -146,16 +146,16 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
     }
 
     /**
-     * Test method for {@link com.github.ginvavilon.traghentto.file.FileSource#getLenght()}.
+     * Test method for {@link com.github.ginvavilon.traghentto.file.FileSource#getLength()}.
      */
     @Test
-    public void testGetLenght() {
-        assertEquals(getTestFileLenght(), getTestFile().getLenght());
+    public void testGetLength() {
+        assertEquals(getTestFileLength(), getTestFile().getLength());
     }
 
 
-    protected long getTestFileLenght() {
-        return TEST_FILE_LENGHT;
+    protected long getTestFileLength() {
+        return TEST_FILE_LENGTH;
     }
 
     /**
@@ -170,7 +170,7 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
         StreamResource<InputStream> singleResource = getTestFile().openResource(null);
         String string = StreamUtils.readStringFromResource(singleResource);
         assertEquals(TEST_TEXT, string);
-        assertTrue("Streem must be closed", checkClosedStream(singleResource));
+        assertTrue("Stream must be closed", checkClosedStream(singleResource));
     }
 
 

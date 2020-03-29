@@ -10,13 +10,13 @@ import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
-class ChildRandomAceessSource extends BaseRandomAccessSource<Source> implements Source {
+class ChildRandomAccessSource extends BaseRandomAccessSource<Source> implements Source {
 
 
-    public ChildRandomAceessSource(StreamSource parentSource, Source source) {
+    public ChildRandomAccessSource(StreamSource parentSource, Source source) {
         super(parentSource, source);
     }
     

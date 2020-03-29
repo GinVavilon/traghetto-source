@@ -83,8 +83,8 @@ public class CryptoSource<T extends Source> extends DelegatedSource<T> implement
     }
 
     @Override
-    public long getLenght() {
-        return UNKNOWN_LENGHT;
+    public long getLength() {
+        return UNKNOWN_LENGTH;
     }
 
     protected Cipher getCipher(int mode) throws UnavailableCipherException {
@@ -134,7 +134,7 @@ public class CryptoSource<T extends Source> extends DelegatedSource<T> implement
 
     @Override
     public String toString() {
-        return "Crypted!" + getSource();
+        return "Encrypted!" + getSource();
     }
 
 }

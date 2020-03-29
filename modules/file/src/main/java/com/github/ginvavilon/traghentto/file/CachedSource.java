@@ -81,7 +81,7 @@ public class CachedSource<T extends Source> extends DelegatedSource<T>
 
 
     @Override
-    public long getLenght() {
+    public long getLength() {
 
         Snapshot snapshot = null;
 	try {
@@ -97,7 +97,7 @@ public class CachedSource<T extends Source> extends DelegatedSource<T>
         } finally {
             StreamUtils.close(snapshot);
 	}
-	return getSource().getLenght();
+	return getSource().getLength();
     }
 
     @Override
@@ -107,10 +107,10 @@ public class CachedSource<T extends Source> extends DelegatedSource<T>
     }
 
     @Override
-    public void onProgress(long pRadedByte) {
-//	long lenght = mSource.getLenght();
-//	if (lenght>0){
-//	    Log.d("Progeress copy %s%%(%s / %s)",(pRadedByte*100)/lenght, pRadedByte,lenght);
+    public void onProgress(long pReadBytes) {
+//	long length = mSource.getLength();
+//	if (length>0){
+//	    Log.d("Progress copy %s%%(%s / %s)",(pReadBytes*100)/length, pReadBytes,length);
 //	}
     }
 
@@ -120,7 +120,7 @@ public class CachedSource<T extends Source> extends DelegatedSource<T>
     }
 
     @Override
-    public void onCompite() {
+    public void onComplete() {
         Logger.d(Level.CACHE | Level.SOURCE, "Finish put into cache %s", getSource().getUriString());
     }
 

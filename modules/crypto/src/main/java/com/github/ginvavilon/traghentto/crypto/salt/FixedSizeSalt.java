@@ -15,13 +15,13 @@ public class FixedSizeSalt extends BaseRandomSalt implements Salt {
 
 	@Override
 	protected int getSize(InputStream inputStream) throws IOException {
-		int skiped = (int) inputStream.skip(mSize);
-		int left =mSize - skiped;
+		int skipped = (int) inputStream.skip(mSize);
+		int left =mSize - skipped;
 		return left;
 	}
 
 	@Override
-	protected int calulateSize(OutputStream outputStream) throws IOException {
+	protected int calculateSize(OutputStream outputStream) throws IOException {
 		return mSize;
 	}
 

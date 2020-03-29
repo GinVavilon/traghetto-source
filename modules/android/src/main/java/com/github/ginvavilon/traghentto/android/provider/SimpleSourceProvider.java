@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -125,7 +125,7 @@ public abstract class SimpleSourceProvider extends SourceDocumentsProvider {
     }
 
     protected boolean isSupportChildDetection(String root, Source source) {
-        return source.isConteiner();
+        return source.isContainer();
     }
 
     protected boolean isSupportChild(Source source) {

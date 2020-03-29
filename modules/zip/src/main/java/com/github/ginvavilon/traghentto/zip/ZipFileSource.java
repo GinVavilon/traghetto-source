@@ -33,7 +33,7 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  * @author Vladimir Baraznovsky
  *
  */
-public class ZipFileSource extends BaseZipSouce implements StreamSource,DeletableSource{
+public class ZipFileSource extends BaseZipSource implements StreamSource,DeletableSource{
     ZipFile mZipFile;
     private File mFile;
 
@@ -133,7 +133,7 @@ public class ZipFileSource extends BaseZipSouce implements StreamSource,Deletabl
     public String getUriString() {
         URIBuilder builder = new URIBuilder();
 	builder.scheme(UriConstants.ZIP_FILE_SCHEME);
-	builder.authority(UriConstants.EMPTY_AUTHOTITY);
+	builder.authority(UriConstants.EMPTY_AUTHORITY);
 	builder.path(getPath());
         return builder.build().toString();
 
@@ -143,14 +143,14 @@ public class ZipFileSource extends BaseZipSouce implements StreamSource,Deletabl
     public String getURI(ZipEntrySource pZipEntrySource) {
         URIBuilder builder = new URIBuilder();
 	builder.scheme(UriConstants.ZIP_FILE_SCHEME);
-	builder.authority(UriConstants.EMPTY_AUTHOTITY);
+	builder.authority(UriConstants.EMPTY_AUTHORITY);
 	builder.path(getPath());
 	builder.encodedFragment(pZipEntrySource.getPath());
         return builder.build().toString();
     }
 
     @Override
-    public long getLenght() {
+    public long getLength() {
 	return mZipFile.size();
     }
 
@@ -168,13 +168,13 @@ public class ZipFileSource extends BaseZipSouce implements StreamSource,Deletabl
 //    public boolean unzip(IWritableSource pTo) throws IOException {
 //	try {
 //	    open();
-//	    pTo.createConteiner();
+//	    pTo.createContainer();
 //	    Enumeration<? extends ZipEntry> entries = mZipFile.entries();
 //	    while (entries.hasMoreElements()) {
 //		ZipEntry entry = entries.nextElement();
 //		IWritableSource child = pTo.getChild(entry.getName());
 //		if (entry.isDirectory()) {
-//		    child.createConteiner();
+//		    child.createContainer();
 //		} else {
 //		    InputStream inputStream = null;
 //		    OutputStream outputStream = null;
@@ -207,12 +207,12 @@ public class ZipFileSource extends BaseZipSouce implements StreamSource,Deletabl
         try {
             fileInputStream = new FileInputStream(mFile);
             inputStream = new ZipInputStream(fileInputStream);
-            pTo.createConteiner();
+            pTo.createContainer();
             ZipEntry entry = inputStream.getNextEntry();
             while ((entry != null)) {
                 WritableSource child = pTo.getChild(entry.getName());
                 if (entry.isDirectory()) {
-                    child.createConteiner();
+                    child.createContainer();
                 } else {
                     StreamResource<OutputStream> outputResource = null;
                     try {
@@ -260,7 +260,7 @@ public class ZipFileSource extends BaseZipSouce implements StreamSource,Deletabl
         return new SourceIterator() {
 
             @Override
-            public void close() throws Exception {
+            public void close() throws IOException {
 
             }
 

@@ -12,7 +12,7 @@ import com.github.ginvavilon.traghentto.Source;
  * @author Vladimir Baraznovsky
  *
  */
-public abstract class BaseZipSouce implements Source, ZipSource {
+public abstract class BaseZipSource implements Source, ZipSource {
     static final String EXPRESSION_ROOT_FILE = "/?[^/]+/?";
     static final String EXPRESSION_CHILD_FILE = "[^/]+/?";
 
@@ -35,7 +35,7 @@ public abstract class BaseZipSouce implements Source, ZipSource {
     protected abstract List<? extends ExistZipEntrySource> getChildren(String pString);
 
     @Override
-    public boolean isConteiner() {
+    public boolean isContainer() {
 	return true;
     }
 

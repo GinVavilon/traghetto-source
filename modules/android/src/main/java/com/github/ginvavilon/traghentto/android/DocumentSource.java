@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Document;
-import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
@@ -21,12 +20,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import com.github.ginvavilon.traghentto.BaseWritebleSource;
-import com.github.ginvavilon.traghentto.Logger;
+import com.github.ginvavilon.traghentto.BaseWritableSource;
 import com.github.ginvavilon.traghentto.RenamedSource;
-import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.android.creators.AndroidSourceCreator;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
@@ -34,9 +30,9 @@ import com.github.ginvavilon.traghentto.exceptions.RenameException;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  */
-public class DocumentSource extends BaseWritebleSource {
+public class DocumentSource extends BaseWritableSource {
 
     public static final String DEFAULT_MIME_TYPE = "application/octet-stream";
     private static final String PATH_SEPARATOR = "/";
@@ -79,7 +75,7 @@ public class DocumentSource extends BaseWritebleSource {
     }
 
     @Override
-    public boolean createConteiner() throws IOException {
+    public boolean createContainer() throws IOException {
         return false;
     }
 
@@ -157,7 +153,7 @@ public class DocumentSource extends BaseWritebleSource {
     }
 
     @Override
-    public boolean isConteiner() {
+    public boolean isContainer() {
         if (mUri == null) {
             return false;
         }
@@ -187,7 +183,7 @@ public class DocumentSource extends BaseWritebleSource {
     }
 
     @Override
-    public long getLenght() {
+    public long getLength() {
         return getDocumentInfo().getSize();
     }
 
@@ -356,7 +352,7 @@ public class DocumentSource extends BaseWritebleSource {
 
         @Override
         public long getSize() {
-            return UNKNOWN_LENGHT;
+            return UNKNOWN_LENGTH;
         }
 
         @Override
@@ -455,7 +451,7 @@ public class DocumentSource extends BaseWritebleSource {
         }
 
         public long getSize(Cursor cursor) {
-            return getLong(cursor, mSize, UNKNOWN_LENGHT);
+            return getLong(cursor, mSize, UNKNOWN_LENGTH);
         }
 
         public int getFlags(Cursor cursor) {
