@@ -26,6 +26,7 @@ import com.github.ginvavilon.traghentto.android.AndroidLogHadler;
 import com.github.ginvavilon.traghentto.android.AssetSource;
 import com.github.ginvavilon.traghentto.android.ResourceSource;
 import com.github.ginvavilon.traghentto.android.provider.SimpleSourceProvider;
+import com.github.ginvavilon.traghentto.crypto.Crypto;
 import com.github.ginvavilon.traghentto.crypto.CryptoConfiguration;
 import com.github.ginvavilon.traghentto.crypto.EncryptoSource;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
@@ -128,7 +129,7 @@ public class ExampleProvider extends SimpleSourceProvider {
                 file.mkdirs();
             }
 
-            return new EncryptoSource<FileSource>(new FileSource(file), configuration);
+            return Crypto.encode(new FileSource(file), configuration);
 
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
             Logger.e(e);

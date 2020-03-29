@@ -3,12 +3,13 @@
  */
 package com.github.ginvavilon.traghentto;
 
+import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
+import com.github.ginvavilon.traghentto.params.StreamParams;
+
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-
-import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
-import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
  * @author vbaraznovsky
@@ -93,4 +94,28 @@ public abstract class DelegatedSource<T extends Source> implements Source {
     public interface SourceProvider<T> {
         T getSource();
     }
+
+    protected static <T extends Closeable> StreamResource<T> wrapStreamResource(
+            StreamResource<T> resource,
+            StreamProcessor<T> processor) throws IOException {
+
+        T sourceStream = resource.getStream();
+        try {
+            processor.process(sourceStream);
+            return resource;
+        } catch (IOException e) {
+            try {
+                resource.close();
+            } catch (IOException newE) {
+                e.addSuppressed(newE);
+            }
+            throw e;
+        }
+
+    }
+
+    protected interface StreamProcessor<T extends Closeable> {
+        void process(T stream) throws IOException;
+    }
+
 }
