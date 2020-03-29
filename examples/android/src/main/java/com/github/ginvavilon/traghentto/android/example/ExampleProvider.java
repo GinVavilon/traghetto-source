@@ -85,6 +85,12 @@ public class ExampleProvider extends SimpleSourceProvider {
         return Arrays.asList(ENCRYPED_ROOT, FILES_ROOT, ASSET_ROOT, RESOURCES_ROOT);
     }
 
+
+    @Override
+    protected boolean isSupportChild(Source source) {
+        return !(source instanceof SimpleSource);
+    }
+
     @Override
     protected Source getRootSource(String name) {
 

@@ -12,7 +12,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.ActionMode;
-import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -137,13 +136,22 @@ public class MainActivity extends AppCompatActivity {
     private void startCopy(View view) {
         Source input = getInputSource();
         Source output = SourceFactory.createFromUri(this, mOutputText.getText().toString());
+        if (!(output instanceof WritableSource)){
+            showError(view, getString(R.string.error_output_is_not_writable));
+            return;
+        }
         mProgress.setMax((int) input.getLenght());
         new CopyAsyncTask(view).executeOnExecutor(Executors.newCachedThreadPool(), input, output);
     }
 
     private void showError(View view, Throwable e) {
         Logger.e(e);
-        Snackbar snackbar = Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_SHORT);
+        String message = e.getMessage();
+        showError(view, message);
+    }
+
+    private void showError(View view, String message) {
+        Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
         runOnUiThread(snackbar::show);
     }
 

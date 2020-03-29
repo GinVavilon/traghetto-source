@@ -19,4 +19,5 @@
     <string name="label_open_tree">Open Tree</string>
     <string name="label_open">Open</string>
     <string name="tooltip_open_tree">Open tree</string>
+    <string name="error_output_is_not_writable">Output is not writable</string>
 </resources>
