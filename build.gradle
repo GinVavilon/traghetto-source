@@ -1,12 +1,14 @@
-ext.GROUP_ID = 'com.github.ginvavilon.traghentto'
-ext.VERSION = '0.6.2'
+ext.GROUP_ID = 'io.github.ginvavilon.traghentto'
+ext.VERSION = '0.6.3'
 ext.REPOSITORY_URL = 'https://github.com/GinVavilon/traghetto-source'
 ext.VCS_URL = 'https://github.com/GinVavilon/traghetto-source.git'
 ext.LICENSES = ['Apache-2.0']
 ext.REPOSITOTY_NAME = 'Traghetto-Source'
 ext.DESCRIPTION = 'Interfaces for join sources of fiiles as files sytem, zip, http'
 ext.PUBLISH = false
-
+ext.MAVEN_UPLOAD_REPOSITORY = (hasProperty('snapshot'))?
+            			"https://s01.oss.sonatype.org/content/repositories/snapshots/":
+            			"https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
 buildscript {
     repositories {
         jcenter()
@@ -15,7 +17,6 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.0'
         classpath 'com.github.ginvavilon:android-eclipse:0.9.6'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
         classpath 'org.eclipse.jgit:org.eclipse.jgit:4.2.0.+'
         classpath 'digital.wup:android-maven-publish:3.6.2'
     }
@@ -121,6 +122,8 @@ def applyJavaPublishing(def project, def artifact,def name = NAME, def descripti
     project.with {
        
         apply plugin: 'maven-publish'
+        apply plugin: 'signing'
+       
         task sourcesJar(type: Jar) {
             classifier = 'sources'
             from sourceSets.main.java.srcDirs
@@ -144,8 +147,21 @@ def applyJavaPublishing(def project, def artifact,def name = NAME, def descripti
 def configurePublishing(def project,def publishName, def artifact, def name = NAME, def description = DESCRIPTION,def component, def archives = []){
    
     project.with {
-       
+        apply plugin: 'signing'
         publishing {
+        
+        	repositories {
+    			maven {
+        			name = "snapshot"
+            		url MAVEN_UPLOAD_REPOSITORY
+            		credentials {
+                		username nexusUsername
+                		password nexusPassword
+            		}
+        		}
+    		}
+        
+        
             publications {
                 "$publishName"(MavenPublication) {
                     if (component != null){
@@ -156,29 +172,13 @@ def configurePublishing(def project,def publishName, def artifact, def name = NA
                     version VERSION
                     artifacts = archives 
                     updatePom(pom, name, description)
-                }
+                    
+				}                
             }
         }
-        
-        apply plugin: 'com.jfrog.bintray'
-       
-            bintray {
-                user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-                key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-                publications = [publishName]
-                    pkg.repo = 'maven'
-                    pkg.name = REPOSITOTY_NAME
-
-                    pkg.desc = DESCRIPTION
-                    pkg.userOrg = user
-                    pkg.publicDownloadNumbers = PUBLISH
-                    pkg.publish = PUBLISH
-                    pkg.version.name = VERSION
-                    pkg.version.desc = gitTag?.fullMessage
-                    pkg.version.released = gitTag?.taggerIdent?.when?.format("yyyy-MM-dd'T'HH:mm:ss.SSSZZ")
-                
-            }
-        
+        signing {
+    		sign publishing.publications."$publishName"
+		}                    
     }
 
 }
