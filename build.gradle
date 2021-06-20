@@ -6,7 +6,9 @@ ext.LICENSES = ['Apache-2.0']
 ext.REPOSITOTY_NAME = 'Traghetto-Source'
 ext.DESCRIPTION = 'Interfaces for join sources of fiiles as files sytem, zip, http'
 ext.PUBLISH = false
-
+ext.MAVEN_UPLOAD_REPOSITORY = (hasProperty('snapshot'))?
+            			"https://s01.oss.sonatype.org/content/repositories/snapshots/":
+            			"https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
 buildscript {
     repositories {
         jcenter()
@@ -149,8 +151,9 @@ def configurePublishing(def project,def publishName, def artifact, def name = NA
         publishing {
         
         	repositories {
-        		maven {
-            		url "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+    			maven {
+        			name = "snapshot"
+            		url MAVEN_UPLOAD_REPOSITORY
             		credentials {
                 		username nexusUsername
                 		password nexusPassword
