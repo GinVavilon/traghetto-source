@@ -162,7 +162,7 @@ public class DocumentSource extends BaseWritebleSource {
             return false;
         }
         String type = getDocumentInfo().getMimeType();
-        return (DocumentsContract.Document.MIME_TYPE_DIR.equals(type) || TextUtils.isEmpty(type));
+        return DocumentsContract.Document.MIME_TYPE_DIR.equals(type);
     }
 
     @Override
