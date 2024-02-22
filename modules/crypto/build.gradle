@@ -1,7 +1,10 @@
 
 apply plugin: 'java-library'
 apply plugin: 'eclipse'
-
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 dependencies {
     api project(':base')
     testImplementation 'junit:junit:4.12'

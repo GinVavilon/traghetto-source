@@ -1,5 +1,5 @@
 ext.GROUP_ID = 'io.github.ginvavilon.traghentto'
-ext.VERSION = '0.6.5'
+ext.VERSION = '0.6.6-dev'
 ext.REPOSITORY_URL = 'https://github.com/GinVavilon/traghetto-source'
 ext.VCS_URL = 'https://github.com/GinVavilon/traghetto-source.git'
 ext.LICENSES = ['Apache-2.0']
@@ -16,7 +16,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.0'
+        classpath 'com.android.tools.build:gradle:8.1.4'
         classpath 'com.github.ginvavilon:android-eclipse:0.9.9'
         classpath 'org.eclipse.jgit:org.eclipse.jgit:4.2.0.+'
         classpath 'digital.wup:android-maven-publish:3.6.2'
@@ -67,7 +67,7 @@ subprojects{
     
             task jarTest (type: Jar, dependsOn: testClasses) {
                 from sourceSets.test.output
-                classifier = 'test'
+                archiveClassifier = 'test'
             }
 
             artifacts {
@@ -126,12 +126,12 @@ def applyJavaPublishing(def project, def artifact,def name = NAME, def descripti
         apply plugin: 'signing'
        
         task sourcesJar(type: Jar) {
-            classifier = 'sources'
+            archiveClassifier = 'sources'
             from sourceSets.main.java.srcDirs
         }
         
         task javadocJar(type: Jar, dependsOn: javadoc) {
-            classifier 'javadoc'
+            archiveClassifier = 'javadoc'
             from javadoc.destinationDir
         }
 

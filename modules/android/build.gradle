@@ -4,11 +4,13 @@ apply plugin: 'maven-publish'
 apply plugin: 'digital.wup.android-maven-publish'
 
 android {
-    compileSdkVersion 28
+    compileSdk 31
+
+    namespace = "com.github.ginvavilon.traghentto.android"
 
     defaultConfig {
         minSdkVersion 8
-        targetSdkVersion 28
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -38,9 +40,6 @@ dependencies {
 }
 
 
-
-
-
 eclipse {
     project {
         name = 'Traghentto-Android'
@@ -50,21 +49,23 @@ eclipse {
 task androidJavadocs(type: Javadoc) {
     failOnError false
     source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+afterEvaluate {
+    project.tasks.androidJavadocs.classpath += project.files(project.android.getBootClasspath().join(File.pathSeparator))
 }
 
 task javadocJar(type: Jar, dependsOn: androidJavadocs) {
-    classifier = 'javadoc'
+    archiveClassifier = 'javadoc'
     from androidJavadocs.destinationDir
 }
 
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from android.sourceSets.main.java.srcDirs
 }
 
-task jar(type: Jar, dependsOn: 'bundleReleaseAar') {
-    from zipTree("$buildDir/intermediates/packaged-classes/release/classes.jar")
+task jar(type: Jar, dependsOn: 'bundleLibCompileToJarRelease') {
+    from zipTree("$buildDir/intermediates/compile_library_classes_jar/release/classes.jar")
 }
 
 configurations {

@@ -6,6 +6,8 @@ apply plugin: 'digital.wup.android-maven-publish'
 android {
     compileSdkVersion 26
 
+    namespace = "com.github.ginvavilon.traghentto.android.glide"
+
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 26
@@ -48,21 +50,23 @@ eclipse {
 task androidJavadocs(type: Javadoc) {
     failOnError false
     source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+ }
+afterEvaluate {
+    project.tasks.androidJavadocs.classpath += project.files(project.android.getBootClasspath().join(File.pathSeparator))
 }
 
 task javadocJar(type: Jar, dependsOn: androidJavadocs) {
-    classifier = 'javadoc'
+    archiveClassifier = 'javadoc'
     from androidJavadocs.destinationDir
 }
 
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from android.sourceSets.main.java.srcDirs
 }
 
-task jar(type: Jar, dependsOn: 'bundleReleaseAar') {
-    from zipTree("$buildDir/intermediates/packaged-classes/release/classes.jar")
+task jar(type: Jar, dependsOn: 'bundleLibCompileToJarRelease') {
+    from zipTree("$buildDir/intermediates/compile_library_classes_jar/release/classes.jar")
 }
 
 configurations {

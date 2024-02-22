@@ -205,31 +205,31 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.item_open:
-                openInput();
-                return true;
-            case R.id.item_open_tree:
-                openTreeInput();
-                return true;
-            case R.id.item_replace:
-                openOutput();
-                return true;
-            case R.id.item_create:
-                createOutput();
-                return true;
-            case R.id.item_save_tree:
-                openTreeOutput();
-                return true;
-            case R.id.item_delete:
-                onDelete();
-                return true;
-            case R.id.item_open_web_image:
-                openImageInputSource(SourceFactory.createFromUri(this, URL), IMAGE_JPEG);
-                return true;
-            case R.id.item_open_resource_image:
-                openImageInputSource(SourceFactory.createFromResource(this, R.mipmap.sample), IMAGE_PNG);
-                return true;
+        int itemId = item.getItemId();
+        if (itemId == R.id.item_open) {
+            openInput();
+            return true;
+        } else if (itemId == R.id.item_open_tree) {
+            openTreeInput();
+            return true;
+        } else if (itemId == R.id.item_replace) {
+            openOutput();
+            return true;
+        } else if (itemId == R.id.item_create) {
+            createOutput();
+            return true;
+        } else if (itemId == R.id.item_save_tree) {
+            openTreeOutput();
+            return true;
+        } else if (itemId == R.id.item_delete) {
+            onDelete();
+            return true;
+        } else if (itemId == R.id.item_open_web_image) {
+            openImageInputSource(SourceFactory.createFromUri(this, URL), IMAGE_JPEG);
+            return true;
+        } else if (itemId == R.id.item_open_resource_image) {
+            openImageInputSource(SourceFactory.createFromResource(this, R.mipmap.sample), IMAGE_PNG);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
