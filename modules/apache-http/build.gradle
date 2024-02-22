@@ -4,8 +4,8 @@ apply plugin: 'eclipse'
 dependencies {
     implementation project(':base')
     implementation project(':http')
-    implementation 'org.apache.httpcomponents:httpcore:4.4.1'
-    implementation 'org.apache.httpcomponents:httpclient:4.5'
+    implementation 'org.apache.httpcomponents:httpcore:4.4.16'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
     testImplementation 'junit:junit:4.12'
 }
 eclipse {
