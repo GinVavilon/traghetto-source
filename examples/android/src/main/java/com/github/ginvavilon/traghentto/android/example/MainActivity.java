@@ -320,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
                 .into(mImageView);
     }
 
-    private class CopyAsyncTask extends AsyncTask<Source, Long, Source> implements StreamUtils.ICopyListener {
+    private class CopyAsyncTask extends AsyncTask<Source, Long, Source> implements SourceUtils.ICopyListener {
 
         private final View mView;
 

@@ -25,6 +25,10 @@ def includeModule (String name){
 rootProject.name = 'TraghettoSource'
 
 include ':base'
+include ':utils:public'
+include ':utils:stream'
+include ':utils:io'
+include ':utils:logger'
 includeModule 'file'
 includeModule 'path'
 includeModule 'http'

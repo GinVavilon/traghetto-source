@@ -17,7 +17,6 @@ import com.github.ginvavilon.traghentto.BaseWritableSource;
 import com.github.ginvavilon.traghentto.RenamedSource;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceCreator;
-import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.exceptions.RenameException;
 import com.github.ginvavilon.traghentto.params.ParamNames;
@@ -107,7 +106,7 @@ public class FileSource extends BaseWritableSource implements Source, WritableSo
 
     @Override
     protected OutputStream openOutputStream(StreamParams pParams) throws IOException {
-        StreamParams params = SourceUtils.getSafetyParams(pParams);
+        StreamParams params = StreamParams.getSafetyParams(pParams);
         if (!(params.getProperty(ParamNames.CREATE, true) || exists())) {
             throw new FileNotFoundException();
         }

@@ -33,7 +33,6 @@ import org.apache.http.util.EntityUtils;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Logger.Level;
 import com.github.ginvavilon.traghentto.SourceCreator;
-import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.http.BaseHttpSource;
 import com.github.ginvavilon.traghentto.params.StreamParams;
@@ -58,7 +57,7 @@ public class ApacheHttpSource extends BaseHttpSource {
     public InputStream openInputStream(StreamParams pParams)
             throws IOException, IOSourceException {
         Logger.d(Level.HTTP | Level.SOURCE | Level.STREAM, "Open Stream");
-        StreamParams params = SourceUtils.getSafetyParams(pParams);
+        StreamParams params = StreamParams.getSafetyParams(pParams);
         Object data = params.getProperty(PARAM_DATA, (Object) null);
         if (data != null) {
             return openInputStream(params, (Map<String, Object>) data);

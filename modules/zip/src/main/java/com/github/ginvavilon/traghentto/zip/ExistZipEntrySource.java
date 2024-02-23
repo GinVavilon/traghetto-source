@@ -12,7 +12,6 @@ import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceIterator;
 import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.StreamSource;
-import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 
@@ -50,7 +49,7 @@ class ExistZipEntrySource extends ZipEntrySource implements StreamSource {
     public StreamResource<InputStream> openResource(StreamParams pParams)
             throws IOSourceException, IOException {
         InputStream inputStream = mZipParent.openInputStream(mZipEntry);
-        return StreamUtils.createResource(inputStream);
+        return StreamResource.createResource(inputStream);
     }
 
     @Override

@@ -9,6 +9,8 @@ dependencies {
     implementation project(':java-se')
     implementation project(':file')
     implementation project(':crypto')
+    implementation project(':utils:public')
+    implementation project(':utils:logger')
     testImplementation 'junit:junit:4.12'
 }
 eclipse {

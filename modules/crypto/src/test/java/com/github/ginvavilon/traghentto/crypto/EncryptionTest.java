@@ -2,10 +2,10 @@ package com.github.ginvavilon.traghentto.crypto;
 
 import static org.junit.Assert.assertEquals;
 
+import com.github.ginvavilon.traghentto.IOSourceUtils;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Logger.LogHandler;
 import com.github.ginvavilon.traghentto.SourceUtils;
-import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.crypto.Crypto.Algorithm;
 import com.github.ginvavilon.traghentto.crypto.Crypto.KeySize;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
@@ -163,9 +163,9 @@ public class EncryptionTest {
         
         for (String name : FILES) {
 
-            String decryptedText = StreamUtils.readStringFromSource(decSource.getChild(name));
+            String decryptedText = IOSourceUtils.readStringFromSource(decSource.getChild(name));
 
-            String originalText = StreamUtils.readStringFromSource(inSource.getChild(name));
+            String originalText = IOSourceUtils.readStringFromSource(inSource.getChild(name));
             assertEquals(originalText, decryptedText);
         }
     }

@@ -24,7 +24,6 @@ import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.RenamedSource;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceCreator;
-import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.exceptions.RenameException;
@@ -146,7 +145,7 @@ public class PathSource extends BaseWritableSource implements Source, WritableSo
 
     @Override
     protected OutputStream openOutputStream(StreamParams pParams) throws IOException {
-        StreamParams params = SourceUtils.getSafetyParams(pParams);
+        StreamParams params = StreamParams.getSafetyParams(pParams);
         List<StandardOpenOption> options = new LinkedList<>();
         if (params.getProperty(ParamNames.APPEND, false)) {
             options.add(StandardOpenOption.APPEND);

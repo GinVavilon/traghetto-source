@@ -4,13 +4,13 @@ apply plugin: 'maven-publish'
 apply plugin: 'digital.wup.android-maven-publish'
 
 android {
-    compileSdkVersion 26
+    compileSdk 31
 
     namespace = "com.github.ginvavilon.traghentto.android.glide"
 
     defaultConfig {
         minSdkVersion 8
-        targetSdkVersion 26
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -32,6 +32,8 @@ android {
 
 dependencies {
     api project(':android')
+    implementation project(':utils:stream')
+    implementation project(':utils:logger')
     compileOnly 'com.github.bumptech.glide:glide:4.8.0'
     compileOnly 'com.github.bumptech.glide:annotations:4.8.0'
     

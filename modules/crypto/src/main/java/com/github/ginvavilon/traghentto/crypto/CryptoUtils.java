@@ -1,7 +1,7 @@
 package com.github.ginvavilon.traghentto.crypto;
 
+import com.github.ginvavilon.traghentto.IOSourceUtils;
 import com.github.ginvavilon.traghentto.Source;
-import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.crypto.Crypto.Algorithm;
 import com.github.ginvavilon.traghentto.crypto.Crypto.Hash;
@@ -44,8 +44,8 @@ public class CryptoUtils {
 	public static KeyPair loadKeys(String algorithm, Source privateKeySource, Source publicKeySource)
 			throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 
-		byte[] encodedPrivateKey = StreamUtils.readSource(privateKeySource);
-		byte[] encodedPublicKey = StreamUtils.readSource(publicKeySource);
+		byte[] encodedPrivateKey = IOSourceUtils.readSource(privateKeySource);
+		byte[] encodedPublicKey = IOSourceUtils.readSource(publicKeySource);
 
 		KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
 		X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(encodedPublicKey);
@@ -60,7 +60,7 @@ public class CryptoUtils {
     public static Key loadPrivateKey(String algorithm, Source privateKeySource)
             throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 
-        byte[] encodedPrivateKey = StreamUtils.readSource(privateKeySource);
+        byte[] encodedPrivateKey = IOSourceUtils.readSource(privateKeySource);
 
         if (isSymmetric(algorithm)) {
             return new SecretKeySpec(encodedPrivateKey, algorithm);
@@ -89,7 +89,7 @@ public class CryptoUtils {
     public static Key loadPublicKey(String algorithm, Source publicKeySource)
             throws NoSuchAlgorithmException, IOException, InvalidKeySpecException {
 
-        byte[] encodedPublicKey = StreamUtils.readSource(publicKeySource);
+        byte[] encodedPublicKey = IOSourceUtils.readSource(publicKeySource);
         if (isSymmetric(algorithm)) {
             return new SecretKeySpec(encodedPublicKey, algorithm);
         }
@@ -104,14 +104,14 @@ public class CryptoUtils {
 	public static boolean savePrivateKey(Key privateKey, WritableSource privateKeySource) {
 
 		PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKey.getEncoded());
-		return StreamUtils.writeSource(privateKeySource, keySpec.getEncoded());
+		return IOSourceUtils.writeSource(privateKeySource, keySpec.getEncoded());
 
 	}
 
 	public static boolean savePublicKey(Key publicKey, WritableSource publicKeySource) {
 		
 		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKey.getEncoded());
-		return StreamUtils.writeSource(publicKeySource, keySpec.getEncoded());
+		return IOSourceUtils.writeSource(publicKeySource, keySpec.getEncoded());
 		
 	}
 

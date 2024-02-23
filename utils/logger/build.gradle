@@ -1,0 +1,20 @@
+
+apply plugin: 'java-library'
+apply plugin: 'eclipse'
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+eclipse {
+    project {
+        name = 'Traghentto-Logger'
+    }
+}
+
+applyJavaPublishing (project, 'logger', 'Tragnetto-Logger')

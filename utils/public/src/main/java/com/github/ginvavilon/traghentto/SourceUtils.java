@@ -14,7 +14,6 @@ import com.github.ginvavilon.traghentto.exceptions.RenameException;
 import com.github.ginvavilon.traghentto.exceptions.SourceAlreadyExistsException;
 import com.github.ginvavilon.traghentto.params.ParamNames;
 import com.github.ginvavilon.traghentto.params.StreamParams;
-import com.github.ginvavilon.traghentto.params.VoidParams;
 
 /**
  * @author Vladimir Baraznovsky
@@ -75,7 +74,7 @@ public class SourceUtils {
                 StreamResource<OutputStream> outputResource = null;
                 OutputStream outputStream = null;
                 try {
-                    StreamParams inParam = getSafetyParams(pInParams);
+                    StreamParams inParam = StreamParams.getSafetyParams(pInParams);
                     inputResource = pFrom.openResource(inParam);
                     outputResource = to.openOutputResource(pOutParams);
                     inputStream = inputResource.getStream();
@@ -84,7 +83,7 @@ public class SourceUtils {
                     skipByte = inParam.getProperty(ParamNames.OUT_SKIP, skipByte);
                     long alreadyRead = inParam.getProperty(ParamNames.OUT_ALREADY_READ, 0L);
                     StreamUtils.copyStream(inputStream, outputStream, false, false, alreadyRead,
-                            skipByte, pListener);
+                            skipByte, delegateCopyListener(pListener));
 
                 } finally {
                     StreamUtils.close(inputResource);
@@ -97,15 +96,13 @@ public class SourceUtils {
         }
     }
 
-
-
-    public static StreamParams getSafetyParams(StreamParams pParams) {
-        if (pParams != null) {
-            return pParams;
-        } else {
-            return new VoidParams();
+    private static StreamUtils.ICopyListener delegateCopyListener(ICopyListener pListener) {
+        if (pListener != null) {
+            return new DelegateCopyListener(pListener);
         }
+        return null;
     }
+
 
     public static RenamedSource rename(RenamedSource source, String newName)
             throws RenameException {
@@ -123,6 +120,45 @@ public class SourceUtils {
             return false;
         }
         return childSource.getUriString().startsWith(parentSource.getUriString());
+    }
+
+
+    public static interface ICopyListener {
+        void onStart();
+
+        void onProgress(long pReadBytes);
+
+        void onComplete();
+
+        void onFail(Throwable pE);
+    }
+
+    private static class DelegateCopyListener implements StreamUtils.ICopyListener {
+        private final ICopyListener mPListener;
+
+        public DelegateCopyListener(ICopyListener pListener) {
+            mPListener = pListener;
+        }
+
+        @Override
+        public void onStart() {
+            mPListener.onStart();
+        }
+
+        @Override
+        public void onProgress(long pReadBytes) {
+            mPListener.onProgress(pReadBytes);
+        }
+
+        @Override
+        public void onComplete() {
+            mPListener.onComplete();
+        }
+
+        @Override
+        public void onFail(Throwable pE) {
+            mPListener.onFail(pE);
+        }
     }
 }
 

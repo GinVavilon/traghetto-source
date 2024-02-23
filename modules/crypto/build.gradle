@@ -7,9 +7,12 @@ java {
 }
 dependencies {
     api project(':base')
+    implementation project(':utils:io')
     testImplementation 'junit:junit:4.12'
     testImplementation project(':file')
     testImplementation project(path: ':base', configuration: 'testOutput')
+    testImplementation project(':utils:public')
+    testImplementation project(':utils:logger')
 }
 eclipse {
     project {

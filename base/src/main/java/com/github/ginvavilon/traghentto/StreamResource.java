@@ -19,4 +19,8 @@ public interface StreamResource<T extends Closeable> extends Closeable {
     T takeStream() throws UnsupportedOperationException;
 
     boolean isOpened();
+
+    static <T extends Closeable> StreamResource<T> createResource(T stream) {
+        return new SimpleStreamResource<T>(stream);
+    }
 }
