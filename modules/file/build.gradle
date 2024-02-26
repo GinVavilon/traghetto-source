@@ -9,11 +9,12 @@ java {
 
 dependencies {
     api project(':base')
+    api project(':common')
+    implementation project(':utils:io')
     implementation project(':utils:stream')
     implementation project(':utils:logger')
     testImplementation 'junit:junit:4.12'
     testImplementation project(path: ':base', configuration: 'testOutput')
-    testImplementation project(':utils:io')
     testImplementation project(':utils:public')
 
 }

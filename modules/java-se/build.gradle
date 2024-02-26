@@ -10,12 +10,12 @@ dependencies {
     api project(':file')
     api project(':zip')
     api project(':path')
+    implementation project(':utils:io')
     testImplementation project(':utils:public')
     compileOnly project(':apache-http')
     testImplementation 'junit:junit:4.12'
     testImplementation project(path: ':zip', configuration: 'testOutput')
     testImplementation project(path: ':base', configuration: 'testOutput')
-    testImplementation project(':utils:io')
 }
 eclipse {
     project {

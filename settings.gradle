@@ -25,6 +25,7 @@ def includeModule (String name){
 rootProject.name = 'TraghettoSource'
 
 include ':base'
+include ':common'
 include ':utils:public'
 include ':utils:stream'
 include ':utils:io'
@@ -43,5 +44,6 @@ if (!excludedModules.contains('java-se')){
 
 if (!excludedModules.contains('android')){
     includeModule 'glide'
+	includeModule 'google-play-assets'
 	include ':examples:android'
 }
