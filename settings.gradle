@@ -30,6 +30,7 @@ include ':utils:public'
 include ':utils:stream'
 include ':utils:io'
 include ':utils:logger'
+
 includeModule 'file'
 includeModule 'path'
 includeModule 'http'
@@ -46,4 +47,8 @@ if (!excludedModules.contains('android')){
     includeModule 'glide'
 	includeModule 'google-play-assets'
 	include ':examples:android'
+	include ':examples:packs:install_pack'
+	include ':examples:packs:on_demand_pack'
+	include ':examples:packs:fast_follow_pack'
+
 }

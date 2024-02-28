@@ -17,7 +17,7 @@ import java.util.List;
  */
 public abstract class DelegatedSource<T extends Source> implements Source {
 
-    private final SourceProvider<T> mSourceProvider;
+    protected final SourceProvider<T> mSourceProvider;
 
     protected DelegatedSource(SourceProvider<T> sourceProvider) {
         mSourceProvider = sourceProvider;
@@ -87,12 +87,18 @@ public abstract class DelegatedSource<T extends Source> implements Source {
             public T getSource() {
                 return source;
             }
+
+            public void clear() {
+            }
+
         };
     }
 
-
+    @FunctionalInterface
     public interface SourceProvider<T> {
         T getSource();
+
+        default void clear() {}
     }
 
     protected static <T extends Closeable> StreamResource<T> wrapStreamResource(

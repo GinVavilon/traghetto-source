@@ -7,9 +7,10 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Build;
 import android.provider.DocumentsContract.Root;
-import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
+
+import androidx.annotation.RequiresApi;
 
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Source;

@@ -6,17 +6,13 @@ public interface RetrievableSource extends Source {
 
     Controller getController();
 
-    Source getReadySource();
-
     interface Controller {
 
         void fetch();
 
         void cancel();
 
-        int getFullByteSize();
-
-        int getReadyByteSize();
+        Progress getProgress();
 
         void registerListener(Listener listener);
 
@@ -25,7 +21,7 @@ public interface RetrievableSource extends Source {
 
     enum Status {
         READY,
-        AVAILABLE,
+        PENDING,
         FETCHING,
         PAUSED,
         ERROR,
@@ -34,10 +30,16 @@ public interface RetrievableSource extends Source {
 
     interface Listener {
 
-        void onStatusUpdate(Status status);
+        void onStatusUpdate(RetrievableSource source, Status status);
 
-        void onProgress(long readyBytes, long fullBytes);
+        void onProgress(RetrievableSource source, long readyBytes, long fullBytes);
 
-        void onError(Throwable throwable);
+        void onError(RetrievableSource source, Throwable throwable);
+    }
+
+    interface Progress {
+        long getFullByteSize();
+
+        long getReadyByteSize();
     }
 }

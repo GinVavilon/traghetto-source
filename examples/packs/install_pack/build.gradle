@@ -1,0 +1,11 @@
+// In the asset pack's build.gradle file:
+plugins {
+  id 'com.android.asset-pack'
+}
+
+assetPack {
+    packName = "install_pack"
+    dynamicDelivery {
+        deliveryType = "install-time"
+    }
+}

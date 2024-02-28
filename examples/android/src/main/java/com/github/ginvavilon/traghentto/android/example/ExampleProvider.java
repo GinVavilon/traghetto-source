@@ -5,7 +5,8 @@ package com.github.ginvavilon.traghentto.android.example;
 
 import android.content.res.AssetManager;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
+
+import androidx.annotation.RequiresApi;
 
 import java.io.File;
 import java.io.IOException;

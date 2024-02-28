@@ -6,7 +6,7 @@ apply plugin: 'digital.wup.android-maven-publish'
 android {
     compileSdk 31
 
-    namespace = "com.github.ginvavilon.traghentto.android"
+    namespace = "com.github.ginvavilon.traghentto.android.play.assets"
 
     defaultConfig {
         minSdkVersion 8
@@ -32,28 +32,25 @@ android {
 
 dependencies {
     api project(':base')
-    implementation project(':utils:stream')
-    implementation project(':utils:public')
+    api project(':common')
+    implementation project(':android')
     implementation project(':utils:logger')
-    implementation project(':utils:io')
-    implementation 'androidx.annotation:annotation:1.7.1'
-    compileOnly project(':http')
-    api project(':file')
-    api project(':zip')
-    compileOnly project(':apache-http')
+    implementation project(':utils:public')
+    implementation "com.google.android.play:asset-delivery:2.1.0"
+    implementation project(path: ':utils:io')
 }
 
 
 eclipse {
     project {
-        name = 'Traghentto-Android'
+        name = 'Traghentto-Android-GP-Assets'
     }
 }
 
 task androidJavadocs(type: Javadoc) {
     failOnError false
     source = android.sourceSets.main.java.srcDirs
-}
+ }
 afterEvaluate {
     project.tasks.androidJavadocs.classpath += project.files(project.android.getBootClasspath().join(File.pathSeparator))
 }
@@ -82,4 +79,4 @@ artifacts {
     archives sourcesJar
 }
 
-configurePublishing(project,'android','android','Tragnetto-Android',DESCRIPTION,components.android,[jar,sourcesJar,javadocJar])
+configurePublishing(project,'google-play-assets','google-play-assets','Tragnetto-Google-Play-Assets',DESCRIPTION,components.android,[jar,sourcesJar,javadocJar]) 

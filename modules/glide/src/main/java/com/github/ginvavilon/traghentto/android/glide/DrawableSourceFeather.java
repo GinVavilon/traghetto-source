@@ -2,7 +2,6 @@ package com.github.ginvavilon.traghentto.android.glide;
 
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
 
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
@@ -10,6 +9,8 @@ import com.bumptech.glide.load.data.DataFetcher;
 import com.github.ginvavilon.traghentto.android.ResourceSource;
 
 import static android.os.Build.VERSION.SDK_INT;
+
+import androidx.annotation.NonNull;
 
 public class DrawableSourceFeather implements DataFetcher<Drawable> {
     private final ResourceSource mResourceSource;
