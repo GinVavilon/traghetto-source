@@ -24,6 +24,7 @@ import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.android.AndroidLogHandler;
+import com.github.ginvavilon.traghentto.android.AndroidSourceFactory;
 import com.github.ginvavilon.traghentto.android.AssetSource;
 import com.github.ginvavilon.traghentto.android.ResourceSource;
 import com.github.ginvavilon.traghentto.android.provider.SimpleSourceProvider;

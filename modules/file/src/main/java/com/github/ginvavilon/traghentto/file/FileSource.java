@@ -101,7 +101,7 @@ public class FileSource extends BaseWritableSource implements Source, WritableSo
 
     @Override
     public boolean isDataAvailable() {
-        return true;
+        return exists();
     }
 
     @Override

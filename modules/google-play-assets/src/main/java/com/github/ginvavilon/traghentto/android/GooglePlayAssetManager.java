@@ -38,6 +38,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -46,7 +48,7 @@ class GooglePlayAssetManager {
 
     private final AssetManager mAssetManager;
     private final AssetPackManager mAssetPackManager;
-    private final Map<RetrievableSource.Listener, StateListener> mListeners = new HashMap<>();
+    private final Map<RetrievableSource.Listener, Set<StateListener>> mListeners = new HashMap<>();
 
     public GooglePlayAssetManager(AssetManager assetManager, AssetPackManager assetPackManager) {
         mAssetManager = assetManager;
@@ -277,14 +279,26 @@ class GooglePlayAssetManager {
         @Override
         public void registerListener(RetrievableSource.Listener listener) {
             StateListener value = new StateListener(mSource, mPackName, listener);
-            mListeners.put(listener, value);
+            Set<StateListener> listeners;
+
+            synchronized (mListeners) {
+                listeners = mListeners.get(listener);
+                if (listeners == null) {
+                    listeners = new CopyOnWriteArraySet<>();
+                }
+            }
+            listeners.add(value);
             mAssetPackManager.registerListener(value);
         }
 
         @Override
         public void unregisterListener(RetrievableSource.Listener listener) {
-            StateListener stateListener = mListeners.remove(listener);
-            mAssetPackManager.unregisterListener(stateListener);
+            Set<StateListener> listeners = mListeners.remove(listener);
+            if (listeners!=null) {
+                for (StateListener stateListener : listeners) {
+                    mAssetPackManager.unregisterListener(stateListener);
+                }
+            }
         }
     }
 

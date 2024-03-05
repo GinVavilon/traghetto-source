@@ -28,10 +28,11 @@ import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.android.AndroidLogHandler;
+import com.github.ginvavilon.traghentto.android.AndroidSourceFactory;
 import com.github.ginvavilon.traghentto.android.DocumentSource;
 import com.github.ginvavilon.traghentto.android.GooglePlayAssetSource;
 import com.github.ginvavilon.traghentto.android.GooglePlayAssetSourceCreator;
-import com.github.ginvavilon.traghentto.android.SourceFactory;
+import com.github.ginvavilon.traghentto.android.GooglePlayAssetSourceUi;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.exceptions.SourceAlreadyExistsException;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -52,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
 
     static {
         AndroidLogHandler.init();
-        GooglePlayAssetSourceCreator.register();
 
     }
 
@@ -64,9 +64,17 @@ public class MainActivity extends AppCompatActivity {
     private String mMimeType = IMAGE_PNG;
     private TextView mTypeText;
 
+    private AndroidSourceFactory mSourceFactory;
+    private GooglePlayAssetSourceUi mGooglePlayAssetSourceUi = new GooglePlayAssetSourceUi(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSourceFactory = AndroidSourceFactory
+                .createDefaultBuilder(this)
+                .register(new GooglePlayAssetSourceCreator(this))
+                .build();
+
         setContentView(R.layout.activity_main);
         mProgress = findViewById(R.id.progress);
         mInputText = findViewById(R.id.txt_input);
@@ -110,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             controller.fetch();
         }
-
         mInputText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -120,6 +127,18 @@ public class MainActivity extends AppCompatActivity {
         });
 
         configureInputMenu();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mGooglePlayAssetSourceUi.stop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mGooglePlayAssetSourceUi.start();
     }
 
     private void configureInputMenu() {
@@ -154,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateInput(TextView v) {
         CharSequence text = v.getText();
-        Source source = SourceFactory.createFromUri(v.getContext(), text.toString());
+        Source source = mSourceFactory.createFromUri(text.toString());
         show(source);
     }
 
@@ -166,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startCopy(View view) {
         Source input = getInputSource();
-        Source output = SourceFactory.createFromUri(this, mOutputText.getText().toString());
+        Source output = mSourceFactory.createFromUri(mOutputText.getText().toString());
         if (!(output instanceof WritableSource)) {
             showError(view, getString(R.string.error_output_is_not_writable));
             return;
@@ -256,10 +275,10 @@ public class MainActivity extends AppCompatActivity {
             onDelete();
             return true;
         } else if (itemId == R.id.item_open_web_image) {
-            openImageInputSource(SourceFactory.createFromUri(this, URL), IMAGE_JPEG);
+            openImageInputSource(mSourceFactory.createFromUri(URL), IMAGE_JPEG);
             return true;
         } else if (itemId == R.id.item_open_resource_image) {
-            openImageInputSource(SourceFactory.createFromResource(this, R.mipmap.sample), IMAGE_PNG);
+            openImageInputSource(mSourceFactory.createFromResource(R.mipmap.sample), IMAGE_PNG);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -281,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Source getInputSource() {
-        return SourceFactory.createFromUri(this, mInputText.getText().toString());
+        return mSourceFactory.createFromUri(mInputText.getText().toString());
     }
 
     @Override

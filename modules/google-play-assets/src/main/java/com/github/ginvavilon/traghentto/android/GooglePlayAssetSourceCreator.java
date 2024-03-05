@@ -3,20 +3,28 @@ package com.github.ginvavilon.traghentto.android;
 import android.content.Context;
 import android.net.Uri;
 
-import com.github.ginvavilon.traghentto.Logger;
-import com.github.ginvavilon.traghentto.android.creators.AndroidSourceCreator;
+import com.github.ginvavilon.traghentto.android.creators.UriSourceCreator;
+import com.github.ginvavilon.traghentto.android.creators.WithDefaultScheme;
 
-public class GooglePlayAssetSourceCreator implements AndroidSourceCreator<GooglePlayAssetSource> {
+public class GooglePlayAssetSourceCreator implements UriSourceCreator<GooglePlayAssetSource>, WithDefaultScheme {
 
-    public static void register() {
-        SourceFactory.register(GooglePlayAssetSource.SCHEME, new GooglePlayAssetSourceCreator());
+    private GooglePlayAssetManager mGooglePlayAssetManager;
+
+
+    public GooglePlayAssetSourceCreator(Context context) {
+        mGooglePlayAssetManager = new GooglePlayAssetManager(context);
     }
 
     @Override
-    public GooglePlayAssetSource create(Context context, Uri uri) {
-        return new GooglePlayAssetSource(context,
+    public GooglePlayAssetSource create(Uri uri) {
+        return new GooglePlayAssetSource(mGooglePlayAssetManager,
                 uri.getAuthority(),
                 uri.getPath()
         );
+    }
+
+    @Override
+    public String getDefaultScheme() {
+        return GooglePlayAssetSource.SCHEME;
     }
 }

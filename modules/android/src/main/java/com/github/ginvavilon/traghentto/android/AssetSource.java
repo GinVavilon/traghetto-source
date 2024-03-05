@@ -158,7 +158,7 @@ public class AssetSource extends BaseSource implements ParcelFileDescriptorSourc
 
     @Override
     public boolean isDataAvailable() {
-        return true;
+        return exists();
     }
 
     @Override

@@ -12,6 +12,7 @@ import com.github.ginvavilon.traghentto.RetrievableSource;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceIterator;
 import com.github.ginvavilon.traghentto.StreamResource;
+import com.github.ginvavilon.traghentto.android.creators.AndroidSourceCreator;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 
@@ -222,4 +223,14 @@ public class GooglePlayAssetSource extends DelegatedSource<Source> implements Re
         return builder.build().toString();
     }
 
+    public static final AndroidSourceCreator<GooglePlayAssetSource> ANDROID_CREATOR = new AndroidSourceCreator<GooglePlayAssetSource>() {
+
+        @Override
+        public GooglePlayAssetSource create(Context context, Uri uri) {
+            return new GooglePlayAssetSource(context,
+                    uri.getAuthority(),
+                    uri.getPath()
+            );
+        }
+    };
 }

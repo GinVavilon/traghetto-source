@@ -1,7 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'android-eclipse'
-apply plugin: 'maven-publish'
-apply plugin: 'digital.wup.android-maven-publish'
 
 android {
     compileSdk 31
@@ -36,6 +34,7 @@ dependencies {
     implementation project(':android')
     implementation project(':utils:logger')
     implementation project(':utils:public')
+    compileOnly 'androidx.activity:activity:1.8.2'
     implementation "com.google.android.play:asset-delivery:2.1.0"
     implementation project(path: ':utils:io')
 }
@@ -47,36 +46,4 @@ eclipse {
     }
 }
 
-task androidJavadocs(type: Javadoc) {
-    failOnError false
-    source = android.sourceSets.main.java.srcDirs
- }
-afterEvaluate {
-    project.tasks.androidJavadocs.classpath += project.files(project.android.getBootClasspath().join(File.pathSeparator))
-}
-
-task javadocJar(type: Jar, dependsOn: androidJavadocs) {
-    archiveClassifier = 'javadoc'
-    from androidJavadocs.destinationDir
-}
-
-task sourcesJar(type: Jar) {
-    archiveClassifier = 'sources'
-    from android.sourceSets.main.java.srcDirs
-}
-
-task jar(type: Jar, dependsOn: 'bundleLibCompileToJarRelease') {
-    from zipTree("$buildDir/intermediates/compile_library_classes_jar/release/classes.jar")
-}
-
-configurations {
-    mavenDeployer
-}
-
-artifacts {
-    archives jar
-    archives javadocJar
-    archives sourcesJar
-}
-
-configurePublishing(project,'google-play-assets','google-play-assets','Tragnetto-Google-Play-Assets',DESCRIPTION,components.android,[jar,sourcesJar,javadocJar]) 
+applyAndroidPublishing(project, 'google-play-assets', 'Tragnetto-Google-Play-Assets', DESCRIPTION) 
