@@ -33,7 +33,6 @@ import org.apache.http.util.EntityUtils;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Logger.Level;
 import com.github.ginvavilon.traghentto.SourceCreator;
-import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.http.BaseHttpSource;
 import com.github.ginvavilon.traghentto.params.StreamParams;
@@ -58,7 +57,7 @@ public class ApacheHttpSource extends BaseHttpSource {
     public InputStream openInputStream(StreamParams pParams)
             throws IOException, IOSourceException {
         Logger.d(Level.HTTP | Level.SOURCE | Level.STREAM, "Open Stream");
-        StreamParams params = SourceUtils.getSaflyParams(pParams);
+        StreamParams params = StreamParams.getSafetyParams(pParams);
         Object data = params.getProperty(PARAM_DATA, (Object) null);
         if (data != null) {
             return openInputStream(params, (Map<String, Object>) data);
@@ -105,20 +104,20 @@ public class ApacheHttpSource extends BaseHttpSource {
             exception.setData(EntityUtils.toString(entity));
             throw exception;
         }
-        mLenght = entity.getContentLength();
+        mLength = entity.getContentLength();
         Header rangeHeader = response.getFirstHeader("Content-Range");
         if (rangeHeader != null) {
             Matcher rangeMatcher = RANGE_HEADER_PATTER.matcher(rangeHeader.getValue());
-            long skiped = 0;
+            long skipped = 0;
             if (rangeMatcher.matches()) {
                 String group = rangeMatcher.group(1);
                 String group2 = rangeMatcher.group(2);
 
-                skiped = Long.parseLong(group);
-                mLenght = Long.parseLong(group2);
+                skipped = Long.parseLong(group);
+                mLength = Long.parseLong(group2);
             }
-            pParams.changeProperty(OUT_SKIP, skip - skiped);
-            pParams.changeProperty(OUT_READED, skiped);
+            pParams.changeProperty(OUT_SKIP, skip - skipped);
+            pParams.changeProperty(OUT_ALREADY_READ, skipped);
         }
 
         Logger.d(Level.HTTP | Level.SOURCE, "Create get Content");

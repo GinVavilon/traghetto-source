@@ -25,7 +25,7 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
 /**
  * @author Vladimir Baraznovsky
  */
-public class AssetSource extends BaseSource implements ParselFileDesriptorSource, AssetFileDescriptorSource {
+public class AssetSource extends BaseSource implements ParcelFileDescriptorSource, AssetFileDescriptorSource {
 
     private final AssetManager mAssetManager;
     private final String mPath;
@@ -68,7 +68,7 @@ public class AssetSource extends BaseSource implements ParselFileDesriptorSource
     }
 
     @Override
-    public boolean isConteiner() {
+    public boolean isContainer() {
         try {
             InputStream open = mAssetManager.open(mPath);
             StreamUtils.close(open);
@@ -129,13 +129,13 @@ public class AssetSource extends BaseSource implements ParselFileDesriptorSource
     public Uri getUri() {
         Uri.Builder builder = Uri.EMPTY.buildUpon();
         builder.scheme(UriConstants.ASSET_SCHEME);
-        builder.authority(UriConstants.EMPTY_AUTHOTITY);
+        builder.authority(UriConstants.EMPTY_AUTHORITY);
         builder.path(mPath);
         return builder.build();
     }
 
     @Override
-    public long getLenght() {
+    public long getLength() {
         try {
             AssetFileDescriptor fd = openAssetFileDescriptor();
             if (fd != null) {
@@ -143,7 +143,7 @@ public class AssetSource extends BaseSource implements ParselFileDesriptorSource
             }
         } catch (IOException e) {
         }
-        return UNKNOWN_LENGHT;
+        return UNKNOWN_LENGTH;
     }
 
     @Override
@@ -158,7 +158,7 @@ public class AssetSource extends BaseSource implements ParselFileDesriptorSource
 
     @Override
     public boolean isDataAvailable() {
-        return true;
+        return exists();
     }
 
     @Override

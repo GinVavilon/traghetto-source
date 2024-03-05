@@ -1,12 +1,17 @@
 
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'eclipse'
-
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 dependencies {
-    implementation project(':base')
-    implementation project(':file')
-    implementation project(':zip')
-    implementation project(':path')
+    api project(':base')
+    api project(':file')
+    api project(':zip')
+    api project(':path')
+    implementation project(':utils:io')
+    testImplementation project(':utils:public')
     compileOnly project(':apache-http')
     testImplementation 'junit:junit:4.12'
     testImplementation project(path: ':zip', configuration: 'testOutput')
@@ -17,5 +22,18 @@ eclipse {
         name = 'Traghentto-JavaSE'
     }
 }
+sourceSets {
+    test{
 
+        resources {
+
+            srcDirs += project(':zip').file('src/test/resources/')
+        }
+    }
+}
+test {
+    testLogging.showStandardStreams = true
+
+
+}
 applyJavaPublishing (project, 'javase', 'Tragnetto-JavaSE')

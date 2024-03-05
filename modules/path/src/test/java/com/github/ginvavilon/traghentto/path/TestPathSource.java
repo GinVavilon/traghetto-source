@@ -19,15 +19,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.github.ginvavilon.traghentto.BaseWritableSource;
+import com.github.ginvavilon.traghentto.IOSourceUtils;
 import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.StreamResource;
-import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.UriConstants;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.file.BaseSourceTest;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public class TestPathSource extends BaseSourceTest<PathSource, PathSource> {
@@ -117,18 +118,18 @@ public class TestPathSource extends BaseSourceTest<PathSource, PathSource> {
 
     /**
      * Test method for
-     * {@link com.github.ginvavilon.traghentto.path.PathSource#createConteiner()}.
+     * {@link com.github.ginvavilon.traghentto.path.PathSource#createContainer()}.
      * 
      * @throws IOException
      */
     @Test
-    public void testCreateConteiner() throws IOException {
+    public void testCreateContainer() throws IOException {
         File root = mTempTestFolder.newFolder();
         PathSource rootSource = new PathSource(root);
-        rootSource.getChild(TEST_CHILD_FOLDER).createConteiner();
+        rootSource.getChild(TEST_CHILD_FOLDER).createContainer();
 
         File file = new File(root, TEST_CHILD_FOLDER);
-        assertTrue("Conteiner does not exits", file.exists());
+        assertTrue("Container does not exits", file.exists());
         assertTrue("File is not directory", file.isDirectory());
     }
 
@@ -206,7 +207,7 @@ public class TestPathSource extends BaseSourceTest<PathSource, PathSource> {
 
     /**
      * Test method for
-     * {@link com.github.ginvavilon.traghentto.BaseWritebleSource#openOutputResource()}.
+     * {@link BaseWritableSource#openOutputResource()}.
      * 
      * @throws IOException
      * @throws IOSourceException
@@ -232,11 +233,11 @@ public class TestPathSource extends BaseSourceTest<PathSource, PathSource> {
             hasIOException = true;
         }
         if (!hasIOException) {
-            fail("Streem must be closed");
+            fail("Stream must be closed");
         }
 
         StreamResource<InputStream> singleResource = PathSource.openResource(null);
-        String string = StreamUtils.readStringFromResource(singleResource);
+        String string = IOSourceUtils.readStringFromResource(singleResource);
         assertEquals(TEST_TEXT, string);
         
         hasIOException = false;
@@ -246,7 +247,7 @@ public class TestPathSource extends BaseSourceTest<PathSource, PathSource> {
             hasIOException = true;
         }
         if (!hasIOException) {
-            fail("Streem must be closed");
+            fail("Stream must be closed");
         }
 
     }

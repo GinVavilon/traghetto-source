@@ -16,11 +16,11 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  */
 public interface Source extends Iterable<Source> {
 
-    public static final long UNKNOWN_LENGHT=-1;
+    long UNKNOWN_LENGTH = -1;
 
     List<? extends Source> getChildren();
     Source getChild(String name);
-    boolean isConteiner();
+    boolean isContainer();
 
     StreamResource<InputStream> openResource(StreamParams pParams)
             throws IOSourceException, IOException;
@@ -29,7 +29,7 @@ public interface Source extends Iterable<Source> {
 
     String getUriString();
     boolean exists();
-    long getLenght();
+    long getLength();
     boolean isLocal();
     boolean isDataAvailable();
 

@@ -10,7 +10,7 @@ import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public abstract class BaseSource implements Source {
@@ -26,9 +26,9 @@ public abstract class BaseSource implements Source {
     @Override
     public StreamResource<InputStream> openResource(StreamParams pParams)
             throws IOSourceException, IOException {
-        StreamParams params = SourceUtils.getSaflyParams(pParams);
+        StreamParams params = StreamParams.getSafetyParams(pParams);
         InputStream inputStream = openInputStream(params);
-        return StreamUtils.createResource(inputStream);
+        return StreamResource.createResource(inputStream);
     }
 
     @Override

@@ -9,7 +9,7 @@ import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceCreator;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public class UriAndroidCreator extends ProxyAndroidCreator {

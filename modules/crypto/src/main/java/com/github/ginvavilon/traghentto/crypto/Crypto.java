@@ -1,8 +1,10 @@
 package com.github.ginvavilon.traghentto.crypto;
 
+import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.crypto.salt.NoSalt;
+import com.github.ginvavilon.traghentto.crypto.salt.Salt;
 
-public interface Crypto {
+public class Crypto {
 
 	public static final String DEFAULT = Algorithm.AES;
 	public static final String DEFAULT_HASH = Hash.SHA256;
@@ -73,6 +75,27 @@ public interface Crypto {
         int DES_GENERATED = 56;
 		
 	}
-
 	
+    public static <T extends WritableSource> EncryptoSource<?> encode(T source,
+            CryptoConfiguration configuration) {
+        Salt salt = configuration.getSalt();
+        if ((salt != null) && !(salt instanceof NoSalt)) {
+            SaltyWritableSource<T> saltySource = new SaltyWritableSource<>(source, salt);
+            return new EncryptoSource<>(saltySource, configuration);
+        } else {
+            return new EncryptoSource<>(source, configuration);
+        }
+    }
+
+    public static <T extends WritableSource> CryptoSource<?> decode(T source,
+            CryptoConfiguration configuration) {
+        Salt salt = configuration.getSalt();
+        if ((salt != null) && !(salt instanceof NoSalt)) {
+            SaltyWritableSource<T> saltySource = new SaltyWritableSource<>(source, salt);
+            return new CryptoSource<>(saltySource, configuration);
+        } else {
+            return new CryptoSource<>(source, configuration);
+        }
+    }
+
 }

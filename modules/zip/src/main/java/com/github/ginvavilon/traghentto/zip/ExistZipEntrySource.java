@@ -12,7 +12,6 @@ import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceIterator;
 import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.StreamSource;
-import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 
@@ -23,8 +22,8 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
 class ExistZipEntrySource extends ZipEntrySource implements StreamSource {
 
     private ZipEntry mZipEntry;
-    public ExistZipEntrySource(ZipEntry pZipEntry, ZipSource pZipParrent) {
-        super(pZipParrent);
+    public ExistZipEntrySource(ZipEntry pZipEntry, ZipSource pZipParent) {
+        super(pZipParent);
 	mZipEntry = pZipEntry;
 
     }
@@ -32,25 +31,25 @@ class ExistZipEntrySource extends ZipEntrySource implements StreamSource {
 
     @Override
     public List<? extends Source> getChildren() {
-	return mZipParrent.getChildren(mZipEntry);
+	return mZipParent.getChildren(mZipEntry);
     }
 
 
     @Override
     public Source getChild(String pName) {
-	return mZipParrent.getChild(this,pName);
+	return mZipParent.getChild(this,pName);
     }
 
     @Override
-    public boolean isConteiner() {
+    public boolean isContainer() {
 	return mZipEntry.isDirectory();
     }
 
     @Override
     public StreamResource<InputStream> openResource(StreamParams pParams)
             throws IOSourceException, IOException {
-        InputStream inputStream = mZipParrent.openInputStream(mZipEntry);
-        return StreamUtils.createResource(inputStream);
+        InputStream inputStream = mZipParent.openInputStream(mZipEntry);
+        return StreamResource.createResource(inputStream);
     }
 
     @Override
@@ -60,13 +59,13 @@ class ExistZipEntrySource extends ZipEntrySource implements StreamSource {
 
     @Override
     public void close() throws IOException {
-	mZipParrent.closeEntry(mZipEntry);
+	mZipParent.closeEntry(mZipEntry);
     }
 
 
     @Override
     public void open() throws IOException {
-	mZipParrent.openEntry(mZipEntry);
+	mZipParent.openEntry(mZipEntry);
     }
 
 
@@ -81,7 +80,7 @@ class ExistZipEntrySource extends ZipEntrySource implements StreamSource {
     }
 
     @Override
-    public long getLenght() {
+    public long getLength() {
 	return mZipEntry.getSize();
     }
 

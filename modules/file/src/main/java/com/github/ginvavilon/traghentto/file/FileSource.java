@@ -13,11 +13,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.ginvavilon.traghentto.BaseWritebleSource;
+import com.github.ginvavilon.traghentto.BaseWritableSource;
 import com.github.ginvavilon.traghentto.RenamedSource;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceCreator;
-import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.exceptions.RenameException;
 import com.github.ginvavilon.traghentto.params.ParamNames;
@@ -27,7 +26,7 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  * @author Vladimir Baraznovsky
  *
  */
-public class FileSource extends BaseWritebleSource implements Source, WritableSource, RenamedSource {
+public class FileSource extends BaseWritableSource implements Source, WritableSource, RenamedSource {
     private File mFile;
 
     public FileSource(File pFile) {
@@ -56,7 +55,7 @@ public class FileSource extends BaseWritebleSource implements Source, WritableSo
     }
 
     @Override
-    public boolean isConteiner() {
+    public boolean isContainer() {
         return mFile.isDirectory();
     }
 
@@ -86,7 +85,7 @@ public class FileSource extends BaseWritebleSource implements Source, WritableSo
     }
 
     @Override
-    public long getLenght() {
+    public long getLength() {
         return mFile.length();
     }
 
@@ -102,12 +101,12 @@ public class FileSource extends BaseWritebleSource implements Source, WritableSo
 
     @Override
     public boolean isDataAvailable() {
-        return true;
+        return exists();
     }
 
     @Override
     protected OutputStream openOutputStream(StreamParams pParams) throws IOException {
-        StreamParams params = SourceUtils.getSaflyParams(pParams);
+        StreamParams params = StreamParams.getSafetyParams(pParams);
         if (!(params.getProperty(ParamNames.CREATE, true) || exists())) {
             throw new FileNotFoundException();
         }
@@ -116,7 +115,7 @@ public class FileSource extends BaseWritebleSource implements Source, WritableSo
     }
 
     @Override
-    public boolean createConteiner() throws IOException {
+    public boolean createContainer() throws IOException {
         return mFile.mkdirs();
     }
 

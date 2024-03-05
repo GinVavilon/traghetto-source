@@ -1,5 +1,5 @@
 ext.GROUP_ID = 'io.github.ginvavilon.traghentto'
-ext.VERSION = '0.6.5'
+ext.VERSION = '0.6.6'
 ext.REPOSITORY_URL = 'https://github.com/GinVavilon/traghetto-source'
 ext.VCS_URL = 'https://github.com/GinVavilon/traghetto-source.git'
 ext.LICENSES = ['Apache-2.0']
@@ -7,18 +7,18 @@ ext.REPOSITOTY_NAME = 'Traghetto-Source'
 ext.DESCRIPTION = 'Interfaces for join sources of fiiles as files sytem, zip, http'
 ext.PUBLISH = false
 ext.MAVEN_UPLOAD_REPOSITORY = (hasProperty('snapshot'))?
-            			"https://s01.oss.sonatype.org/content/repositories/snapshots/":
-            			"https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                        "https://s01.oss.sonatype.org/content/repositories/snapshots/":
+                        "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
 buildscript {
     repositories {
         jcenter()
         google()
+        mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.0'
-        classpath 'com.github.ginvavilon:android-eclipse:0.9.6'
+        classpath 'com.android.tools.build:gradle:8.1.4'
+        classpath 'com.github.ginvavilon:android-eclipse:0.9.9'
         classpath 'org.eclipse.jgit:org.eclipse.jgit:4.2.0.+'
-        classpath 'digital.wup:android-maven-publish:3.6.2'
     }
 }
 
@@ -66,7 +66,7 @@ subprojects{
     
             task jarTest (type: Jar, dependsOn: testClasses) {
                 from sourceSets.test.output
-                classifier = 'test'
+                archiveClassifier = 'test'
             }
 
             artifacts {
@@ -74,14 +74,14 @@ subprojects{
             }            
         }
         
-   			       
-	 
-    	if (project.hasProperty('eclipse')) {
-			project.eclipse.project {
-	 			natures 'org.eclipse.buildship.core.gradleprojectnature'
-    			buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
-			}	
-    	}
+                      
+     
+        if (project.hasProperty('eclipse')) {
+            project.eclipse.project {
+                 natures 'org.eclipse.buildship.core.gradleprojectnature'
+                buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
+            }    
+        }
         
     }
 
@@ -122,44 +122,50 @@ def applyJavaPublishing(def project, def artifact,def name = NAME, def descripti
     project.with {
        
         apply plugin: 'maven-publish'
-        apply plugin: 'signing'
-       
-        task sourcesJar(type: Jar) {
-            classifier = 'sources'
-            from sourceSets.main.java.srcDirs
+        java {
+            withSourcesJar()
+            withJavadocJar()
         }
-        
-        task javadocJar(type: Jar, dependsOn: javadoc) {
-            classifier 'javadoc'
-            from javadoc.destinationDir
-        }
-
-        artifacts {
-            archives jar
-            archives sourcesJar
-            archives javadocJar
-        }
-        configurePublishing(project,artifact,artifact,name,description,components.java, [project.jar,project.sourcesJar,project.javadocJar]) 
+        configurePublishing(project,artifact,artifact,name,description,components.java) 
     }
 
 }
 
-def configurePublishing(def project,def publishName, def artifact, def name = NAME, def description = DESCRIPTION,def component, def archives = []){
+def applyAndroidPublishing(def project, def artifact,def name = NAME, def description = DESCRIPTION){
+   
+    project.with {
+        apply plugin: 'maven-publish'
+        android {
+            publishing {
+                singleVariant("release") {
+                    withSourcesJar()
+                    withJavadocJar()
+                }
+            }
+        }
+        afterEvaluate {
+            configurePublishing(project, artifact, artifact,name, description,components.release) 
+        }
+    }
+
+}
+
+def configurePublishing(def project,def publishName, def artifact, def name = NAME, def description = DESCRIPTION,def component){
    
     project.with {
         apply plugin: 'signing'
         publishing {
         
-        	repositories {
-    			maven {
-        			name = "snapshot"
-            		url MAVEN_UPLOAD_REPOSITORY
-            		credentials {
-                		username sonatypeUsername
-                		password sonatypePassword
-            		}
-        		}
-    		}
+            repositories {
+                maven {
+                    name = "snapshot"
+                    url MAVEN_UPLOAD_REPOSITORY
+                    credentials {
+                        username sonatypeUsername
+                        password sonatypePassword
+                    }
+                }
+            }
         
         
             publications {
@@ -170,15 +176,14 @@ def configurePublishing(def project,def publishName, def artifact, def name = NA
                     groupId GROUP_ID
                     artifactId artifact
                     version VERSION
-                    artifacts = archives 
                     updatePom(pom, name, description)
                     
-				}                
+                }                
             }
         }
         signing {
-    		sign publishing.publications."$publishName"
-		}                    
+            sign publishing.publications."$publishName"
+        }                    
     }
 
 }

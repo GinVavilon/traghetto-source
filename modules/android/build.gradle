@@ -1,14 +1,15 @@
 apply plugin: 'com.android.library'
 apply plugin: 'android-eclipse'
 apply plugin: 'maven-publish'
-apply plugin: 'digital.wup.android-maven-publish'
 
 android {
-    compileSdkVersion 26
+    compileSdk 31
+
+    namespace = "com.github.ginvavilon.traghentto.android"
 
     defaultConfig {
         minSdkVersion 8
-        targetSdkVersion 26
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -30,15 +31,16 @@ android {
 
 dependencies {
     api project(':base')
+    implementation project(':utils:stream')
+    implementation project(':utils:public')
+    implementation project(':utils:logger')
+    implementation project(':utils:io')
+    implementation 'androidx.annotation:annotation:1.7.1'
     compileOnly project(':http')
     api project(':file')
     api project(':zip')
     compileOnly project(':apache-http')
-    compileOnly 'com.android.support:support-annotations:27.1.1'
 }
-
-
-
 
 
 eclipse {
@@ -46,40 +48,5 @@ eclipse {
         name = 'Traghentto-Android'
     }
 }
-androidEclipse{
 
-   manifest = main
-   pluginType = ANDMORE
-}
-
-task androidJavadocs(type: Javadoc) {
-    failOnError false
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-}
-
-task javadocJar(type: Jar, dependsOn: androidJavadocs) {
-    classifier = 'javadoc'
-    from androidJavadocs.destinationDir
-}
-
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from android.sourceSets.main.java.srcDirs
-}
-
-task jar(type: Jar, dependsOn: 'assembleRelease') {
-    from zipTree("$buildDir/intermediates/packaged-classes/release/classes.jar")
-}
-
-configurations {
-    mavenDeployer
-}
-
-artifacts {
-    archives jar
-    archives javadocJar
-    archives sourcesJar
-}
-
-configurePublishing(project,'android','android','Tragnetto-Android',DESCRIPTION,components.android,[jar,sourcesJar,javadocJar]) 
+applyAndroidPublishing (project, 'android','Tragnetto-Android')

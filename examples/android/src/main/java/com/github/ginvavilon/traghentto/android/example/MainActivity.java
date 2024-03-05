@@ -7,12 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.ActionMode;
-import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,17 +17,26 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.ginvavilon.traghentto.DeletableSource;
 import com.github.ginvavilon.traghentto.Logger;
+import com.github.ginvavilon.traghentto.RetrievableSource;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceUtils;
-import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.WritableSource;
-import com.github.ginvavilon.traghentto.android.AndroidLogHadler;
+import com.github.ginvavilon.traghentto.android.AndroidLogHandler;
+import com.github.ginvavilon.traghentto.android.AndroidSourceFactory;
 import com.github.ginvavilon.traghentto.android.DocumentSource;
-import com.github.ginvavilon.traghentto.android.SourceFactory;
+import com.github.ginvavilon.traghentto.android.GooglePlayAssetSource;
+import com.github.ginvavilon.traghentto.android.GooglePlayAssetSourceCreator;
+import com.github.ginvavilon.traghentto.android.GooglePlayAssetSourceUi;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.exceptions.SourceAlreadyExistsException;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -41,14 +45,15 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String DEFAULT_NAME = "new";
     public static final String OPEN_TYPE = "*/*";
-    public static final String IMAGE_MIME_TIPE_PREFIX = "image/";
+    public static final String IMAGE_MIME_TYPE_PREFIX = "image/";
 
     public static final String URL = "https://www.w3schools.com/w3css/img_lights.jpg";
     public static final String IMAGE_PNG = "image/png";
     public static final String IMAGE_JPEG = "image/jpeg";
 
     static {
-        AndroidLogHadler.init();
+        AndroidLogHandler.init();
+
     }
 
     private TextView mInputText;
@@ -59,9 +64,17 @@ public class MainActivity extends AppCompatActivity {
     private String mMimeType = IMAGE_PNG;
     private TextView mTypeText;
 
+    private AndroidSourceFactory mSourceFactory;
+    private GooglePlayAssetSourceUi mGooglePlayAssetSourceUi = new GooglePlayAssetSourceUi(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSourceFactory = AndroidSourceFactory
+                .createDefaultBuilder(this)
+                .register(new GooglePlayAssetSourceCreator(this))
+                .build();
+
         setContentView(R.layout.activity_main);
         mProgress = findViewById(R.id.progress);
         mInputText = findViewById(R.id.txt_input);
@@ -76,11 +89,35 @@ public class MainActivity extends AppCompatActivity {
 
         mInputText = findViewById(R.id.txt_input);
         mTypeText = findViewById(R.id.type);
-        Source initialInput = SourceFactory.createFromResource(this, R.mipmap.sample);
+        //Source initialInput = SourceFactory.createFromResource(this, R.mipmap.sample);
+        GooglePlayAssetSource initialInput = new GooglePlayAssetSource(this,"fast_follow_pack","fast.jpeg");
+        RetrievableSource.Controller controller = initialInput.getController();
 
+        controller.registerListener(new RetrievableSource.Listener() {
+            @Override
+            public void onStatusUpdate(RetrievableSource source, RetrievableSource.Status status) {
+                Logger.d(Logger.Level.APPLICATION, "Update status %s of %s", status, source);
+                if (status == RetrievableSource.Status.READY){
+                    show(initialInput);
+                }
+            }
+
+            @Override
+            public void onProgress(RetrievableSource source, long readyBytes, long fullBytes) {
+                Logger.d(Logger.Level.APPLICATION, "Update progress %s to %s of %s", readyBytes, fullBytes, source);
+            }
+
+            @Override
+            public void onError(RetrievableSource source, Throwable throwable) {
+                Logger.e(Logger.Level.APPLICATION, throwable);
+            }
+        });
         mInputText.setText(initialInput.getUriString());
-        show(initialInput);
-
+        if (initialInput.isDataAvailable()) {
+            show(initialInput);
+        } else {
+            controller.fetch();
+        }
         mInputText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -90,6 +127,18 @@ public class MainActivity extends AppCompatActivity {
         });
 
         configureInputMenu();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mGooglePlayAssetSourceUi.stop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mGooglePlayAssetSourceUi.start();
     }
 
     private void configureInputMenu() {
@@ -107,12 +156,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                 return false;
+                return false;
             }
 
             @Override
             public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                 return onOptionsItemSelected(menuItem);
+                return onOptionsItemSelected(menuItem);
             }
 
             @Override
@@ -124,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateInput(TextView v) {
         CharSequence text = v.getText();
-        Source source = SourceFactory.createFromUri(v.getContext(), text.toString());
+        Source source = mSourceFactory.createFromUri(text.toString());
         show(source);
     }
 
@@ -136,14 +185,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void startCopy(View view) {
         Source input = getInputSource();
-        Source output = SourceFactory.createFromUri(this, mOutputText.getText().toString());
-        mProgress.setMax((int) input.getLenght());
+        Source output = mSourceFactory.createFromUri(mOutputText.getText().toString());
+        if (!(output instanceof WritableSource)) {
+            showError(view, getString(R.string.error_output_is_not_writable));
+            return;
+        }
+        mProgress.setMax((int) input.getLength());
         new CopyAsyncTask(view).executeOnExecutor(Executors.newCachedThreadPool(), input, output);
     }
 
     private void showError(View view, Throwable e) {
         Logger.e(e);
-        Snackbar snackbar = Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_SHORT);
+        String message = e.getMessage();
+        showError(view, message);
+    }
+
+    private void showError(View view, String message) {
+        Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
         runOnUiThread(snackbar::show);
     }
 
@@ -197,52 +255,52 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.item_open:
-                openInput();
-                return true;
-            case R.id.item_open_tree:
-                openTreeInput();
-                return true;
-            case R.id.item_replace:
-                openOutput();
-                return true;
-            case R.id.item_create:
-                createOutput();
-                return true;
-            case R.id.item_save_tree:
-                openTreeOutput();
-                return true;
-            case R.id.item_delete:
-                onDelete();
-                return true;
-            case R.id.item_open_web_image:
-                openImageInputSource(SourceFactory.createFromUri(this, URL), IMAGE_JPEG);
-                return true;
-            case R.id.item_open_resource_image:
-                openImageInputSource(SourceFactory.createFromResource(this, R.mipmap.sample), IMAGE_PNG);
-                return true;
+        int itemId = item.getItemId();
+        if (itemId == R.id.item_open) {
+            openInput();
+            return true;
+        } else if (itemId == R.id.item_open_tree) {
+            openTreeInput();
+            return true;
+        } else if (itemId == R.id.item_replace) {
+            openOutput();
+            return true;
+        } else if (itemId == R.id.item_create) {
+            createOutput();
+            return true;
+        } else if (itemId == R.id.item_save_tree) {
+            openTreeOutput();
+            return true;
+        } else if (itemId == R.id.item_delete) {
+            onDelete();
+            return true;
+        } else if (itemId == R.id.item_open_web_image) {
+            openImageInputSource(mSourceFactory.createFromUri(URL), IMAGE_JPEG);
+            return true;
+        } else if (itemId == R.id.item_open_resource_image) {
+            openImageInputSource(mSourceFactory.createFromResource(R.mipmap.sample), IMAGE_PNG);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void onDelete() {
         Source input = getInputSource();
-        if (input instanceof DeletableSource){
-            if (((DeletableSource) input).delete()){
-                Snackbar.make(mInputText, R.string.result_deleted,Snackbar.LENGTH_SHORT).show();
+        if (input instanceof DeletableSource) {
+            if (((DeletableSource) input).delete()) {
+                Snackbar.make(mInputText, R.string.result_deleted, Snackbar.LENGTH_SHORT).show();
                 return;
             }
-            Snackbar.make(mInputText, R.string.fail_delete,Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(mInputText, R.string.fail_delete, Snackbar.LENGTH_SHORT).show();
             return;
         }
 
-        Snackbar.make(mInputText, R.string.failr_not_deletable,Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mInputText, R.string.fail_not_deletable, Snackbar.LENGTH_SHORT).show();
 
     }
 
     private Source getInputSource() {
-        return SourceFactory.createFromUri(this, mInputText.getText().toString());
+        return mSourceFactory.createFromUri(mInputText.getText().toString());
     }
 
     @Override
@@ -290,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
 
         mMimeType = inputSource.getDocumentInfo().getMimeType();
         mTypeText.setText(mMimeType);
-        if (mMimeType.startsWith(IMAGE_MIME_TIPE_PREFIX)) {
+        if (mMimeType.startsWith(IMAGE_MIME_TYPE_PREFIX)) {
             show(inputSource);
         } else {
             mImageView.setImageDrawable(null);
@@ -298,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    void openImageInputSource(Source inputSource, String mimeType){
+    void openImageInputSource(Source inputSource, String mimeType) {
         mMimeType = mimeType;
         mTypeText.setText(mMimeType);
         mInputText.setText(inputSource.getUriString());
@@ -309,10 +367,11 @@ public class MainActivity extends AppCompatActivity {
 
         GlideApp.with(this)
                 .load(source)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(mImageView);
     }
 
-    private class CopyAsyncTask extends AsyncTask<Source, Long, Source> implements StreamUtils.ICopyListener {
+    private class CopyAsyncTask extends AsyncTask<Source, Long, Source> implements SourceUtils.ICopyListener {
 
         private final View mView;
 
@@ -331,12 +390,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onProgress(long pRadedByte) {
-            publishProgress(pRadedByte);
+        public void onProgress(long pReadBytes) {
+            publishProgress(pReadBytes);
         }
 
         @Override
-        public void onCompite() {
+        public void onComplete() {
         }
 
         @Override

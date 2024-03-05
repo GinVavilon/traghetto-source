@@ -11,6 +11,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -23,14 +24,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.github.ginvavilon.traghentto.IOSourceUtils;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceIterator;
 import com.github.ginvavilon.traghentto.StreamResource;
-import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source> {
@@ -41,7 +42,7 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
     private TChild mTestDirectorySource;
 
     protected static final String TEST_CHILD_FOLDER = "folder1";
-    private static final int TEST_FILE_LENGHT = 13;
+    private static final int TEST_FILE_LENGTH = 13;
     protected static final String TEST_CHILD = "child.txt";
     protected static final String TEST_FILE = "test.txt";
     protected static final String TEST_DIRECTORY = "test";
@@ -70,7 +71,15 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
 
         mRoot = getRootSource();
         mTestFileSource = (TChild) mRoot.getChild(TEST_FILE);
+        if (mTestFileSource == null){
+            throw new FileNotFoundException("File " + TEST_FILE + " is not found in " + mRoot);
+        }
         mTestDirectorySource = (TChild) mRoot.getChild(TEST_DIRECTORY);
+
+        if (mTestDirectorySource == null){
+            throw new FileNotFoundException("Directory " + TEST_DIRECTORY + " is not found in " + mRoot);
+        }
+
     }
 
     public TChild getTestFile() {
@@ -109,12 +118,12 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
     protected abstract TRoot getRootSource();
 
     /**
-     * Test method for {@link com.github.ginvavilon.traghentto.file.FileSource#isConteiner()}.
+     * Test method for {@link com.github.ginvavilon.traghentto.file.FileSource#isContainer()}.
      */
     @Test
-    public void testIsConteiner() {
-        assertFalse(getTestFile().isConteiner());
-        assertTrue(getTestDirectory().isConteiner());
+    public void testIsContainer() {
+        assertFalse(getTestFile().isContainer());
+        assertTrue(getTestDirectory().isContainer());
     }
 
     /**
@@ -137,16 +146,16 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
     }
 
     /**
-     * Test method for {@link com.github.ginvavilon.traghentto.file.FileSource#getLenght()}.
+     * Test method for {@link com.github.ginvavilon.traghentto.file.FileSource#getLength()}.
      */
     @Test
-    public void testGetLenght() {
-        assertEquals(getTestFileLenght(), getTestFile().getLenght());
+    public void testGetLength() {
+        assertEquals(getTestFileLength(), getTestFile().getLength());
     }
 
 
-    protected long getTestFileLenght() {
-        return TEST_FILE_LENGHT;
+    protected long getTestFileLength() {
+        return TEST_FILE_LENGTH;
     }
 
     /**
@@ -159,9 +168,9 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
     @Test
     public void testOpenResource() throws IOException, IOSourceException {
         StreamResource<InputStream> singleResource = getTestFile().openResource(null);
-        String string = StreamUtils.readStringFromResource(singleResource);
+        String string = IOSourceUtils.readStringFromResource(singleResource);
         assertEquals(TEST_TEXT, string);
-        assertTrue("Streem must be closed", checkClosedStream(singleResource));
+        assertTrue("Stream must be closed", checkClosedStream(singleResource));
     }
 
 

@@ -1,14 +1,17 @@
 package com.github.ginvavilon.traghentto.crypto;
 
+import com.github.ginvavilon.traghentto.SourceCreator;
+import com.github.ginvavilon.traghentto.WritableSource;
+import com.github.ginvavilon.traghentto.crypto.salt.NoSalt;
+import com.github.ginvavilon.traghentto.crypto.salt.Salt;
+
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
-import com.github.ginvavilon.traghentto.SourceCreator;
-import com.github.ginvavilon.traghentto.WritableSource;
-
-public final class CryptoSourceCreator<T extends WritableSource> implements SourceCreator<EncryptoSource<T>> {
+public final class CryptoSourceCreator<T extends WritableSource>
+        implements SourceCreator<EncryptoSource<?>> {
 
 	private SourceCreator<? extends T> mCreator;
 	private CryptoConfiguration mCryptoConfiguration;
@@ -26,13 +29,20 @@ public final class CryptoSourceCreator<T extends WritableSource> implements Sour
 	}
 
 	@Override
-	public EncryptoSource<T> create(String pParam) {
+    public EncryptoSource<?> create(String pParam) {
 		T source = mCreator.create(pParam);
 		return create(source);
 	}
 
-	protected EncryptoSource<T> create(T source) {
-		return new EncryptoSource<T>(source, mCryptoConfiguration);
+    protected EncryptoSource<?> create(T source) {
+
+		Salt salt = mCryptoConfiguration.getSalt();
+		if ((salt!=null)&&!(salt instanceof NoSalt)) {
+            SaltyWritableSource<T> saltySource = new SaltyWritableSource<T>(source, salt);
+            return new EncryptoSource<>(saltySource, mCryptoConfiguration);
+		} else {
+		    return new EncryptoSource<>(source, mCryptoConfiguration);
+		}
 	}
 
 	public static <T extends WritableSource> CryptoSourceCreator<T> create(SourceCreator<? extends T> creator,

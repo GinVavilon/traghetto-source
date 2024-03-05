@@ -19,12 +19,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.github.ginvavilon.traghentto.BaseWritebleSource;
+import com.github.ginvavilon.traghentto.BaseWritableSource;
 import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.RenamedSource;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceCreator;
-import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.exceptions.RenameException;
@@ -32,10 +31,10 @@ import com.github.ginvavilon.traghentto.params.ParamNames;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
-public class PathSource extends BaseWritebleSource implements Source, WritableSource {
+public class PathSource extends BaseWritableSource implements Source, WritableSource {
 
     private final Path mPath;
 
@@ -132,7 +131,7 @@ public class PathSource extends BaseWritebleSource implements Source, WritableSo
     }
 
     @Override
-    public boolean createConteiner() throws IOException {
+    public boolean createContainer() throws IOException {
         Files.createDirectories(mPath);
         return Files.exists(mPath);
     }
@@ -146,7 +145,7 @@ public class PathSource extends BaseWritebleSource implements Source, WritableSo
 
     @Override
     protected OutputStream openOutputStream(StreamParams pParams) throws IOException {
-        StreamParams params = SourceUtils.getSaflyParams(pParams);
+        StreamParams params = StreamParams.getSafetyParams(pParams);
         List<StandardOpenOption> options = new LinkedList<>();
         if (params.getProperty(ParamNames.APPEND, false)) {
             options.add(StandardOpenOption.APPEND);
@@ -180,7 +179,7 @@ public class PathSource extends BaseWritebleSource implements Source, WritableSo
     }
 
     @Override
-    public boolean isConteiner() {
+    public boolean isContainer() {
         return Files.isDirectory(mPath);
     }
 
@@ -205,11 +204,11 @@ public class PathSource extends BaseWritebleSource implements Source, WritableSo
     }
 
     @Override
-    public long getLenght() {
+    public long getLength() {
         try {
             return Files.size(mPath);
         } catch (IOException e) {
-            return UNKNOWN_LENGHT;
+            return UNKNOWN_LENGTH;
         }
     }
 

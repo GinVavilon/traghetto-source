@@ -16,7 +16,7 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
 public interface WritableSource extends DeletableSource, RenamedSource {
 
     boolean create() throws IOException;
-    boolean createConteiner() throws IOException;
+    boolean createContainer() throws IOException;
 
     boolean isWritable();
 

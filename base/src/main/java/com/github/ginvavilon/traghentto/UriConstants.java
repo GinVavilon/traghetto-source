@@ -14,6 +14,6 @@ public interface UriConstants {
     public static final String STREAM_SCHEME="stream";
     public static final String HTTP_SCHEME = "http";
     public static final String HTTPS_SCHEME = "https";
-    public static final String EMPTY_AUTHOTITY = "";
+    public static final String EMPTY_AUTHORITY = "";
     public static final String RESOURCE_SCHEME = "resource";
 }

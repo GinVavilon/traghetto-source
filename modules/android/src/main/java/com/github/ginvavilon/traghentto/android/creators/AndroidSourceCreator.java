@@ -9,9 +9,10 @@ import android.net.Uri;
 import com.github.ginvavilon.traghentto.Source;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
+@FunctionalInterface
 public interface AndroidSourceCreator<T extends Source> {
     T create(Context context, Uri uri);
 }

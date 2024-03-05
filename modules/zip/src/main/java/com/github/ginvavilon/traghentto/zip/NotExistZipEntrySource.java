@@ -15,7 +15,7 @@ import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 import com.github.ginvavilon.traghentto.params.StreamParams;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public class NotExistZipEntrySource extends ZipEntrySource implements StreamSource {
@@ -23,8 +23,8 @@ public class NotExistZipEntrySource extends ZipEntrySource implements StreamSour
     private String mPath;
 
 
-    public NotExistZipEntrySource(ZipSource pZipParrent, String path) {
-        super(pZipParrent);
+    public NotExistZipEntrySource(ZipSource pZipParent, String path) {
+        super(pZipParent);
         mPath = path;
     }
 
@@ -35,11 +35,11 @@ public class NotExistZipEntrySource extends ZipEntrySource implements StreamSour
 
     @Override
     public Source getChild(String name) {
-        return new NotExistZipEntrySource(mZipParrent, mPath + "/" + name);
+        return new NotExistZipEntrySource(mZipParent, mPath + "/" + name);
     }
 
     @Override
-    public boolean isConteiner() {
+    public boolean isContainer() {
         return false;
     }
 
@@ -60,8 +60,8 @@ public class NotExistZipEntrySource extends ZipEntrySource implements StreamSour
     }
 
     @Override
-    public long getLenght() {
-        return UNKNOWN_LENGHT;
+    public long getLength() {
+        return UNKNOWN_LENGTH;
     }
 
     @Override

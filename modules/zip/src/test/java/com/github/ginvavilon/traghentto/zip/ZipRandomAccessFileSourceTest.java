@@ -4,7 +4,7 @@
 package com.github.ginvavilon.traghentto.zip;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public class ZipRandomAccessFileSourceTest extends BaseZipSourceTest<ZipRandomAccessFileSource> {

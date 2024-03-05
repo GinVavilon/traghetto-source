@@ -20,7 +20,7 @@ public class RandomSalt extends BaseRandomSalt {
 	}
 
 	@Override
-	protected int calulateSize(OutputStream outputStream) throws IOException {
+	protected int calculateSize(OutputStream outputStream) throws IOException {
 
 		Random random = getRandom();
 		int randomX1 = random.nextInt()&(~MASK);

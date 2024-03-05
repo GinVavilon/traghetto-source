@@ -2,4 +2,4 @@
 [ ![Build Status](https://travis-ci.org/GinVavilon/traghetto-source.svg?branch=master) ](https://travis-ci.org/GinVavilon/traghetto-source)
 
 # traghetto-source
-Interfaces for join sources of fiiles as files sytem, zip, http for Java
+Interfaces for join sources of files as files system, zip, http for Java

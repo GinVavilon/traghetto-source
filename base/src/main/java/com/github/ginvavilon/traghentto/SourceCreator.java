@@ -4,7 +4,7 @@
 package com.github.ginvavilon.traghentto;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public interface SourceCreator<T extends Source> {

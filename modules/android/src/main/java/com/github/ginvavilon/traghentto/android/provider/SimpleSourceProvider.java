@@ -7,9 +7,14 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Build;
 import android.provider.DocumentsContract.Root;
-import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
+
+import androidx.annotation.RequiresApi;
+
+import com.github.ginvavilon.traghentto.Logger;
+import com.github.ginvavilon.traghentto.Source;
+import com.github.ginvavilon.traghentto.SourceUtils;
 
 import java.io.FileNotFoundException;
 import java.util.Arrays;
@@ -18,11 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.github.ginvavilon.traghentto.Logger;
-import com.github.ginvavilon.traghentto.Source;
-
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -111,6 +113,7 @@ public abstract class SimpleSourceProvider extends SourceDocumentsProvider {
     protected int getRootFlags(String root, Source source) {
         return (canWrite(source) ? Root.FLAG_SUPPORTS_CREATE : 0)
                 | (isLocalOnly(source) ? Root.FLAG_LOCAL_ONLY : 0)
+                | (isSupportChild(source) ? Root.FLAG_SUPPORTS_IS_CHILD : 0)
                 | getFlagSupportsIsChild(root, source);
     }
 
@@ -123,7 +126,11 @@ public abstract class SimpleSourceProvider extends SourceDocumentsProvider {
     }
 
     protected boolean isSupportChildDetection(String root, Source source) {
-        return source.isConteiner();
+        return source.isContainer();
+    }
+
+    protected boolean isSupportChild(Source source) {
+        return false;
     }
 
     protected boolean isLocalOnly(Source source) {
@@ -156,6 +163,19 @@ public abstract class SimpleSourceProvider extends SourceDocumentsProvider {
     }
 
     protected abstract Source getRootSource(String name);
+
+    @Override
+    public boolean isChildDocument(String parentDocumentId, String documentId) {
+        try {
+            Source parentSource = getDocumentSource(parentDocumentId);
+            Source documentSource = getDocumentSource(documentId);
+            return SourceUtils.isChild(parentSource,documentSource);
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+
+
+    }
 
     @Override
     protected Source getDocumentSource(String documentId) throws FileNotFoundException {

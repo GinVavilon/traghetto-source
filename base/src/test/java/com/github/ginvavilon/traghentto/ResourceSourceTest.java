@@ -14,7 +14,7 @@ import java.util.List;
 import com.github.ginvavilon.traghentto.file.BaseSourceTest;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public class ResourceSourceTest extends BaseSourceTest<ResourceSource, ResourceSource> {
@@ -46,14 +46,14 @@ public class ResourceSourceTest extends BaseSourceTest<ResourceSource, ResourceS
     }
 
     @Override
-    public void testIsConteiner() {
-        assertFalse(getTestFile().isConteiner());
-        assertFalse(getTestDirectory().isConteiner());
+    public void testIsContainer() {
+        assertFalse(getTestFile().isContainer());
+        assertFalse(getTestDirectory().isContainer());
     }
 
     @Override
-    protected long getTestFileLenght() {
-        return Source.UNKNOWN_LENGHT;
+    protected long getTestFileLength() {
+        return Source.UNKNOWN_LENGTH;
     }
 
     @Override

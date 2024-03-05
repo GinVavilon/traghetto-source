@@ -12,7 +12,7 @@ import com.github.ginvavilon.traghentto.params.ParamNames;
 import com.github.ginvavilon.traghentto.params.SourceStreamParams;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 public abstract class BaseHttpSource extends BaseSource implements Source, ParamNames {
@@ -21,7 +21,7 @@ public abstract class BaseHttpSource extends BaseSource implements Source, Param
     protected static final String PARAM_HTTP_BUFFER = "http.buffer";
     protected static final String PARAM_DATA = "post.param";
     protected static final String CONTENT_LENGTH_HEADER = "Content-Length";
-    protected long mLenght = UNKNOWN_LENGHT;
+    protected long mLength = UNKNOWN_LENGTH;
 
     public static class HttpSourceParams extends SourceStreamParams {
 
@@ -29,7 +29,7 @@ public abstract class BaseHttpSource extends BaseSource implements Source, Param
             return set(PARAM_HTTP_TIMEOUT, pValue);
         }
 
-        public HttpSourceParams bufer(int pValue) {
+        public HttpSourceParams buffer(int pValue) {
             return set(PARAM_HTTP_BUFFER, pValue);
         }
 
@@ -42,8 +42,8 @@ public abstract class BaseHttpSource extends BaseSource implements Source, Param
             return (HttpSourceParams) super.set(pKey, pValue);
         }
 
-        public HttpSourceParams skip(long pLenght) {
-            return set(ParamNames.IN_SKIP, pLenght);
+        public HttpSourceParams skip(long pLength) {
+            return set(ParamNames.IN_SKIP, pLength);
         }
     }
 
@@ -58,7 +58,7 @@ public abstract class BaseHttpSource extends BaseSource implements Source, Param
     }
 
     @Override
-    public boolean isConteiner() {
+    public boolean isContainer() {
         return false;
     }
 
@@ -79,8 +79,8 @@ public abstract class BaseHttpSource extends BaseSource implements Source, Param
     }
 
     @Override
-    public long getLenght() {
-        return mLenght;
+    public long getLength() {
+        return mLength;
     }
 
     @Override

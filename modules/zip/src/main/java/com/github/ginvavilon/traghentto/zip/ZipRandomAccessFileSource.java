@@ -46,7 +46,7 @@ public class ZipRandomAccessFileSource extends RandomAccessSource implements Zip
             List<? extends ZipEntrySource> children = mSource.getChildren();
 
             for (ZipEntrySource zipEntrySource : children) {
-                zipEntrySource.setZipParrent(this);
+                zipEntrySource.setZipParent(this);
             }
             return children;
         } catch (IOException e) {
@@ -75,7 +75,7 @@ public class ZipRandomAccessFileSource extends RandomAccessSource implements Zip
         try {
             mSource.open();
             child = mSource.getChild(pZipEntrySource, pName);
-            child.setZipParrent(this);
+            child.setZipParent(this);
         } catch (IOException e) {
             Logger.e(e);
         } finally {
@@ -89,7 +89,7 @@ public class ZipRandomAccessFileSource extends RandomAccessSource implements Zip
         try {
             mSource.open();
             child = mSource.getChild(pName);
-            child.setZipParrent(this);
+            child.setZipParent(this);
         } catch (IOException e) {
             Logger.e(e);
         } finally {
@@ -110,7 +110,7 @@ public class ZipRandomAccessFileSource extends RandomAccessSource implements Zip
             }
 
             for (ZipEntrySource child : children) {
-                child.setZipParrent(this);
+                child.setZipParent(this);
             }
         } catch (IOException e) {
             Logger.e(e);

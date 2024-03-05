@@ -3,10 +3,11 @@
  */
 package com.github.ginvavilon.traghentto;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 /**
- * @author vbaraznovsky
+ * @author Vladimir Baraznovsky
  *
  */
 class RecursiveSourceIterator implements SourceIterator {
@@ -43,15 +44,17 @@ class RecursiveSourceIterator implements SourceIterator {
         }
 
         Source next = mIterator.next();
-        if (next.isConteiner()) {
+        if (next.isContainer()) {
             mCurrentIterator = next.iterator();
         }
         return next;
     }
 
     @Override
-    public void close() throws Exception {
-
+    public void close() throws IOException {
+        if (mCurrentIterator != null) {
+            mCurrentIterator.close();
+        }
     }
 
 }

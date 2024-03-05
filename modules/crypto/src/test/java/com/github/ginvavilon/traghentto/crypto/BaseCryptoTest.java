@@ -104,8 +104,8 @@ public abstract class BaseCryptoTest extends BaseSourceTest<CryptoSource<?>, Cry
     }
 
     @Override
-    protected long getTestFileLenght() {
-        return Source.UNKNOWN_LENGHT;
+    protected long getTestFileLength() {
+        return Source.UNKNOWN_LENGTH;
     }
 
 }
