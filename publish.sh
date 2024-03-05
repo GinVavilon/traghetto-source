@@ -1,30 +1,11 @@
 #!/bin/bash
-./gradlew publishAndroid-glidePublicationToMavenRepository
-echo wait
-sleep 300
-./gradlew publishAndroidPublicationToMavenRepository
-echo wait
-sleep 300
-./gradlew publishBasePublicationToMavenRepository
-echo wait
-sleep 300
-./gradlew publishCryptoPublicationToMavenRepository
-echo wait
-sleep 300
-./gradlew publishFilePublicationToMavenRepository
-echo wait
-sleep 300
-./gradlew publishHttp-apachePublicationToMavenRepository
-echo wait
-sleep 300
-./gradlew publishHttpPublicationToMavenRepository
-echo wait
-sleep 300
-./gradlew publishJavasePublicationToMavenRepository
-echo wait
-sleep 300
-./gradlew publishPathPublicationToMavenRepository
-echo wait
-sleep 300
-./gradlew publishZipPublicationToMavenRepository
+
+tasks=($(./gradlew tasks --all | grep -oP 'publish.*PublicationToMavenRepository'))
+
+for task in "${tasks[@]}"; do
+    echo "Run task: $task"
+    ./gradlew "$task"
+    echo wait
+    sleep 300
+done
 echo Complete.
