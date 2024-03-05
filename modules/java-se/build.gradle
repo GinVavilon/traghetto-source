@@ -10,6 +10,8 @@ dependencies {
     api project(':file')
     api project(':zip')
     api project(':path')
+    implementation project(':utils:io')
+    testImplementation project(':utils:public')
     compileOnly project(':apache-http')
     testImplementation 'junit:junit:4.12'
     testImplementation project(path: ':zip', configuration: 'testOutput')
@@ -22,7 +24,11 @@ eclipse {
 }
 sourceSets {
     test{
-        runtimeClasspath  = files('/home/vbaraznovsky/workspaces/Traghetto/TraghettoSource/modules/zip/src/test/resources/')
+
+        resources {
+
+            srcDirs += project(':zip').file('src/test/resources/')
+        }
     }
 }
 test {

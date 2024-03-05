@@ -24,10 +24,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.github.ginvavilon.traghentto.IOSourceUtils;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceIterator;
 import com.github.ginvavilon.traghentto.StreamResource;
-import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 
 /**
@@ -168,7 +168,7 @@ public abstract class BaseSourceTest<TRoot extends Source, TChild extends Source
     @Test
     public void testOpenResource() throws IOException, IOSourceException {
         StreamResource<InputStream> singleResource = getTestFile().openResource(null);
-        String string = StreamUtils.readStringFromResource(singleResource);
+        String string = IOSourceUtils.readStringFromResource(singleResource);
         assertEquals(TEST_TEXT, string);
         assertTrue("Stream must be closed", checkClosedStream(singleResource));
     }

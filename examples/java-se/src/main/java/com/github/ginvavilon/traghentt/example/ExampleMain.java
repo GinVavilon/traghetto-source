@@ -32,7 +32,6 @@ import com.github.ginvavilon.traghentto.Logger.LogHandler;
 import com.github.ginvavilon.traghentto.ResourceSource;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.SourceUtils;
-import com.github.ginvavilon.traghentto.StreamUtils.ICopyListener;
 import com.github.ginvavilon.traghentto.WritableSource;
 import com.github.ginvavilon.traghentto.crypto.Crypto.Algorithm;
 import com.github.ginvavilon.traghentto.crypto.CryptoConfiguration;
@@ -76,7 +75,7 @@ public class ExampleMain {
      * @author Vladimir Baraznovsky
      *
      */
-    private final class LogListener implements ICopyListener {
+    private final class LogListener implements SourceUtils.ICopyListener {
         private final StringBuilder mLogBuilder;
         private final Source mIn;
         private Future<?> mTask;

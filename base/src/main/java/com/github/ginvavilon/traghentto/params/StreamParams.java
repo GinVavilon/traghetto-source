@@ -22,4 +22,12 @@ public interface StreamParams {
 
     StreamParams changeProperty(String pKey, Object pValue);
 
+    static StreamParams getSafetyParams(StreamParams pParams) {
+        if (pParams != null) {
+            return pParams;
+        } else {
+            return new VoidParams();
+        }
+    }
+
 }

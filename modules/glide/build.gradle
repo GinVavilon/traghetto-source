@@ -1,16 +1,14 @@
 apply plugin: 'com.android.library'
 apply plugin: 'android-eclipse'
-apply plugin: 'maven-publish'
-apply plugin: 'digital.wup.android-maven-publish'
 
 android {
-    compileSdkVersion 26
+    compileSdk 31
 
     namespace = "com.github.ginvavilon.traghentto.android.glide"
 
     defaultConfig {
         minSdkVersion 8
-        targetSdkVersion 26
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -32,14 +30,14 @@ android {
 
 dependencies {
     api project(':android')
-    compileOnly 'com.github.bumptech.glide:glide:4.8.0'
-    compileOnly 'com.github.bumptech.glide:annotations:4.8.0'
+    implementation project(':utils:stream')
+    implementation project(':utils:logger')
+    implementation 'org.jetbrains:annotations:23.0.0'
+    implementation 'androidx.annotation:annotation:1.7.1'
+    compileOnly 'com.github.bumptech.glide:glide:4.15.1'
+    compileOnly 'com.github.bumptech.glide:annotations:4.15.1'
     
 }
-
-
-
-
 
 eclipse {
     project {
@@ -47,36 +45,4 @@ eclipse {
     }
 }
 
-task androidJavadocs(type: Javadoc) {
-    failOnError false
-    source = android.sourceSets.main.java.srcDirs
- }
-afterEvaluate {
-    project.tasks.androidJavadocs.classpath += project.files(project.android.getBootClasspath().join(File.pathSeparator))
-}
-
-task javadocJar(type: Jar, dependsOn: androidJavadocs) {
-    archiveClassifier = 'javadoc'
-    from androidJavadocs.destinationDir
-}
-
-task sourcesJar(type: Jar) {
-    archiveClassifier = 'sources'
-    from android.sourceSets.main.java.srcDirs
-}
-
-task jar(type: Jar, dependsOn: 'bundleLibCompileToJarRelease') {
-    from zipTree("$buildDir/intermediates/compile_library_classes_jar/release/classes.jar")
-}
-
-configurations {
-    mavenDeployer
-}
-
-artifacts {
-    archives jar
-    archives javadocJar
-    archives sourcesJar
-}
-
-configurePublishing(project,'android-glide','android-glide','Tragnetto-Android-Glide',DESCRIPTION,components.android,[jar,sourcesJar,javadocJar]) 
+applyAndroidPublishing(project, 'android-glide','Tragnetto-Android-Glide',DESCRIPTION) 

@@ -18,9 +18,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.github.ginvavilon.traghentto.BaseWritableSource;
+import com.github.ginvavilon.traghentto.IOSourceUtils;
 import com.github.ginvavilon.traghentto.SourceUtils;
 import com.github.ginvavilon.traghentto.StreamResource;
-import com.github.ginvavilon.traghentto.StreamUtils;
 import com.github.ginvavilon.traghentto.UriConstants;
 import com.github.ginvavilon.traghentto.exceptions.IOSourceException;
 
@@ -230,7 +230,7 @@ public class TestFileSource extends BaseSourceTest<FileSource, FileSource> {
         }
 
         StreamResource<InputStream> singleResource = fileSource.openResource(null);
-        String string = StreamUtils.readStringFromResource(singleResource);
+        String string = IOSourceUtils.readStringFromResource(singleResource);
         assertEquals(TEST_TEXT, string);
         
         hasIOException = false;

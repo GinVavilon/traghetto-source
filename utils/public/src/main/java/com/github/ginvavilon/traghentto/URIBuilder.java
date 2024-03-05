@@ -43,6 +43,7 @@ public class URIBuilder {
         try {
             return new URI(mScheme, mAuthority, mPath, null, mFragment);
         } catch (URISyntaxException e) {
+            Logger.e(e);
             return null;
         }
     }

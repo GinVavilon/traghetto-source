@@ -5,7 +5,8 @@ package com.github.ginvavilon.traghentto.android.example;
 
 import android.content.res.AssetManager;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
+
+import androidx.annotation.RequiresApi;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import com.github.ginvavilon.traghentto.Logger;
 import com.github.ginvavilon.traghentto.Source;
 import com.github.ginvavilon.traghentto.StreamResource;
 import com.github.ginvavilon.traghentto.android.AndroidLogHandler;
+import com.github.ginvavilon.traghentto.android.AndroidSourceFactory;
 import com.github.ginvavilon.traghentto.android.AssetSource;
 import com.github.ginvavilon.traghentto.android.ResourceSource;
 import com.github.ginvavilon.traghentto.android.provider.SimpleSourceProvider;

@@ -74,7 +74,7 @@ class BaseRandomAccessSource<T extends Source> extends DelegatedSource<T> {
         } finally {
             closeStream();
         }
-        return UNKNOWN_LENGTH;
+        return Source.UNKNOWN_LENGTH;
     }
 
 

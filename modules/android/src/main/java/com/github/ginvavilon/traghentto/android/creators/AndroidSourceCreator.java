@@ -12,6 +12,7 @@ import com.github.ginvavilon.traghentto.Source;
  * @author Vladimir Baraznovsky
  *
  */
+@FunctionalInterface
 public interface AndroidSourceCreator<T extends Source> {
     T create(Context context, Uri uri);
 }

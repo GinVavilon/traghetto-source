@@ -18,7 +18,7 @@ public abstract class BaseWritableSource extends BaseSource implements WritableS
     @Override
     public StreamResource<OutputStream> openOutputResource(StreamParams pParams)
             throws IOException {
-        return StreamUtils.createResource(openOutputStream(pParams));
+        return StreamResource.createResource(openOutputStream(pParams));
     }
 
     @Override

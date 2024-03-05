@@ -24,7 +24,7 @@ import com.github.ginvavilon.traghentto.params.StreamParams;
  *
  */
 public class CachedSource<T extends Source> extends DelegatedSource<T>
-        implements Source, ICopyListener {
+        implements Source {
     public static final int COUNT_INDEX = 2;
     private static final int INDEX_STREAM = 0;
     private static final int INDEX_SIZE = 1;
@@ -44,7 +44,7 @@ public class CachedSource<T extends Source> extends DelegatedSource<T>
         Snapshot snapshot = mDiskLruCache.get(key);
         if (snapshot != null) {
             StreamUtils.close(snapshot.getInputStream(INDEX_SIZE));
-            return StreamUtils.createResource(snapshot.getInputStream(INDEX_STREAM));
+            return StreamResource.createResource(snapshot.getInputStream(INDEX_STREAM));
         } else {
             Editor editor = mDiskLruCache.edit(key);
             if (editor != null) {
@@ -52,14 +52,14 @@ public class CachedSource<T extends Source> extends DelegatedSource<T>
                 StreamResource<InputStream> inResource = getSource().openResource(pParams);
                 InputStream in = inResource.getStream();
                 try {
-                    long size = StreamUtils.copyStream(in, out, false, true, this);
+                    long size = StreamUtils.copyStream(in, out, false, true, new LoggerListener());
                     if (size > 0) {
                         editor.set(INDEX_SIZE, String.valueOf(size));
                         editor.commit();
                         mDiskLruCache.flush();
                         Snapshot value = mDiskLruCache.get(key);
                         if (value != null) {
-                            return StreamUtils.createResource(value.getInputStream(INDEX_STREAM));
+                            return StreamResource.createResource(value.getInputStream(INDEX_STREAM));
                         }
                     } else {
                         editor.abort();
@@ -100,29 +100,7 @@ public class CachedSource<T extends Source> extends DelegatedSource<T>
 	return getSource().getLength();
     }
 
-    @Override
-    public void onStart() {
-        Logger.d(Level.SOURCE | Level.CACHE, "Start put into cache %s", getSource().getUriString());
 
-    }
-
-    @Override
-    public void onProgress(long pReadBytes) {
-//	long length = mSource.getLength();
-//	if (length>0){
-//	    Log.d("Progress copy %s%%(%s / %s)",(pReadBytes*100)/length, pReadBytes,length);
-//	}
-    }
-
-    @Override
-    public void onFail(Throwable pE) {
-        Logger.e("Fail put into cache %s", pE, getSource().getUriString());
-    }
-
-    @Override
-    public void onComplete() {
-        Logger.d(Level.CACHE | Level.SOURCE, "Finish put into cache %s", getSource().getUriString());
-    }
 
     @Override
     public String toString() {
@@ -140,6 +118,32 @@ public class CachedSource<T extends Source> extends DelegatedSource<T>
 
     public boolean removeFromCache() throws IOException{
         return mDiskLruCache.remove(getKey());
+    }
+
+    private class LoggerListener implements ICopyListener {
+        @Override
+        public void onStart() {
+            Logger.d(Level.SOURCE | Level.CACHE, "Start put into cache %s", getSource().getUriString());
+
+        }
+
+        @Override
+        public void onProgress(long pReadBytes) {
+//	long length = mSource.getLength();
+//	if (length>0){
+//	    Log.d("Progress copy %s%%(%s / %s)",(pReadBytes*100)/length, pReadBytes,length);
+//	}
+        }
+
+        @Override
+        public void onFail(Throwable pE) {
+            Logger.e("Fail put into cache %s", pE, getSource().getUriString());
+        }
+
+        @Override
+        public void onComplete() {
+            Logger.d(Level.CACHE | Level.SOURCE, "Finish put into cache %s", getSource().getUriString());
+        }
     }
 
 }

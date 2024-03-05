@@ -61,7 +61,7 @@ public class ZipStreamSource extends BaseZipSource implements StreamSource {
     public StreamResource<InputStream> openResource(StreamParams pParams)
             throws IOSourceException, IOException {
 
-        return StreamUtils.createResource(mZipInputStream);
+        return StreamResource.createResource(mZipInputStream);
     }
 
 

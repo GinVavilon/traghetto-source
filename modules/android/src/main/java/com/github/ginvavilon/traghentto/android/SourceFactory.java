@@ -27,6 +27,7 @@ import com.github.ginvavilon.traghentto.zip.ZipRandomAccessFileSource;
  * @author Vladimir Baraznovsky
  *
  */
+@Deprecated
 public class SourceFactory implements UriConstants {
 
     private static final Map<String, AndroidSourceCreator<?>> sCreators = new HashMap<>();

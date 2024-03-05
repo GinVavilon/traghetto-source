@@ -8,8 +8,10 @@ java {
 dependencies {
     api project(':base')
     api project(':http')
+    implementation project(':utils:logger')
     implementation 'org.apache.httpcomponents:httpcore:4.4.16'
     implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+    implementation project(':utils:stream')
     testImplementation 'junit:junit:4.12'
 }
 eclipse {

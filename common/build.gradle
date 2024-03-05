@@ -1,0 +1,25 @@
+
+apply plugin: 'java-library'
+apply plugin: 'eclipse'
+
+dependencies {
+    api project(':base')
+    implementation project(':utils:stream')
+    implementation project(':utils:logger')
+    testImplementation 'junit:junit:4.12'
+    testImplementation project(':utils:io')
+    testImplementation project(':utils:public')
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+eclipse {
+    project {
+        name = 'Traghentto-Common'
+    }
+}
+
+applyJavaPublishing (project, 'common', 'Tragnetto-Common')

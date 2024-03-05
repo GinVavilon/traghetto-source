@@ -3,6 +3,7 @@
  */
 package com.github.ginvavilon.traghentto.zip;
 
+import com.github.ginvavilon.traghentto.PathUtils;
 import com.github.ginvavilon.traghentto.StreamSource;
 
 /**
@@ -34,12 +35,7 @@ public abstract class ZipEntrySource implements StreamSource {
     @Override
     public String getName() {
         String name = getPath();
-        int last = name.length()-1;
-        if ('/'==(name.charAt(last))){
-            last--;
-        }
-        int index = name.lastIndexOf("/",last);
-        return name.substring(index+1,last+1);
+        return PathUtils.extractName(name);
     }
 
     @Override
