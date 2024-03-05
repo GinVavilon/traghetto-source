@@ -1,5 +1,5 @@
 ext.GROUP_ID = 'io.github.ginvavilon.traghentto'
-ext.VERSION = '0.6.6-SNAPSHOT'
+ext.VERSION = '0.6.6'
 ext.REPOSITORY_URL = 'https://github.com/GinVavilon/traghetto-source'
 ext.VCS_URL = 'https://github.com/GinVavilon/traghetto-source.git'
 ext.LICENSES = ['Apache-2.0']
